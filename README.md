@@ -23,5 +23,5 @@ Solucionador de sistemas de ecuaciones no lineales para ingeniería
   archivo de texto con la condición de que x se encuentre entre -5 y 5, así como
   que el valor inicial de suposición de x es 1.
 
-  Los comentarios se escriben entre << y >>, ejemplo: "<<string>>"
-  Ejemplo en test/input2.xt
+  - Los comentarios se escriben entre << y >>
+  - Ejemplo en test/input2.xt
