@@ -46,7 +46,7 @@ with open(fichero, 'rb') as f:
 lista = []
 dicc_condiciones = {}
 for eqn in ecuaciones:
-    if (eqn != '') and ('{' not in eqn):
+    if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
         expresion = eqn.replace(" ", "")
         expresion = expresion.replace("^", "**") #Capacidad de interpretar pow
         izq_der = expresion.split('=')
