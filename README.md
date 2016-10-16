@@ -22,3 +22,6 @@ Solucionador de sistemas de ecuaciones no lineales para ingeniería
   En este caso se busca solucionar las dos primeras ecuaciones contenidas en un
   archivo de texto con la condición de que x se encuentre entre -5 y 5, así como
   que el valor inicial de suposición de x es 1.
+
+  Los comentarios se escriben entre << y >>, ejemplo: "<<string>>"
+  Ejemplo en test/input2.xt
