@@ -12,17 +12,13 @@ import warnings
 #pyENL designa acá el vector de posibles soluciones que se está probando
 def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     cantidad_eqns = len(pyENL_variables)
-    cont = 0
     #Asignación de variables
-    for var in pyENL_variables:
+    for cont, var in enumerate(pyENL_variables):
         exec(var.name + '= pyENL[' + str(cont) + ']')
-        cont += 1
     salidapyENL = empty((cantidad_eqns))
-    cont = 0
     #Funciones para hallar raíces
-    for eqn in pyENL_eqns:
+    for cont, eqn in enumerate(pyENL_eqns):
         salidapyENL[cont] = eval(eqn)
-        cont += 1
     return salidapyENL
 
 
@@ -57,10 +53,8 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     pyENL_guesses = zeros(pyENL_cantidad)
     #Actualización de los valores de suposiciones iniciales basados en los
     #atributos de los objetos de entrada de las variables.
-    contd = 0
-    for vard in pyENL_variables:
+    for contd, vard in enumerate(pyENL_variables):
         pyENL_guesses[contd] = vard.guess
-        contd += 1
     pyENL_ones = ones(pyENL_cantidad)
     try:
         pyENL_sol = opt.fsolve(pyENL_sistema, pyENL_guesses, \
