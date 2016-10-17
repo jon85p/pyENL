@@ -3,6 +3,7 @@
 
 import scipy.optimize as opt
 from numpy import *
+from CoolProp.CoolProp import PropsSI as prop
 ln = log
 log = log10
 import warnings
@@ -29,7 +30,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     '''
 
     warnings.simplefilter('error')
-    #print(pyENL_variables)
+    for vp in pyENL_variables: print(vp.name)
 
     #Verificación de que se tiene el mismo número de ecuaciones y de variables:
     if len(pyENL_eqns) != len(pyENL_variables):

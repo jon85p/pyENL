@@ -1,0 +1,6 @@
+<<Prueba para propiedades termodinámicas>>
+s_1 = prop('S', 'P', 6e5, 'Q', 1, 'R22')
+s_2 = prop('S', 'P', 3e5, 'Q', Q, 'R22')
+s_1 = s_2
+{s_1, 1000, 1, 1}
+{s_2, 1000, 1, 1}

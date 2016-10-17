@@ -6,6 +6,7 @@ import sys
 from solver import solver
 from utils import variables
 from numpy import inf
+from CoolProp.CoolProp import PropsSI as prop
 
 class pyENL_variable:
     '''

@@ -25,3 +25,11 @@ Solucionador de sistemas de ecuaciones no lineales para ingeniería
 
   - Los comentarios se escriben entre << y >>
   - Ejemplo en test/input2.xt
+
+###Propiedades termodinámicas
+Se pueden acceder a propiedades con el paquete CoolProp instalable desde pip con
+<pre><code>pip install coolprop</code></pre>
+- Uso de la función prop en lugar de PropsSI, ejemplos: [en la documentación de CoolProp](http://www.coolprop.org/coolprop/examples.html#sample-props-code)
+
+- Ejemplo: Entalpía del agua a presión atmosférica y 300 K:
+ <pre><code>prop('H', 'P', 101325, 'T', 300, 'Water')</code></pre>

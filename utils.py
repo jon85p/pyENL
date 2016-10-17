@@ -5,6 +5,7 @@ Utilidades para reconocimiento de parámetros de ecuaciones
 '''
 from numpy import *
 ln = log
+prop = log #Solo importa el nombre de la función para comprobación...
 
 def esalfanum(caracter):
     '''Verifica que el caracter es alfanumérico'''
@@ -80,7 +81,7 @@ def variables(texto_eqn):
     for cambio in cambios:
         texto_eqn = texto_eqn.replace(cambio, '1+')
     #Reemplazos:
-    A_reemplazar = ['(', ')', '-', '*', '/', '^']
+    A_reemplazar = ['(', ')', '-', '*', '/', '^', ',']
     for termino in A_reemplazar:
         texto_eqn = texto_eqn.replace(termino, '+')
     posibles = texto_eqn.split('+')
