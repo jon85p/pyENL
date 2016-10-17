@@ -1,0 +1,25 @@
+<<Ciclo de refrigeración simple de compresión de vapor>>
+m_dot = 1.2
+<<Potencia que consume el compresor>>
+W_compresor = m_dot*(h_2-h_1)
+P_evap = 150e3
+P_cond = 1e6
+<<Capacidad, cantidad de calor que puede extraerse>>
+CAP = m_dot*(h_1 - h_4)
+<<COP, cuánto calor se saca por cada unidad de energía gastada en el compresor>>
+COP = CAP/W_compresor
+<<Cálculo de propiedades termodinámicas>>
+h_1 = prop('H', 'P', P_evap, 'Q', 1, 'R134a')
+s_1 = prop('S', 'P', P_evap, 'Q', 1, 'R134a')
+h_2 = prop('H', 'P', P_cond, 'S', s_1, 'R134a')
+h_3 = prop('H', 'P', P_cond, 'Q', 0, 'R134a')
+h_3 = h_4
+<<Valores iniciales de las variables>>
+{h_1,1e5,1,1}
+{h_2,1e5,1,1}
+{h_3,1e5,1,1}
+{h_4,1e5,1,1}
+{s_1,1000,1,1}
+{P_evap,150e3,1,1}
+{P_cond,1e6,1,1}
+{W_compresor, 10,1,1}

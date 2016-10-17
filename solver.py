@@ -30,7 +30,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     '''
 
     warnings.simplefilter('error')
-    for vp in pyENL_variables: print(vp.name)
+    #for vp in pyENL_variables: print(vp.name)
 
     #Verificación de que se tiene el mismo número de ecuaciones y de variables:
     if len(pyENL_eqns) != len(pyENL_variables):
