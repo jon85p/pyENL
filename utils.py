@@ -7,6 +7,26 @@ from numpy import *
 ln = log
 prop = log #Solo importa el nombre de la función para comprobación...
 
+def ajustes(texto):
+    '''
+    Ajusta el contenido del texto de cada ecuación por si se necesitan hacer
+    arreglos, tales como soporte para números en notación científica con
+    exponentes negativos
+    '''
+    pos_e_menos = buscainds(texto, 'e-')
+    for posicion in pos_e_menos:
+        #Verificar que lo que hay antes y después del e- son números.
+        t1 = texto[posicion - 1]
+        t2 = texto[posicion + 2]
+        try:
+            int(t1) #Comprueba que son números
+            int(t2) #Si no, entonces es excepción y chao
+            texto = texto.replace(t1 + 'e-' + t2,t1 + 'e ' + t2)
+        except:
+            pass
+    texto = texto.replace('e ', 'e')
+    return texto
+
 def esalfanum(caracter):
     '''Verifica que el caracter es alfanumérico'''
     suma = 0
@@ -56,6 +76,7 @@ def variables(texto_eqn):
     #Ir agregando los válidos siempre que no se repitan a la lista de salida
     #Return esa lista
     texto_eqn = '1*' + texto_eqn
+    texto_eqn = ajustes(texto_eqn)
     #print(texto_eqn)
     parent_abrir = buscainds(texto_eqn, '(') #Índices donde hay paréntesis open
     #print(parent_abrir)
