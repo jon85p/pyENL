@@ -51,7 +51,7 @@ for eqn in ecuaciones:
         expresion = eqn.replace(" ", "")
         expresion = expresion.replace("^", "**") #Capacidad de interpretar pow
         izq_der = expresion.split('=')
-        paraRaiz = izq_der[0] + '-' + izq_der[1] #Igualación de cero de la eqn
+        paraRaiz = izq_der[0] + '-(' + izq_der[1] + ')' #Igualación de cero
         lista.append(paraRaiz)
     if '{' in eqn:
         #Entonces acá vienen condiciones, que son de la forma:
