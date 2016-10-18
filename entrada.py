@@ -42,7 +42,7 @@ def find_between(s, first, last ):
 fichero = sys.argv[1]
 with open(fichero, 'rb') as f:
     ecuaciones = (f.read()).decode('utf-8')
-    ecuaciones = ecuaciones.split('\n')
+    ecuaciones = ecuaciones.splitlines()
 
 lista = []
 dicc_condiciones = {}
