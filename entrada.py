@@ -74,6 +74,23 @@ for miembro in lista_vars:
     #Crear los objetos pyENL_variable a partir de los strings de nombres de vars
     objeto = pyENL_variable(miembro)
     #Ahora verificar que se encuentre listada en las condidiones
+    #Si se puede definir directamente entonces dejar ese valor inicial
+    #Es decir, tomar el valor del guess como el sugerido en una ecuación
+    #Tipo:
+    #x = ln(y)
+    #y = 5
+    #Entonces el valor inicial de y será 5, aún si el usuario no lo deja 
+    #especificado por los corchetes {}
+    for cadaEqn in lista:
+        varAux = cadaEqn
+        A_reemplazar = [objeto.name, '-', '(', ')']
+        for termino_areemplazar in A_reemplazar:
+            varAux = varAux.replace(termino_areemplazar, '')
+        try:
+            objeto.guess = eval(varAux)
+        except:
+            pass
+        #Si no, entonces buscar si ya hay una definición:
     try:
         objeto.guess = float(dicc_condiciones[miembro][0])
     except:
