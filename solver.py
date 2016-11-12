@@ -59,7 +59,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     pyENL_ones = ones(pyENL_cantidad)
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses, \
-        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'broyden1')
+        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'hybr')
         # Métodos:
         # ‘hybr’
         # ‘lm’
@@ -72,12 +72,16 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         # ‘krylov’
         # ‘df-sane’
 
-    except Exception as pyENL_e:
+    except:
         # print('ERROR:',str(pyENL_e))
         # exit(0)
-        return
-    if pyENL_sol['success'] == False:
-        raise ValueError('No se asegura convergencia')
+        pass
+
+    try:
+        if pyENL_sol['success'] == False:
+            raise ValueError('No se asegura convergencia')
+    except:
+        pass
     for cont in range(0,len(pyENL_variables)):
         print(pyENL_variables[cont].name, '=', pyENL_sol['x'][cont])
     print('Residuos:')
