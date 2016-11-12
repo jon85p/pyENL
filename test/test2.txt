@@ -1,0 +1,24 @@
+T = 300
+P=101400
+mu=prop("V", "T", T, "P", P, "Water")
+<<{Q=((54*10^(-3))/60) [m^3/s]}>>
+nu=mu/rho
+L=4.2
+k=6.432
+A=pi*d^2/4
+v=Q/A
+rho=prop("D", "T",T, "P", P, "Water")
+d=0.0201
+g=9.81
+Re=rho*v*d/mu
+epsilon=4.6e-5
+1/sqrt(f)=-2*log10((epsilon/d)/3.7+5.1286/(Re^0.89))
+H_long=f*8*L*Q^2/(pi^2*g*d^5)
+H_acc=k*Q^2/(2*g*A^2)
+H_fteo=H_long+H_acc
+H_fteo=DELTA_P_teo/(rho*g)
+Q = 9e-4
+{f,0.1,0,1}
+{mu,1e-5,0,1e-2}
+{rho,1000,900,1200}
+{Re, 10000, 1e6}

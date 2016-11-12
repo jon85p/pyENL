@@ -4,9 +4,10 @@ Intérprete de texto
 '''
 import sys
 from solver import solver
-from utils import variables
+from utils import variables, random_lim
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
+from time import time
 
 class pyENL_variable:
     '''
@@ -19,9 +20,9 @@ class pyENL_variable:
         variable. El nombre es una cadena de texto
         '''
         self.name = nombre
-        self.guess = 0
-        self.upperlim = inf
-        self.lowerlim = -inf
+        self.guess = 1
+        self.upperlim = 1e5
+        self.lowerlim = -1e5
 
     def convert(self):
         '''
@@ -40,6 +41,7 @@ def find_between(s, first, last ):
         return ""
 
 fichero = sys.argv[1]
+pyENL_timeout = int(sys.argv[2]) #Cantidad de segundos máxima para obtener respuesta.
 with open(fichero, 'rb') as f:
     ecuaciones = (f.read()).decode('utf-8')
     ecuaciones = ecuaciones.splitlines()
@@ -79,7 +81,7 @@ for miembro in lista_vars:
     #Tipo:
     #x = ln(y)
     #y = 5
-    #Entonces el valor inicial de y será 5, aún si el usuario no lo deja 
+    #Entonces el valor inicial de y será 5, aún si el usuario no lo deja
     #especificado por los corchetes {}
     for cadaEqn in lista:
         varAux = cadaEqn
@@ -105,6 +107,32 @@ for miembro in lista_vars:
         pass
     #Se van añadiendo los objetos de salida de las variables:
     variables_salida.append(objeto)
-
+pyENL_inicio = time() #Tiempo de inicio de llamada al solver
 #Llamada al solver
-solver(lista, variables_salida, pyENL_iteraciones = 600, pyENL_tol=1.49012e-08)
+try:
+    solver(lista, variables_salida, pyENL_iteraciones = 600, pyENL_tol=1.49012e-08)
+    print('A la primera!')
+except Exception as e:
+    #Intento aleatorio
+    pyENL_final = time()
+    pyENL_transcurrido = pyENL_final - pyENL_inicio
+    pyENL_solved = False
+    while pyENL_transcurrido < pyENL_timeout:
+        #Encontrar nuevos valores de guesses:
+        for cont, objetoVar in enumerate(variables_salida):
+            obtemp = objetoVar#Objeto variable temporal
+            obtemp.guess = random_lim(objeto.lowerlim, objeto.upperlim)
+            variables_salida[cont] = obtemp
+        #Termina de actualizar, ahora:
+        try:
+            solver(lista, variables_salida, pyENL_iteraciones = 600, \
+            pyENL_tol=1.49012e-08)
+            pyENL_solved = True
+            break
+        except:
+            pass
+        pyENL_final = time()
+        pyENL_transcurrido = pyENL_final - pyENL_inicio
+    if not pyENL_solved:
+        print('TIMEOUT')
+    print('Transcurrieron', pyENL_transcurrido, 'segundos')

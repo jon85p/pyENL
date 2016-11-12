@@ -58,15 +58,27 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         pyENL_guesses[contd] = vard.guess
     pyENL_ones = ones(pyENL_cantidad)
     try:
-        pyENL_sol = opt.fsolve(pyENL_sistema, pyENL_guesses, \
-        args=(pyENL_variables, pyENL_eqns), full_output=False,\
-         maxfev = pyENL_iteraciones, xtol=pyENL_tol)
+        pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses, \
+        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'broyden1')
+        # Métodos:
+        # ‘hybr’
+        # ‘lm’
+        # ‘broyden1’
+        # ‘broyden2’
+        # ‘anderson’
+        # ‘linearmixing’
+        # ‘diagbroyden’
+        # ‘excitingmixing’
+        # ‘krylov’
+        # ‘df-sane’
+
     except Exception as pyENL_e:
-        print('ERROR:',str(pyENL_e))
-        exit(0)
-
-
+        # print('ERROR:',str(pyENL_e))
+        # exit(0)
+        return
+    if pyENL_sol['success'] == False:
+        raise ValueError('No se asegura convergencia')
     for cont in range(0,len(pyENL_variables)):
-        print(pyENL_variables[cont].name, '=', pyENL_sol[cont])
+        print(pyENL_variables[cont].name, '=', pyENL_sol['x'][cont])
     print('Residuos:')
-    print(pyENL_sistema(pyENL_sol, pyENL_variables, pyENL_eqns))
+    print(pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns))

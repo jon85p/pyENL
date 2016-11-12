@@ -1,0 +1,6 @@
+<<Prueba número 1>>
+8 + T*cos(2*theta)+C*sin(theta)=16
+T*sin(2*theta)-C*cos(theta)=3
+<<theta = 20*pi/180>>
+T = 2*C
+theta_deg = theta*180/pi

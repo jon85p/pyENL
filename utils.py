@@ -115,3 +115,11 @@ def variables(texto_eqn):
                     salida.append(variable)
 
     return salida
+
+def random_lim(a, b):
+    '''
+    Número aleatorio entre a y b
+    '''
+    temp = random.rand()
+    salida = a + (b - a)*temp
+    return salida
