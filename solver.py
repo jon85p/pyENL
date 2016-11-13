@@ -59,7 +59,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     pyENL_ones = ones(pyENL_cantidad)
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses, \
-        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'hybr')
+        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'df-sane')
         # Métodos:
         # ‘hybr’
         # ‘lm’
@@ -71,6 +71,31 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         # ‘excitingmixing’
         # ‘krylov’
         # ‘df-sane’
+    #         Notes
+    # -----
+    # This section describes the available solvers that can be selected by the
+    # 'method' parameter. The default method is *hybr*.
+    # Method *hybr* uses a modification of the Powell hybrid method as
+    # implemented in MINPACK [1]_.
+    # Method *lm* solves the system of nonlinear equations in a least squares
+    # sense using a modification of the Levenberg-Marquardt algorithm as
+    # implemented in MINPACK [1]_.
+    # Method *df-sane* is a derivative-free spectral method. [3]_
+    # Methods *broyden1*, *broyden2*, *anderson*, *linearmixing*,
+    # *diagbroyden*, *excitingmixing*, *krylov* are inexact Newton methods,
+    # with backtracking or full line searches [2]_. Each method corresponds
+    # to a particular Jacobian approximations. See `nonlin` for details.
+    # - Method *broyden1* uses Broyden's first Jacobian approximation, it is
+    #   known as Broyden's good method.
+    # - Method *broyden2* uses Broyden's second Jacobian approximation, it
+    #   is known as Broyden's bad method.
+    # - Method *anderson* uses (extended) Anderson mixing.
+    # - Method *Krylov* uses Krylov approximation for inverse Jacobian. It
+    #   is suitable for large-scale problem.
+    # - Method *diagbroyden* uses diagonal Broyden Jacobian approximation.
+    # - Method *linearmixing* uses a scalar Jacobian approximation.
+    # - Method *excitingmixing* uses a tuned diagonal Jacobian
+    #   approximation.
 
     except:
         # print('ERROR:',str(pyENL_e))
@@ -79,7 +104,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
 
     try:
         if pyENL_sol['success'] == False:
-            raise ValueError('No se asegura convergencia')
+            print('NO se asegura convergencia')
     except:
         pass
     for cont in range(0,len(pyENL_variables)):
