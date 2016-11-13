@@ -4,6 +4,7 @@
 Solucionador de sistemas de ecuaciones no lineales para ingeniería
 ###Características
 - Resuelve numéricamente ecuaciones no lineales usando MINPACK desde SciPy.
+- 🆕 Uso de varios solvers provenientes de [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
 - Opción para cambiar los valores de búsquedas iniciales.
 - En desarrollo!
 
@@ -11,7 +12,7 @@ Solucionador de sistemas de ecuaciones no lineales para ingeniería
 - <pre><code>solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):</code></pre>
     Acá llegan como parámetros la lista de funciones a hallar raíces como string
     La segunda entrada consiste en los objetos pyENL_variables en lista.
-- <pre><code>entrada.py:</code></pre>
+- <pre><code>entrada.py archivo_texto timeout[segundos]:</code></pre>
   Consiste de un parser de un archivo de texto que contiene las ecuaciones en
   cada línea de texto, además de las restricciones dadas de cada variable.
   Ejemplo:
