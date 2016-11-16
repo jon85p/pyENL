@@ -1,0 +1,4 @@
+<<Tercera prueba>>
+quadsum(x,y) = 9
+x = y
+z = prueba1(x)

@@ -3,6 +3,7 @@
 
 import scipy.optimize as opt
 from numpy import *
+from pyENL_fcns import *
 from CoolProp.CoolProp import PropsSI as prop
 ln = log
 log = log10
@@ -59,7 +60,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     pyENL_ones = ones(pyENL_cantidad)
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses, \
-        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'df-sane')
+        args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method = 'hybr')
         # Métodos:
         # ‘hybr’
         # ‘lm’
