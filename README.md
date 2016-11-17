@@ -6,6 +6,8 @@ Solucionador de sistemas de ecuaciones no lineales para ingeniería
 - Resuelve numéricamente ecuaciones no lineales usando MINPACK desde SciPy.
 - 🆕 Uso de varios solvers provenientes de [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
 - Opción para cambiar los valores de búsquedas iniciales.
+- Funciones propias de ingenierías incorporadas (Ver Issue 4, en construcción 💪)
+- Funciones personalizadas en Python por parte del usuario.
 - En desarrollo!
 
 ###Uso de archivos:
