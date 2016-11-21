@@ -108,7 +108,8 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
             print('NO se asegura convergencia')
     except:
         pass
+
     for cont in range(0,len(pyENL_variables)):
-        print(pyENL_variables[cont].name, '=', pyENL_sol['x'][cont])
-    print('Residuos:')
-    print(pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns))
+        pyENL_variables[cont].guess = pyENL_sol['x'][cont]
+    pyENL_residuos = pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns)
+    return pyENL_variables, pyENL_residuos
