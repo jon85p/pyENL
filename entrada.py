@@ -105,15 +105,16 @@ def entradaTexto(ecuaciones, pyENL_timeout):
         variables_salida.append(objeto)
     pyENL_inicio = time() #Tiempo de inicio de llamada al solver
     #Llamada al solver
+    pyENL_solved = False
     try:
         pyENL_solucion = solver(lista, variables_salida, \
         pyENL_iteraciones = 600, pyENL_tol=1.49012e-08)
+        pyENL_solved = True
         print('A la primera!')  #Esto se comentará para la GUI
     except Exception as e:
         #Intento aleatorio
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
-        pyENL_solved = False
         while pyENL_transcurrido < pyENL_timeout:
             #Encontrar nuevos valores de guesses:
             for cont, objetoVar in enumerate(variables_salida):
@@ -128,11 +129,11 @@ def entradaTexto(ecuaciones, pyENL_timeout):
                 break
             except:
                 pass
-            pyENL_final = time()
-            pyENL_transcurrido = pyENL_final - pyENL_inicio
-        if not pyENL_solved:
-            raise ValueError('Timeout')
-        return [pyENL_solucion, pyENL_transcurrido]
+    pyENL_final = time()
+    pyENL_transcurrido = pyENL_final - pyENL_inicio
+    if not pyENL_solved:
+        raise ValueError('Timeout')
+    return [pyENL_solucion, pyENL_transcurrido]
 
 def main():
     fichero = sys.argv[1]
