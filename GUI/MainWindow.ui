@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">pyENL</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="MainResources.qrc">
+    <normaloff>:/imgs/imgs/icon.png</normaloff>:/imgs/imgs/icon.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="2" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>x Ecuaciones/y Variables</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Ecuaciones</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Variables</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>Soluciones</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuArchivo">
+    <property name="title">
+     <string>Archivo</string>
+    </property>
+    <widget class="QMenu" name="menuExportar_reporte">
+     <property name="title">
+      <string>Exportar reporte</string>
+     </property>
+     <addaction name="actionLibreOffice"/>
+     <addaction name="actionTeX"/>
+    </widget>
+    <widget class="QMenu" name="menuImportar">
+     <property name="title">
+      <string>Importar</string>
+     </property>
+     <addaction name="actionArchivo_EES"/>
+    </widget>
+    <addaction name="actionAbrir"/>
+    <addaction name="actionGuardar"/>
+    <addaction name="actionGuardar_Como"/>
+    <addaction name="separator"/>
+    <addaction name="menuExportar_reporte"/>
+    <addaction name="menuImportar"/>
+    <addaction name="separator"/>
+    <addaction name="actionCerrar"/>
+    <addaction name="actionSalir"/>
+   </widget>
+   <widget class="QMenu" name="menuEditar">
+    <property name="title">
+     <string>Editar</string>
+    </property>
+    <addaction name="actionComentario"/>
+    <addaction name="actionSeleccionar_todo"/>
+    <addaction name="separator"/>
+    <addaction name="actionDeshacer"/>
+    <addaction name="actionRehacer"/>
+    <addaction name="separator"/>
+    <addaction name="actionCopiar"/>
+    <addaction name="actionPegar"/>
+    <addaction name="actionPegar_2"/>
+   </widget>
+   <widget class="QMenu" name="menuOpciones">
+    <property name="title">
+     <string>Opciones</string>
+    </property>
+    <addaction name="actionUnidades"/>
+    <addaction name="separator"/>
+    <addaction name="actionConfiguraci_n"/>
+   </widget>
+   <widget class="QMenu" name="menuHerramientas">
+    <property name="title">
+     <string>Herramientas</string>
+    </property>
+    <widget class="QMenu" name="menuFunciones_Ingenier_a">
+     <property name="title">
+      <string>Funciones Ingeniería</string>
+     </property>
+     <addaction name="actionTermodin_micas"/>
+     <addaction name="actionPor_agregar"/>
+    </widget>
+    <widget class="QMenu" name="menuFunciones_de_usuario">
+     <property name="title">
+      <string>Funciones de usuario</string>
+     </property>
+     <addaction name="actionDisponibles"/>
+     <addaction name="actionAgregar"/>
+    </widget>
+    <addaction name="menuFunciones_Ingenier_a"/>
+    <addaction name="menuFunciones_de_usuario"/>
+    <addaction name="actionImprimir"/>
+   </widget>
+   <widget class="QMenu" name="menuAyuda">
+    <property name="title">
+     <string>Ayuda</string>
+    </property>
+    <addaction name="actionAyuda_pyENL"/>
+    <addaction name="actionAyuda_NumPy"/>
+    <addaction name="actionAyuda_CoolProp"/>
+    <addaction name="separator"/>
+    <addaction name="actionSobre_pyENL"/>
+    <addaction name="actionLicencias"/>
+   </widget>
+   <addaction name="menuArchivo"/>
+   <addaction name="menuEditar"/>
+   <addaction name="menuOpciones"/>
+   <addaction name="menuHerramientas"/>
+   <addaction name="menuAyuda"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbrir">
+   <property name="text">
+    <string>Abrir</string>
+   </property>
+   <property name="whatsThis">
+    <string/>
+   </property>
+  </action>
+  <action name="actionGuardar">
+   <property name="text">
+    <string>Guardar</string>
+   </property>
+  </action>
+  <action name="actionGuardar_Como">
+   <property name="text">
+    <string>Guardar Como...</string>
+   </property>
+  </action>
+  <action name="actionCerrar">
+   <property name="text">
+    <string>Cerrar</string>
+   </property>
+  </action>
+  <action name="actionSalir">
+   <property name="text">
+    <string>Salir</string>
+   </property>
+  </action>
+  <action name="actionComentario">
+   <property name="text">
+    <string>Comentario</string>
+   </property>
+  </action>
+  <action name="actionSeleccionar_todo">
+   <property name="text">
+    <string>Seleccionar todo</string>
+   </property>
+  </action>
+  <action name="actionDeshacer">
+   <property name="text">
+    <string>Deshacer</string>
+   </property>
+  </action>
+  <action name="actionRehacer">
+   <property name="text">
+    <string>Rehacer</string>
+   </property>
+  </action>
+  <action name="actionCopiar">
+   <property name="text">
+    <string>Copiar</string>
+   </property>
+  </action>
+  <action name="actionPegar">
+   <property name="text">
+    <string>Cortar</string>
+   </property>
+  </action>
+  <action name="actionPegar_2">
+   <property name="text">
+    <string>Pegar</string>
+   </property>
+  </action>
+  <action name="actionAyuda_pyENL">
+   <property name="text">
+    <string>Ayuda pyENL</string>
+   </property>
+  </action>
+  <action name="actionAyuda_NumPy">
+   <property name="text">
+    <string>Ayuda NumPy</string>
+   </property>
+  </action>
+  <action name="actionAyuda_CoolProp">
+   <property name="text">
+    <string>Ayuda CoolProp</string>
+   </property>
+  </action>
+  <action name="actionSobre_pyENL">
+   <property name="text">
+    <string>Sobre pyENL</string>
+   </property>
+  </action>
+  <action name="actionLicencias">
+   <property name="text">
+    <string>Licencias</string>
+   </property>
+  </action>
+  <action name="actionTermodin_micas">
+   <property name="text">
+    <string>Termodinámicas</string>
+   </property>
+  </action>
+  <action name="actionPor_agregar">
+   <property name="text">
+    <string>Por agregar...</string>
+   </property>
+  </action>
+  <action name="actionDisponibles">
+   <property name="text">
+    <string>Disponibles</string>
+   </property>
+  </action>
+  <action name="actionAgregar">
+   <property name="text">
+    <string>Agregar...</string>
+   </property>
+  </action>
+  <action name="actionUnidades">
+   <property name="text">
+    <string>Unidades</string>
+   </property>
+  </action>
+  <action name="actionConfiguraci_n">
+   <property name="text">
+    <string>Configuración</string>
+   </property>
+  </action>
+  <action name="actionImprimir">
+   <property name="text">
+    <string>Imprimir</string>
+   </property>
+  </action>
+  <action name="actionLibreOffice">
+   <property name="text">
+    <string>Open Document Text</string>
+   </property>
+  </action>
+  <action name="actionTeX">
+   <property name="text">
+    <string>Archivo LaTeX</string>
+   </property>
+  </action>
+  <action name="actionArchivo_EES">
+   <property name="text">
+    <string>Archivo EES</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="MainResources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
