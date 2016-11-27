@@ -1,10 +1,12 @@
 #pyENL
 
+<img src="GUI/imgs/icon.png" style="width: 100px">*
+
 ###Descripción
 Solucionador de sistemas de ecuaciones no lineales para ingeniería
 ###Características
 - Resuelve numéricamente ecuaciones no lineales usando MINPACK desde SciPy.
-- 🆕 Uso de varios solvers provenientes de [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
+- Uso de varios solvers provenientes de [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
 - Opción para cambiar los valores de búsquedas iniciales.
 - Funciones propias de ingenierías incorporadas (Ver Issue 4, en construcción 💪)
 - Funciones personalizadas en Python por parte del usuario.
@@ -36,3 +38,6 @@ Se pueden acceder a propiedades con el paquete CoolProp instalable desde pip con
 
 - Ejemplo: Entalpía del agua a presión atmosférica y 300 K:
  <pre><code>prop('H', 'P', 101325, 'T', 300, 'Water')</code></pre>
+
+
+<sup>Icono por @fabianalexisinostroza<sub>
