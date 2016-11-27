@@ -1,6 +1,6 @@
 #pyENL
 
-<img src="GUI/imgs/icon.png" style="width: 100px">*
+<img src="GUI/imgs/icon240.png">*
 
 ###Descripción
 Solucionador de sistemas de ecuaciones no lineales para ingeniería
