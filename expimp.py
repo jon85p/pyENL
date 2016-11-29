@@ -27,7 +27,7 @@ def sols2odt(variables, file_name, user_input):
     textdoc.automaticstyles.addElement(boldstyle)
     #Italic
     italicstyle = Style(name="Italic", family="text")
-    italicprop = TextProperties(fontweight="italic")
+    italicprop = TextProperties(fontstyle="italic")
     italicstyle.addElement(italicprop)
     textdoc.automaticstyles.addElement(italicstyle)
     # Text
