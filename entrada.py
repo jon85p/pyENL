@@ -8,6 +8,7 @@ from utils import variables, random_lim
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
 from time import time
+from expimp import sols2odt
 
 class pyENL_variable:
     '''
@@ -23,6 +24,7 @@ class pyENL_variable:
         self.guess = 1
         self.upperlim = 1e5
         self.lowerlim = -1e5
+        self.comment = 'Variable'
 
     def convert(self):
         '''
@@ -143,6 +145,7 @@ def main():
         ecuaciones = ecuaciones.splitlines()
 
     solucion = entradaTexto(ecuaciones, pyENL_timeout)
+    sols2odt(solucion[0][0], 'respuesta.odt', ecuaciones)
     for variable in solucion[0][0]:
         print(variable.name, '=', variable.guess)
     print('Residuos:', solucion[0][1])
