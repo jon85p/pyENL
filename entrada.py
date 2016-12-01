@@ -8,6 +8,9 @@ from utils import variables, random_lim
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
 from time import time
+import optparse
+import os
+from expimp import sols2odt
 
 class pyENL_variable:
     '''
@@ -139,14 +142,53 @@ def entradaTexto(ecuaciones, pyENL_timeout):
     return [pyENL_solucion, pyENL_transcurrido]
 
 def main():
-    fichero = sys.argv[1]
-    pyENL_timeout = int(sys.argv[2]) #Cantidad de segundos máxima para obtener respuesta.
+    parser = optparse.OptionParser('Uso: ' + sys.argv[0] + ' -f archivo_texto\
+    -t timeout(seg) -e archivo_exp')
+    parser.add_option('-f', dest='foption', type='string', \
+    help='Archivo de texto con el sistema de ecuaciones')
+    parser.add_option('-t', dest='toption', type='float', \
+    help='Tiempo de espera máximo para la solución')
+    parser.add_option('-e', dest='eoption', type='string', \
+    help='Archivo de exportación, puede ser .odt o .tex')
+    (options, args) = parser.parse_args()
+    if options.foption == None:
+        print(parser.usage)
+        exit(0)
+    else:
+        fichero = options.foption
+    #Verificación de existencia y lectura del archivo de texto:
+    if not os.path.isfile(fichero):
+        print('[!] El archivo de texto no se encuentra')
+        exit(0)
+    if not os.access(fichero, os.R_OK):
+        print('[!] No se cuentan con los permisos apropiados para acceder al archivo')
+        exit(0)
+    if options.toption == None:
+        pyENL_timeout = 10
+    else:
+        pyENL_timeout = options.toption
     with open(fichero, 'rb') as f:
         ecuaciones = (f.read()).decode('utf-8')
         ecuaciones = ecuaciones.splitlines()
 
     solucion = entradaTexto(ecuaciones, pyENL_timeout)
 
+    #Si se especificó archivo de exportación entonces generarlo:
+    if options.eoption:
+        if (not '.odt' in options.eoption) != ('.tex' in options.eoption):
+            print('No se especificó un válido archivo de salida, debe ser .odt\
+            o .tex (soporte para LaTeX pendiente)')
+            exit(0)
+        if '.odt' in options.eoption:
+            #Intentar guardar el documento para exportación y en caso de error
+            #lanzar mensaje de advertencia.
+            try:
+                sols2odt(solucion[0][0], options.eoption, ecuaciones)
+            except:
+                print('No se pudo guardar el archivo de exportación, verifique \
+                que tenga permisos de escritura o que el nombre sea válido')
+        if '.tex' in options.eoption:
+            print('Soporte para archivos LaTeX pendiente')
     for variable in solucion[0][0]:
         print(variable.name, '=', variable.guess)
     print('Residuos:', solucion[0][1])
