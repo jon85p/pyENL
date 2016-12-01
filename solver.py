@@ -35,10 +35,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
 
     #Verificación de que se tiene el mismo número de ecuaciones y de variables:
     if len(pyENL_eqns) != len(pyENL_variables):
-        print('No se tiene el mismo número de ecuaciones y de variables')
-        print('Hay', str(len(pyENL_eqns)), 'ecuaciones y', \
-        str(len(pyENL_variables)), 'variables')
-        exit(0)
+        return 'Error ecuaciones/variables'
 
     #Valores iniciales iguales a cero
     #TODO
@@ -102,14 +99,14 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         # print('ERROR:',str(pyENL_e))
         # exit(0)
         pass
-
+    asegura_convergencia = True
     try:
         if pyENL_sol['success'] == False:
-            print('NO se asegura convergencia')
+            asegura_convergencia = False
     except:
         pass
 
     for cont in range(0,len(pyENL_variables)):
         pyENL_variables[cont].guess = pyENL_sol['x'][cont]
     pyENL_residuos = pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns)
-    return pyENL_variables, pyENL_residuos
+    return pyENL_variables, pyENL_residuos, asegura_convergencia

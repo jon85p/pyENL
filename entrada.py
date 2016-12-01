@@ -56,7 +56,7 @@ def entradaTexto(ecuaciones, pyENL_timeout):
             #Entonces acá vienen condiciones, que son de la forma:
             #   {x,first_guess,-lim,+lim}
             if '}' not in eqn:
-                print('Error, falta el: }')
+                raise Exception("Falt cerrar corchete")
             condicion = find_between(eqn, '{', '}')
             condicion = condicion.replace(' ', '')
             condiciones = condicion.split(',')
@@ -111,7 +111,6 @@ def entradaTexto(ecuaciones, pyENL_timeout):
         pyENL_solucion = solver(lista, variables_salida, \
         pyENL_iteraciones = 600, pyENL_tol=1.49012e-08)
         pyENL_solved = True
-        print('A la primera!')  #Esto se comentará para la GUI
     except Exception as e:
         #Intento aleatorio
         pyENL_final = time()
@@ -130,6 +129,9 @@ def entradaTexto(ecuaciones, pyENL_timeout):
                 break
             except:
                 pass
+    if pyENL_solucion == 'Error ecuaciones/variables':
+        raise ValueError("Hay", str(len(lista)), 'ecuaciones y', \
+        str(len(variables_salida)), 'variables')
     pyENL_final = time()
     pyENL_transcurrido = pyENL_final - pyENL_inicio
     if not pyENL_solved:
@@ -144,7 +146,7 @@ def main():
         ecuaciones = ecuaciones.splitlines()
 
     solucion = entradaTexto(ecuaciones, pyENL_timeout)
-    
+
     for variable in solucion[0][0]:
         print(variable.name, '=', variable.guess)
     print('Residuos:', solucion[0][1])
