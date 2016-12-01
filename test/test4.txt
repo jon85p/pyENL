@@ -1,0 +1,6 @@
+<<Prueba de funciones de usuario>>
+5*x=48*cos(x)
+<<El valor de x es de voltaje>>
+res = 10
+<<Este es un valor para resistencia>>
+i = corriente('Resistencia', res, 'V', x)
