@@ -17,7 +17,4 @@ def corriente(str1, a, str2, b):
         v, r = a, b
     if str1 in R and str2 in V:
         r, v = a, b
-    try:
-        return v/r
-    except:
-        raise Exception()
+    return v/r
