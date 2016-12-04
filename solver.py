@@ -38,6 +38,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         return 'Error ecuaciones/variables'
 
     #Valores iniciales iguales a cero
+    pyENL_variables.sort(key = lambda x: x.name.lower())
     #TODO
     #Lograr dividir las ecuaciones en bloques!!!
     #Reto---------------------------------------------------------------------------
