@@ -10,7 +10,7 @@ from CoolProp.CoolProp import PropsSI as prop
 from time import time
 import optparse
 import os
-from expimp import sols2odt
+from expimp import sols2odt, sols2tex
 
 class pyENL_variable:
     '''
@@ -27,6 +27,7 @@ class pyENL_variable:
         self.upperlim = 1e5
         self.lowerlim = -1e5
         self.comment = 'Variable'
+        self.units = '1' #Unidades de la variable.
 
     def convert(self):
         '''
@@ -149,7 +150,7 @@ def main():
     parser.add_option('-t', dest='toption', type='float', \
     help='Tiempo de espera máximo para la solución')
     parser.add_option('-e', dest='eoption', type='string', \
-    help='Archivo de exportación, puede ser .odt o .tex')
+    help='Archivo de exportación, puede ser .odt, .tex o .pdf (LaTeX)')
     (options, args) = parser.parse_args()
     if options.foption == None:
         print(parser.usage)
@@ -175,7 +176,7 @@ def main():
 
     #Si se especificó archivo de exportación entonces generarlo:
     if options.eoption:
-        if (not '.odt' in options.eoption) != ('.tex' in options.eoption):
+        if options.eoption[-4::] not in ['.pdf', '.odt', '.tex']:
             print('No se especificó un válido archivo de salida, debe ser .odt\
             o .tex (soporte para LaTeX pendiente)')
             exit(0)
@@ -187,8 +188,15 @@ def main():
             except:
                 print('No se pudo guardar el archivo de exportación, verifique \
                 que tenga permisos de escritura o que el nombre sea válido')
-        if '.tex' in options.eoption:
-            print('Soporte para archivos LaTeX pendiente')
+        else:
+            #Entonces es .pdf o .tex
+            try:
+                autor = input('Nombre de autor para reporte LaTeX: ')
+                sols2tex(solucion[0][0], options.eoption, ecuaciones, autor)
+            except:
+                print('No se pudo generar el archivo, verifique que tenga\
+                dependencias necesarias instaladas.')
+
     for variable in solucion[0][0]:
         print(variable.name, '=', variable.guess)
     print('Residuos:', solucion[0][1])

@@ -1,4 +1,5 @@
 <<Ciclo de refrigeración simple de compresión de vapor>>
+<<Ejemplo de pyENL>>
 m_dot = 1.2
 <<Potencia que consume el compresor>>
 W_compresor = m_dot*(h_2-h_1)

@@ -63,7 +63,8 @@ def sols2odt(variables, file_name, user_input):
     for variable in variables:
         #Primero insertar el nombre de la variable con su valor y finalmente
         #El comentario de la misma:
-        p = P(text=variable.name + ' = ' + str(variable.guess))
+        p = P(text=variable.name + ' = ' + str(variable.guess) + ' ' + \
+        variable.units)
         textdoc.text.addElement(p)
         p = P(text=variable.comment)
         textdoc.text.addElement(p)
@@ -73,11 +74,60 @@ def sols2odt(variables, file_name, user_input):
     textdoc.save(file_name)
 
 
-def sols2tex(variables, file_name):
+def sols2tex(variables, file_name, user_input, autor):
     '''
     Soluciones a documento TeX
     '''
-    pass
+    from pylatex import Document, Section, Subsection, Command, Math, Tabular
+    from pylatex.utils import italic, NoEscape
+    doc = Document()
+    doc.preamble.append(Command('title', 'Reporte pyENL'))
+    doc.preamble.append(Command('author', autor))
+    doc.preamble.append(Command('date', NoEscape(r'\today')))
+    doc.append(NoEscape(r'\maketitle'))
+
+    with doc.create(Section('Ecuaciones:')):
+        #Por cada línea de user_input añadir un append y salto de línea
+        #(si es comentario de usuario)
+        comentario_user = False
+        for eqn in user_input:
+            if '<<' in eqn:
+                #Entonces es un comentario de usuario
+                comentario = eqn
+                comentario = comentario.replace('<<', '')
+                comentario = comentario.replace('>>', '')
+                if comentario_user == True:
+                    doc.append('\n' + comentario)
+                else:
+                    doc.append(comentario) #Esto porque no hay necesidad de salto.
+                comentario_user = True
+            else:
+                #Entonces no es un comentario sino una ecuación, entonces
+                #insertar con símbolos matemáticos.
+                doc.append(Math(data=[eqn]))
+                comentario_user = False
+
+    #Ahora insertar los resultados
+    with doc.create(Section('Resultados:')):
+        #Acá viene una tabla con los resultados.
+        with doc.create(Tabular('rc|cl')) as table:
+            table.add_hline()
+            table.add_row(('Variable', 'Valor', 'Descripción', 'Unidades'))
+            table.add_hline(1,4)
+            table.add_empty_row()
+            #Ahora por cada variable añadir la información requerida:
+            for variable in variables:
+                t_var = variable.name #Nombre variable
+                t_val = variable.guess #Valor de la variable
+                t_desc = variable.comment #Descripción de la variable
+                t_unit = variable.units #Unidades de la variable
+                table.add_row((t_var, t_val, t_desc, t_unit))
+            #table.add_row(('x', 5, 'Hola', 'm'))
+
+    if file_name[-4::] == '.pdf':
+        doc.generate_pdf(file_name[0:-4])
+    else:
+        doc.generate_tex(file_name[0:-4])
 
 def import_ees(file):
     '''
