@@ -1,8 +1,11 @@
 '''
 Funciones propias de pyENL
 '''
+
+
 def quadsum(x, y):
-    return x**2 + y **2
+    return x**2 + y ** 2
+
 
 def corriente(str1, a, str2, b):
     '''
@@ -17,4 +20,4 @@ def corriente(str1, a, str2, b):
         v, r = a, b
     if str1 in R and str2 in V:
         r, v = a, b
-    return v/r
+    return v / r
