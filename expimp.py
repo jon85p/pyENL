@@ -132,8 +132,14 @@ def sols2tex(variables, file_name, user_input, autor):
         doc.generate_tex(file_name[0:-4])
 
 
-def import_ees(file):
+def import_ees(ees_file):
     '''
     Importar texto de documentos EES y convertirlos a formato pyENL
     '''
-    pass
+    f = open(ees_file, mode='r', encoding='iso8859-1')
+    salida = f.read()
+    end = '{$ID$'
+    texto = salida[20:salida.index(end)]
+    lista = texto.split('\n')
+    # TODO Tratar texto EES para compatibilidad con pyENL
+    return lista
