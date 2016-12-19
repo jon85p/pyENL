@@ -1,5 +1,7 @@
 <<Ciclo de refrigeración simple de compresión de vapor>>
 <<Ejemplo de pyENL>>
+<<Fluido a usar>>
+#ref# = 'R134a'
 m_dot = 1.2
 <<Potencia que consume el compresor>>
 W_compresor = m_dot*(h_2-h_1)
@@ -10,9 +12,9 @@ CAP = m_dot*(h_1 - h_4)
 <<COP, cuánto calor se saca por cada unidad de energía gastada en el compresor>>
 COP = CAP/W_compresor
 <<Cálculo de propiedades termodinámicas>>
-h_1 = prop('H', 'P', P_evap, 'Q', 1, 'R134a')
-s_1 = prop('S', 'P', P_evap, 'Q', 1, 'R134a')
-h_2 = prop('H', 'P', P_cond, 'S', s_1, 'R134a')
-h_3 = prop('H', 'P', P_cond, 'Q', 0, 'R134a')
+h_1 = prop('H', 'P', P_evap, 'Q', 1, #ref#)
+s_1 = prop('S', 'P', P_evap, 'Q', 1, #ref#)
+h_2 = prop('H', 'P', P_cond, 'S', s_1, #ref#)
+h_3 = prop('H', 'P', P_cond, 'Q', 0, #ref#)
 h_3 = h_4
 <<Valores iniciales de las variables>>

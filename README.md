@@ -39,5 +39,9 @@ Se pueden acceder a propiedades con el paquete CoolProp instalable desde pip con
 - Ejemplo: Entalpía del agua a presión atmosférica y 300 K:
  <pre><code>prop('H', 'P', 101325, 'T', 300, 'Water')</code></pre>
 
-
+###Variables tipo texto:
+Se usan como variables de texto los nombres:
+<pre><code>#ref# = 'R134a'</code></pre>
+<pre><code>P = prop('P', 'T', 300, 'Q', 0, #ref#)</code></pre>
+<pre><code>H = prop('H', 'P', P, 'T', 300, #ref#)</code></pre>
 <sup>Icono por @fabianalexisinostroza<sub>

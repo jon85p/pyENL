@@ -4,6 +4,8 @@
 Utilidades para reconocimiento de parámetros de ecuaciones
 '''
 from numpy import *
+from pyENL_fcns import *
+import re
 ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...
 
@@ -130,3 +132,49 @@ def random_lim(a, b):
     temp = random.rand()
     salida = a + (b - a) * temp
     return salida
+
+
+def variables_string(texto):
+    '''
+    Acomoda el texto para que puedan usarse variables tipo string en el archivo
+    de entrada de ecuaciones.
+    Las variables de texto se declaran como:
+    #ref# = 'R404a'
+    '''
+    # 1. Identificar las lineas de declaración de estas variables
+    # 2. Llevar a cabo los respectivos reemplazos.
+    # 3. Eliminar las líneas de declaración
+    # 4. Lanzar excepciones si se ven variables que no han sido declaradas
+    dicc = {}
+    to_del = []
+    for i, eqn in enumerate(texto):
+        # Asegurarse de que no elimine contenido de comentarios:
+        if '<<' not in eqn:
+            try:
+                lista = eqn.split('=')
+                if len(lista) == 2 and ('#' == lista[0].replace(' ', '')[0]):
+                    nombre_var = lista[0]
+                    nombre_var = nombre_var.replace(' ', '')
+                    dicc[nombre_var] = lista[1].replace(' ', '')
+                    to_del.append(i)
+            except:
+                pass
+    for num in to_del:
+        texto.pop(num)
+    # Segunda iteración para reemplazos
+    pattern = re.compile('|'.join(dicc.keys()))
+    for i, eqn in enumerate(texto):
+        if '<<' not in eqn:
+            try:
+                result = pattern.sub(lambda x: dicc[x.group()], eqn)
+                print(eqn)
+                # El reemplazo:
+                texto[i] = result
+            except:
+                pass
+    # Ahora la comprobación de que no han quedado $ en las ecuaciones:
+    for i, eqn in enumerate(texto):
+        if '<<' not in eqn:
+            if '#' in eqn:
+                raise Exception('No se usa bien variable string en ', str(i))
+    return texto
