@@ -7,6 +7,7 @@ from solver import solver
 from utils import variables, random_lim, variables_string
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
+from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 import os
