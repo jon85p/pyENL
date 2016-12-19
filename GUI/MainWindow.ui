@@ -20,7 +20,7 @@
    <string notr="true">pyENL</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="MainResources.qrc.py">
+   <iconset>
     <normaloff>:/imgs/imgs/icon.png</normaloff>:/imgs/imgs/icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -37,6 +37,18 @@
        <attribute name="title">
         <string>Ecuaciones</string>
        </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QPlainTextEdit" name="plainTextEdit"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="pushButton_4">
+          <property name="text">
+           <string>Resolver</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
