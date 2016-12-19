@@ -8,6 +8,7 @@ from pyENL_fcns import *
 import re
 ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...
+haprop = log
 
 
 def ajustes(texto):

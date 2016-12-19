@@ -5,6 +5,7 @@ import scipy.optimize as opt
 from numpy import *
 from pyENL_fcns import *
 from CoolProp.CoolProp import PropsSI as prop
+from CoolProp.CoolProp import HAPropsSI as haprop
 ln = log
 log = log10
 import warnings
