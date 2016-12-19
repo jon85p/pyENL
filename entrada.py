@@ -4,7 +4,7 @@ Intérprete de texto
 '''
 import sys
 from solver import solver
-from utils import variables, random_lim
+from utils import variables, random_lim, variables_string
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
 from time import time
@@ -177,7 +177,8 @@ def main():
     with open(fichero, 'rb') as f:
         ecuaciones = (f.read()).decode('utf-8')
         ecuaciones = ecuaciones.splitlines()
-
+    # Ahora a organizar lo de las variables tipo string
+    ecuaciones = variables_string(ecuaciones)
     solucion = entradaTexto(ecuaciones, pyENL_timeout)
 
     # Si se especificó archivo de exportación entonces generarlo:
