@@ -204,4 +204,4 @@ def cantidadEqnVar(texto_caja):
         lista_vars = lista_vars + variables(ecuacion)
     lista_vars = list(set(lista_vars))
     # Regresa el número de ecuaciones y de variables.
-    return ecuaciones, len(lista_vars)
+    return ecuaciones, lista_vars
