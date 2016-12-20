@@ -179,3 +179,29 @@ def variables_string(texto):
             if '#' in eqn:
                 raise Exception('No se usa bien variable string en ', str(i))
     return texto
+
+
+def cantidadEqnVar(texto_caja):
+    '''
+    Regresa la cantidad de ecuaciones y de variables en el texto entero de
+    entrada del usuario
+    '''
+    texto_fcn = variables_string(texto_caja)
+    ecuaciones = 0
+    lista = []
+    for eqn in texto_fcn:
+        if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
+            ecuaciones += 1
+            expresion = eqn.replace(" ", "")
+            # Capacidad de interpretar pow
+            expresion = expresion.replace("^", "**")
+            izq_der = expresion.split('=')
+            paraRaiz = izq_der[0] + \
+                '-(' + izq_der[1] + ')'  # Igualación de cero
+            lista.append(paraRaiz)
+    lista_vars = []
+    for ecuacion in lista:
+        lista_vars = lista_vars + variables(ecuacion)
+    lista_vars = list(set(lista_vars))
+    # Regresa el número de ecuaciones y de variables.
+    return ecuaciones, len(lista_vars)
