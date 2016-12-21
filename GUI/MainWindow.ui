@@ -61,7 +61,7 @@
            <widget class="QTableWidget" name="varsTable"/>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_2">
+           <widget class="QPushButton" name="Actualizar_Button">
             <property name="text">
              <string>Actualizar</string>
             </property>

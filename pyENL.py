@@ -18,14 +18,23 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
         # Variables en el programa:
+        self.cajaTexto.setFocus()
         self.variables = []
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
+        self.cleanVarButton.clicked.connect(self.showVarsTable)
+        self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
+        self.solve_button.clicked.connect(self.solve)
         # print(dir(self.varsTable))
         # print(dir(self.tabWidget))
 
-    def solve():
-        pass
+    def solve(self):
+        '''
+        Pasa el contenido de la caja de texto y de la tabla de variables al
+        solver principal y calcula.
+        '''
+        print('Hola prueba!')
+
 
     def actualizaVars(self):
         '''
@@ -35,38 +44,85 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         # print([obj.name for obj in self.variables])
         # Si se cambia justo a la segunda pestaña...
         if self.tabWidget.currentIndex() == 1:
-            texto = self.cajaTexto.toPlainText()
-            self.varsTable.resizeColumnsToContents()
-            self.varsTable.resizeRowsToContents()
-            # La cantidad de filas es pues igual a la cantidad de variables.
-            self.varsTable.setRowCount(len(self.variables))
-            # Muestra seis columnas, una para cada parámetro de la variable.
-            self.varsTable.setColumnCount(6)
-            horHeaders = ['Variable', 'Valor Inicial',
-                          'Inf', 'Sup', 'Unidades', 'Comentario']
+            self.showVarsTable()
+
+    def showVarsTable(self):
+        '''
+        Imprime en tabla las variables del programa.
+        '''
+        self.varsTable.resizeColumnsToContents()
+        self.varsTable.resizeRowsToContents()
+        # La cantidad de filas es pues igual a la cantidad de variables.
+        self.varsTable.setRowCount(len(self.variables))
+        # Muestra seis columnas, una para cada parámetro de la variable.
+        self.varsTable.setColumnCount(6)
+        horHeaders = ['Variable', 'Valor Inicial',
+                      'Inf', 'Sup', 'Unidades', 'Comentario']
+        for i, var in enumerate(self.variables):
+            # Por cada variable ahora a llenar la tabla!
+            # Empezamos con el nombre de variable:
+            lista_items = []
+            newitem = QtGui.QTableWidgetItem(var.name)
+            # color = QtGui.QColor(240,100,100)
+            # newitem.setBackgroundColor(color)
+            # Esto es para que no se pueda editar el nombre de la variable
+            # desde la tabla de variables:
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            self.varsTable.setItem(i, 0, newitem)
+            newitem = QtGui.QTableWidgetItem(str(var.guess))
+            color = QtGui.QColor(255, 255, 0, 40)
+            newitem.setBackgroundColor(color)
+            self.varsTable.setItem(i, 1, newitem)
+            newitem = QtGui.QTableWidgetItem(str(var.lowerlim))
+            color = QtGui.QColor(0, 255, 0, 40)
+            newitem.setBackgroundColor(color)
+            self.varsTable.setItem(i, 2, newitem)
+            newitem = QtGui.QTableWidgetItem(str(var.upperlim))
+            color = QtGui.QColor(255, 0, 0, 40)
+            newitem.setBackgroundColor(color)
+            self.varsTable.setItem(i, 3, newitem)
+            newitem = QtGui.QTableWidgetItem(var.units)
+            self.varsTable.setItem(i, 4, newitem)
+            newitem = QtGui.QTableWidgetItem(var.comment)
+            self.varsTable.setItem(i, 5, newitem)
+            # for m, item in enumerate(data[key]):
+            #     newitem = QtGui.QTableWidgetItem(item)
+            #     self.varsTable.setItem(m, n, newitem)
+        self.varsTable.setHorizontalHeaderLabels(horHeaders)
+        # print(dir(newitem))
+        # self.varsTable.show()
+        # self.infoLabel.setText('Pollo')
+
+    def actualizaVarsTable(self):
+        '''
+        Al darle al botón de Actualizar en la pestaña de variables, actualizar
+        los parámetros de las variables de programa.
+        '''
+        try:
             for i, var in enumerate(self.variables):
-                # Por cada variable ahora a llenar la tabla!
-                #Empezamos con el nombre de variable:
-                lista_items = []
-                newitem = QtGui.QTableWidgetItem(var.name)
-                self.varsTable.setItem(i, 0, newitem)
-                newitem = QtGui.QTableWidgetItem(str(var.guess))
-                self.varsTable.setItem(i, 1, newitem)
-                newitem = QtGui.QTableWidgetItem(str(var.lowerlim))
-                self.varsTable.setItem(i, 2, newitem)
-                newitem = QtGui.QTableWidgetItem(str(var.upperlim))
-                self.varsTable.setItem(i, 3, newitem)
-                newitem = QtGui.QTableWidgetItem(var.units)
-                self.varsTable.setItem(i, 4, newitem)
-                newitem = QtGui.QTableWidgetItem(var.comment)
-                self.varsTable.setItem(i, 5, newitem)
-                # for m, item in enumerate(data[key]):
-                #     newitem = QtGui.QTableWidgetItem(item)
-                #     self.varsTable.setItem(m, n, newitem)
-            self.varsTable.setHorizontalHeaderLabels(horHeaders)
-            # print(dir(newitem))
-            # self.varsTable.show()
-            # self.infoLabel.setText('Pollo')
+                # print(self.varsTable.item(i, 1).text())
+                guess = float(self.varsTable.item(i, 1).text())
+                lowerlim = float(self.varsTable.item(i, 2).text())
+                upperlim = float(self.varsTable.item(i, 3).text())
+                units = self.varsTable.item(i, 4).text()
+                comment = self.varsTable.item(i, 5).text()
+                if lowerlim >= upperlim:
+                    raise Exception('El número ' + str(lowerlim) +
+                                    ' es mayor a ' + str(upperlim) +
+                                    ' en la variable ' + var.name)
+                if (guess < lowerlim) or (guess > upperlim):
+                    raise Exception('El valor inicial de ' + str(var.name) +
+                                    ' debe estar entre los dos límites.')
+                # Ya que se recogieron los valores de la tabla, ahora a
+                # actualizar la lista de variables del programa:
+                self.variables[i].guess = guess
+                self.variables[i].lowerlim = lowerlim
+                self.variables[i].upperlim = upperlim
+                self.variables[i].units = units
+                self.variables[i].comment = comment
+        except Exception as e:
+            QtGui.QMessageBox.about(self, "Error", str(e))
+        self.showVarsTable()
 
     def actualizaInfo(self):
         '''

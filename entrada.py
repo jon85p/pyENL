@@ -50,7 +50,11 @@ def find_between(s, first, last):
         return ""
 
 
-def entradaTexto(ecuaciones, pyENL_timeout):
+def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects = None):
+    '''
+    ecuaciones es una lista de cadenas de texto con ecuaciones de entrada
+    La salida de esta función está dada por
+    '''
     lista = []
     dicc_condiciones = {}
     for eqn in ecuaciones:
@@ -116,6 +120,9 @@ def entradaTexto(ecuaciones, pyENL_timeout):
         variables_salida.append(objeto)
     pyENL_inicio = time()  # Tiempo de inicio de llamada al solver
     # Llamada al solver
+    # Si los objetos variables ya vienen entonces:
+    if pyENL_varsObjects:
+        variables_salida = pyENL_varsObjects
     pyENL_solved = False
     try:
         pyENL_solucion = solver(lista, variables_salida,
