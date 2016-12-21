@@ -36,6 +36,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         solver principal y calcula.
         '''
         # 10 segundos de espera
+        self.actualizaInfo()
         try:
             pyENL_timeout = 10
             ecuaciones = self.cajaTexto.toPlainText().splitlines()
@@ -97,6 +98,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         '''
         # print([obj.name for obj in self.variables])
         # Si se cambia justo a la segunda pestaña...
+        self.actualizaInfo()
         if self.tabWidget.currentIndex() == 1:
             self.showVarsTable()
 
