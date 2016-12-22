@@ -135,7 +135,10 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
         # Si el error es de sintaxis hay que detectarlo sin que intente
         # nuevamente buscar soluciones infructuosamente:
         if 'de sintaxis' in str(e):
-            raise Exception(e)
+            raise Exception(str(e))
+        if 'No se ha definido' in str(e):
+            # Una función no está definida
+            raise Exception(str(e))
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
         while pyENL_transcurrido < pyENL_timeout:
@@ -152,13 +155,15 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
                 break
             except:
                 pass
+            # Actualiza el tiempo que ha transcurido:
+            pyENL_final = time()
+            pyENL_transcurrido = pyENL_final - pyENL_inicio
+    if pyENL_solved == False:
+        raise Exception(
+            'El tiempo de espera ha sido superado, verifique las ecuaciones')
     if pyENL_solucion == 'Error ecuaciones/variables':
         raise ValueError("Hay " + str(len(lista)) + ' ecuación(es) y ' +
                          str(len(variables_salida)) + ' variable(s)')
-    pyENL_final = time()
-    pyENL_transcurrido = pyENL_final - pyENL_inicio
-    if not pyENL_solved:
-        raise ValueError('Timeout')
     return [pyENL_solucion, pyENL_transcurrido]
 
 
@@ -193,7 +198,11 @@ def main():
         ecuaciones = ecuaciones.splitlines()
     # Ahora a organizar lo de las variables tipo string
     ecuaciones = variables_string(ecuaciones)
-    solucion = entradaTexto(ecuaciones, pyENL_timeout)
+    try:
+        solucion = entradaTexto(ecuaciones, pyENL_timeout)
+    except Exception as e:
+        print(str(e))
+        exit(0)
 
     # Si se especificó archivo de exportación entonces generarlo:
     if options.eoption:

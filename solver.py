@@ -9,7 +9,7 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 ln = log
 log = log10
 import warnings
-#from time import time as pyENL_time
+# from time import time as pyENL_time
 
 # Definición de la función a resolver
 # pyENL designa acá el vector de posibles soluciones que se está probando
@@ -25,8 +25,15 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     for cont, eqn in enumerate(pyENL_eqns):
         try:
             salidapyENL[cont] = eval(eqn)
-        except:
-            raise Exception('Error de sintaxis en la ecuación ' + str(cont + 1))
+        except Exception as e:
+            if 'invalid syntax' in str(e):
+                raise Exception(
+                    'Error de sintaxis en la ecuación ' + str(cont + 1))
+            if 'is not defined' in str(e):
+                raise Exception('No se ha definido a ' + str(e)
+                                [6:-16] + " en la ecuación " + str(cont + 1))
+            else:
+                raise Exception
     return salidapyENL
 
 
@@ -37,7 +44,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     '''
 
     warnings.simplefilter('error')
-    #for vp in pyENL_variables: print(vp.name)
+    # for vp in pyENL_variables: print(vp.name)
 
     # Verificación de que se tiene el mismo número de ecuaciones y de
     # variables:
@@ -108,8 +115,10 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         # exit(0)
         # No está tomando el error porque primero aparece el de opt.root y antes
         # de ese si está el que se supone se quiere.
-        print(str(e))
+        # print(str(e))
         if 'de sintaxis' in str(e):
+            raise Exception(str(e))
+        if 'No se ha definido' in str(e):
             raise Exception(str(e))
     asegura_convergencia = True
     try:
