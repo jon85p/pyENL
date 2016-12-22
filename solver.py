@@ -23,7 +23,10 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     salidapyENL = empty((cantidad_eqns))
     # Funciones para hallar raíces
     for cont, eqn in enumerate(pyENL_eqns):
-        salidapyENL[cont] = eval(eqn)
+        try:
+            salidapyENL[cont] = eval(eqn)
+        except:
+            raise Exception('Error de sintaxis en la ecuación ' + str(cont + 1))
     return salidapyENL
 
 
@@ -100,10 +103,14 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     # - Method *excitingmixing* uses a tuned diagonal Jacobian
     #   approximation.
 
-    except:
+    except Exception as e:
         # print('ERROR:',str(pyENL_e))
         # exit(0)
-        pass
+        # No está tomando el error porque primero aparece el de opt.root y antes
+        # de ese si está el que se supone se quiere.
+        print(str(e))
+        if 'de sintaxis' in str(e):
+            raise Exception(str(e))
     asegura_convergencia = True
     try:
         if pyENL_sol['success'] == False:

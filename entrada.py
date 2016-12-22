@@ -50,7 +50,7 @@ def find_between(s, first, last):
         return ""
 
 
-def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects = None):
+def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
     '''
     ecuaciones es una lista de cadenas de texto con ecuaciones de entrada
     La salida de esta función está dada por
@@ -129,7 +129,13 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects = None):
                                 pyENL_iteraciones=600, pyENL_tol=1.49012e-08)
         pyENL_solved = True
     except Exception as e:
+        # print(str(e))
+        # exit(0)
         # Intento aleatorio
+        # Si el error es de sintaxis hay que detectarlo sin que intente
+        # nuevamente buscar soluciones infructuosamente:
+        if 'de sintaxis' in str(e):
+            raise Exception(e)
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
         while pyENL_transcurrido < pyENL_timeout:
@@ -147,8 +153,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects = None):
             except:
                 pass
     if pyENL_solucion == 'Error ecuaciones/variables':
-        raise ValueError("Hay", str(len(lista)), 'ecuaciones y',
-                         str(len(variables_salida)), 'variables')
+        raise ValueError("Hay " + str(len(lista)) + ' ecuación(es) y ' +
+                         str(len(variables_salida)) + ' variable(s)')
     pyENL_final = time()
     pyENL_transcurrido = pyENL_final - pyENL_inicio
     if not pyENL_solved:
