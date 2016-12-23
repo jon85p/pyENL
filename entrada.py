@@ -128,6 +128,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
         pyENL_solucion = solver(lista, variables_salida,
                                 pyENL_iteraciones=600, pyENL_tol=1.49012e-08)
         pyENL_solved = True
+        pyENL_final = time()
+        pyENL_transcurrido = pyENL_final - pyENL_inicio
     except Exception as e:
         # print(str(e))
         # exit(0)
