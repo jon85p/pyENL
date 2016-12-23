@@ -20,16 +20,94 @@
    <string notr="true">pyENL</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="MainResources.qrc">
+   <iconset>
     <normaloff>:/imgs/imgs/icon.png</normaloff>:/imgs/imgs/icon.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>x Ecuaciones/y Variables</string>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
       </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="eqnTab">
+       <attribute name="title">
+        <string>Ecuaciones</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QPlainTextEdit" name="cajaTexto"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QPushButton" name="solve_button">
+          <property name="text">
+           <string>Resolver</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="varTab">
+       <attribute name="title">
+        <string>Variables</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QTableWidget" name="varsTable"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="Actualizar_Button">
+            <property name="text">
+             <string>Actualizar</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="cleanVarButton">
+            <property name="text">
+             <string>Limpiar</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="solTab">
+       <attribute name="title">
+        <string>Soluciones</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QTableWidget" name="solsTable"/>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="info_button">
+          <property name="text">
+           <string>Información</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item row="1" column="0">
@@ -39,29 +117,11 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="tabShape">
-       <enum>QTabWidget::Rounded</enum>
+    <item row="2" column="0">
+     <widget class="QLabel" name="infoLabel">
+      <property name="text">
+       <string>x Ecuaciones/y Variables</string>
       </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Ecuaciones</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Variables</string>
-       </attribute>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Soluciones</string>
-       </attribute>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -122,17 +182,17 @@
     </property>
     <addaction name="actionUnidades"/>
     <addaction name="separator"/>
-    <addaction name="actionConfiguraci_n"/>
+    <addaction name="actionConfiguracion"/>
    </widget>
    <widget class="QMenu" name="menuHerramientas">
     <property name="title">
      <string>Herramientas</string>
     </property>
-    <widget class="QMenu" name="menuFunciones_Ingenier_a">
+    <widget class="QMenu" name="menuFunciones_Ingenieria">
      <property name="title">
       <string>Funciones Ingeniería</string>
      </property>
-     <addaction name="actionTermodin_micas"/>
+     <addaction name="actionTermodinamicas"/>
      <addaction name="actionPor_agregar"/>
     </widget>
     <widget class="QMenu" name="menuFunciones_de_usuario">
@@ -142,7 +202,7 @@
      <addaction name="actionDisponibles"/>
      <addaction name="actionAgregar"/>
     </widget>
-    <addaction name="menuFunciones_Ingenier_a"/>
+    <addaction name="menuFunciones_Ingenieria"/>
     <addaction name="menuFunciones_de_usuario"/>
     <addaction name="actionImprimir"/>
    </widget>
@@ -252,7 +312,7 @@
     <string>Licencias</string>
    </property>
   </action>
-  <action name="actionTermodin_micas">
+  <action name="actionTermodinamicas">
    <property name="text">
     <string>Termodinámicas</string>
    </property>
@@ -277,7 +337,7 @@
     <string>Unidades</string>
    </property>
   </action>
-  <action name="actionConfiguraci_n">
+  <action name="actionConfiguracion">
    <property name="text">
     <string>Configuración</string>
    </property>
@@ -304,7 +364,7 @@
   </action>
  </widget>
  <resources>
-  <include location="MainResources.qrc"/>
+  <include location="MainResources.qrc.py"/>
  </resources>
  <connections/>
 </ui>
