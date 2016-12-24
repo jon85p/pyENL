@@ -40,6 +40,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         try:
             pyENL_timeout = 10
             ecuaciones = self.cajaTexto.toPlainText().splitlines()
+            # Para poder soportar variables tipo texto
+            ecuaciones = variables_string(ecuaciones)
             self.solucion = entradaTexto(
                 ecuaciones, pyENL_timeout, pyENL_varsObjects=self.variables)
             tiempo = self.solucion[1]
