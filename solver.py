@@ -29,9 +29,15 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             if 'invalid syntax' in str(e):
                 raise Exception(
                     'Error de sintaxis en la ecuación ' + str(cont + 1))
-            if 'is not defined' in str(e):
+            elif 'is not defined' in str(e):
+                # Acá no se ha definido una función.
                 raise Exception('No se ha definido a ' + str(e)
                                 [6:-16] + " en la ecuación " + str(cont + 1))
+            elif 'unsupported operand type(s)' in str(e):
+                # En este caso se intenta usar un nombre de función como
+                # variable
+                raise Exception('Nombre de función como variable en ecuación '
+                                + str(cont + 1))
             else:
                 raise Exception
     return salidapyENL
@@ -119,6 +125,8 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         if 'de sintaxis' in str(e):
             raise Exception(str(e))
         if 'No se ha definido' in str(e):
+            raise Exception(str(e))
+        if 'como variable en':
             raise Exception(str(e))
     asegura_convergencia = True
     try:

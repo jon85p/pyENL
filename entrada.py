@@ -141,6 +141,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
         if 'No se ha definido' in str(e):
             # Una función no está definida
             raise Exception(str(e))
+        if 'como variable en' in str(e):
+            raise Exception(str(e))
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
         while pyENL_transcurrido < pyENL_timeout:
