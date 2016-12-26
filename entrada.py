@@ -136,13 +136,22 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
         # Intento aleatorio
         # Si el error es de sintaxis hay que detectarlo sin que intente
         # nuevamente buscar soluciones infructuosamente:
-        if 'de sintaxis' in str(e):
-            raise Exception(str(e))
-        if 'No se ha definido' in str(e):
+        er = str(e)
+        if 'de sintaxis' in er:
+            raise Exception(er)
+        if 'No se ha definido' in er:
             # Una función no está definida
-            raise Exception(str(e))
-        if 'como variable en' in str(e):
-            raise Exception(str(e))
+            raise Exception(er)
+        if 'como variable en' in er:
+            raise Exception(er)
+        if 'Faltan argumentos' in er:
+            raise Exception(er)
+        if 'inadecuado en función' in er:
+            raise Exception(er)
+        if 'Mala entrada' in er:
+            raise Exception(er)
+        if 'No se tienen los valores' in er:
+            raise Exception(er)
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
         while pyENL_transcurrido < pyENL_timeout:
