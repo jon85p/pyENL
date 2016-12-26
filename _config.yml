@@ -1,0 +1,8 @@
+title: PyENL
+description: Solucionador de sistemas de ecuaciones no lineales enfocado a ingeniería.
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-architect
+
+gems:
+  - jekyll-mentions
