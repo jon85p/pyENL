@@ -43,7 +43,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             # Para poder soportar variables tipo texto
             ecuaciones = variables_string(ecuaciones)
             self.solucion = entradaTexto(
-                ecuaciones, pyENL_timeout, pyENL_varsObjects=self.variables)
+                ecuaciones, pyENL_timeout, varsObj=self.variables, method = 'hybr')
             tiempo = self.solucion[1]
             variables = self.solucion[0][0]
             residuos = self.solucion[0][1]

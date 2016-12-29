@@ -61,10 +61,11 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     return salidapyENL
 
 
-def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
+def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     '''
     Acá llegan como parámetros la lista de funciones a hallar raíces como string
     La segunda entrada consiste en los objetos pyENL_variables en lista.
+    iters por iteraciones
     '''
 
     warnings.simplefilter('error')
@@ -96,7 +97,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     pyENL_ones = ones(pyENL_cantidad)
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
-                             args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method='hybr')
+                             args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
         # Métodos:
         # ‘hybr’
         # ‘lm’
