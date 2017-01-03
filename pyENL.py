@@ -26,8 +26,18 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
-        # print(dir(self.varsTable))
-        # print(dir(self.tabWidget))
+        # self.actionSalir.connect(self.salir)
+        # Atajo para resolver el sistema
+        self.solve_button.setShortcut('Ctrl+R')
+        self.actionSalir.setShortcut('Ctrl+Q')
+        # TODO En lugar de salir de una vez, crear función que verifique que
+        # se han guardado los cambios y así
+        self.actionSalir.triggered.connect(QtGui.qApp.quit)
+        # TODO Opciones del programa:
+        self.opt_method = 'hybr'
+        self.opt_tol = None
+        # print(dir(self))
+        # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
 
     def solve(self):
@@ -43,7 +53,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             # Para poder soportar variables tipo texto
             ecuaciones = variables_string(ecuaciones)
             self.solucion = entradaTexto(
-                ecuaciones, pyENL_timeout, varsObj=self.variables, method = 'hybr')
+                ecuaciones, pyENL_timeout, varsObj=self.variables, method='hybr')
             tiempo = self.solucion[1]
             variables = self.solucion[0][0]
             residuos = self.solucion[0][1]
@@ -57,9 +67,11 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 # Imprimir
                 self.solsTable.resizeColumnsToContents()
                 self.solsTable.resizeRowsToContents()
-                # La cantidad de filas es pues igual a la cantidad de variables.
+                # La cantidad de filas es pues igual a la cantidad de
+                # variables.
                 self.solsTable.setRowCount(len(self.variables))
-                # Muestra cuatro columnas, una para cada parámetro de la solución.
+                # Muestra cuatro columnas, una para cada parámetro de la
+                # solución.
                 self.solsTable.setColumnCount(4)
                 horHeaders = ['Variable', 'Solución', 'Unidades', 'Comentario']
                 for i, var in enumerate(variables):

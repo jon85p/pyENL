@@ -143,6 +143,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
         # Si el error es de sintaxis hay que detectarlo sin que intente
         # nuevamente buscar soluciones infructuosamente:
         er = str(e)
+        if 'Improper input parameters were entered.' in er:
+            raise Exception('Parámetros inválidos suministrados')
         if 'de sintaxis' in er:
             raise Exception(er)
         if 'No se ha definido' in er:
