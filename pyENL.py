@@ -36,6 +36,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         # TODO Opciones del programa:
         self.opt_method = 'hybr'
         self.opt_tol = None
+        # TODO En Información incluir la máxima desviación
         # print(dir(self))
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
@@ -74,6 +75,13 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 # solución.
                 self.solsTable.setColumnCount(4)
                 horHeaders = ['Variable', 'Solución', 'Unidades', 'Comentario']
+                # Ahora para la pestaña de residuos:
+                self.resTable.resizeColumnsToContents()
+                self.resTable.resizeRowsToContents()
+                self.resTable.setRowCount(len(self.variables))
+                self.resTable.setColumnCount(2)
+                resHeaders = ['Ecuación', 'Residuo']
+
                 for i, var in enumerate(variables):
                     # Por cada variable ahora a llenar la tabla!
                     # Empezamos con el nombre de variable:
@@ -97,8 +105,17 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                     newitem.setFlags(QtCore.Qt.ItemIsEditable)
                     self.solsTable.setItem(i, 3, newitem)
 
+                    #Residuos:
+                    newitem = QtGui.QTableWidgetItem(ecuaciones[i])
+                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
+                    self.resTable.setItem(i, 0, newitem)
+                    newitem = QtGui.QTableWidgetItem(str(residuos[i]))
+                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
+                    self.resTable.setItem(i, 1, newitem)
+
                 self.solsTable.setHorizontalHeaderLabels(horHeaders)
-                pass
+                self.resTable.setHorizontalHeaderLabels(resHeaders)
+
             else:
                 QtGui.QMessageBox.about(
                     self, "Problema", "No hubo convergencia a solución...")
