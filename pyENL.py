@@ -60,7 +60,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             residuos = self.solucion[0][1]
             solved = self.solucion[0][2]
             QtGui.QMessageBox.about(self, "Información", 'Solucionado en ' +
-                                    str(tiempo) + ' segundos')
+                                    str(tiempo) + ' segundos.\nMayor desviación\
+                                    de ' + str(max(residuos)))
             # Ahora a enfocar la última pestaña de la aplicación:
             self.tabWidget.setCurrentIndex(2)
             # Ahora a imprimir la respuesta en la tabla si solved es True
@@ -105,7 +106,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                     newitem.setFlags(QtCore.Qt.ItemIsEditable)
                     self.solsTable.setItem(i, 3, newitem)
 
-                    #Residuos:
+                    # Residuos:
                     newitem = QtGui.QTableWidgetItem(ecuaciones[i])
                     newitem.setFlags(QtCore.Qt.ItemIsEditable)
                     self.resTable.setItem(i, 0, newitem)

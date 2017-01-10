@@ -69,7 +69,6 @@ def variables(texto_eqn):
     '''
     Regresa en texto las variables del string texto_eqn
     '''
-    # TODO
     # Reconocer lo que hay entre paréntesis
     # Cambiar todos los nombres de las funciones por números
     #   Buscar las posiciones de "("
