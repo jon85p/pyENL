@@ -26,21 +26,46 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
         try:
             salidapyENL[cont] = eval(eqn)
         except Exception as e:
-            if 'invalid syntax' in str(e):
+            er = str(e)
+            if 'invalid syntax' in er:
                 raise Exception(
                     'Error de sintaxis en la ecuación ' + str(cont + 1))
-            if 'is not defined' in str(e):
-                raise Exception('No se ha definido a ' + str(e)
+            elif 'is not defined' in er:
+                # Acá no se ha definido una función.
+                raise Exception('No se ha definido a ' + er
                                 [6:-16] + " en la ecuación " + str(cont + 1))
+            elif 'unsupported operand type(s)' in er:
+                # En este caso se intenta usar un nombre de función como
+                # variable
+                raise Exception('Nombre de función como variable en ecuación '
+                                + str(cont + 1))
+            elif ('required positional arguments' in er) or ('invalid number of arguments' in er):
+                # Acá no se han suministrado suficientes argumentos a la
+                # función
+                raise Exception('Faltan argumentos en función de la ecuación '
+                                + str(cont + 1))
+            elif 'Not implemented for this type' in er:
+                # Se ingresan variables no numéricas a la función
+                raise Exception('Tipo de variable inadecuado en función de ecuación '
+                                + str(cont + 1))
+            elif 'return arrays must be of ArrayType' in er:
+                # Acá no se ingresaron bien valores a una función NumPy:
+                raise Exception('Mala entrada a función en la ecuación ' +
+                                str(cont + 1))
+            elif 'No se tienen los valores' in er:
+                # La funció pyENL lanza la excepción por no tener suficientes
+                # variables para operar
+                raise Exception(er + ' en la ecuación ' + str(cont + 1))
             else:
                 raise Exception
     return salidapyENL
 
 
-def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
+def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     '''
     Acá llegan como parámetros la lista de funciones a hallar raíces como string
     La segunda entrada consiste en los objetos pyENL_variables en lista.
+    iters por iteraciones
     '''
 
     warnings.simplefilter('error')
@@ -72,7 +97,7 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
     pyENL_ones = ones(pyENL_cantidad)
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
-                             args=(pyENL_variables, pyENL_eqns), tol=pyENL_tol, method='hybr')
+                             args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
         # Métodos:
         # ‘hybr’
         # ‘lm’
@@ -116,10 +141,21 @@ def solver(pyENL_eqns, pyENL_variables, pyENL_iteraciones, pyENL_tol):
         # No está tomando el error porque primero aparece el de opt.root y antes
         # de ese si está el que se supone se quiere.
         # print(str(e))
-        if 'de sintaxis' in str(e):
-            raise Exception(str(e))
-        if 'No se ha definido' in str(e):
-            raise Exception(str(e))
+        er = str(e)
+        if 'de sintaxis' in er:
+            raise Exception(er)
+        if 'No se ha definido' in er:
+            raise Exception(er)
+        if 'como variable en':
+            raise Exception(er)
+        if 'Faltan argumentos' in er:
+            raise Exception(er)
+        if 'inadecuado en función' in er:
+            raise Exception(er)
+        if 'Mala entrada' in er:
+            raise Exception(er)
+        if 'No se tienen los valores' in er:
+            raise Exception(er)
     asegura_convergencia = True
     try:
         if pyENL_sol['success'] == False:

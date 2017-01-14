@@ -50,13 +50,20 @@ def find_between(s, first, last):
         return ""
 
 
-def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
+def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
     '''
-    ecuaciones es una lista de cadenas de texto con ecuaciones de entrada
+    ecuaciones es una lista de cadenas de texto con ecuaciones de entrada.
+    varsObj define si llegan objetos variable como entrada.
     La salida de esta función está dada por
     '''
     lista = []
     dicc_condiciones = {}
+    # Si el método no está listado entonces no se procede
+    # method = method.strip(' ')
+    methods = ['hybr', 'lm', 'broyden1', 'broyden2', 'anderson', 'linearmixing',
+               'diagbroyden', 'excitingmixing', 'krylov', 'df-sane']
+    if method not in methods:
+        raise Exception('El método de resolución no está listado, ver ayuda.')
     for eqn in ecuaciones:
         if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
             expresion = eqn.replace(" ", "")
@@ -90,8 +97,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
         # Si se puede definir directamente entonces dejar ese valor inicial
         # Es decir, tomar el valor del guess como el sugerido en una ecuación
         # Tipo:
-        #x = ln(y)
-        #y = 5
+        # x = ln(y)
+        # y = 5
         # Entonces el valor inicial de y será 5, aún si el usuario no lo deja
         # especificado por los corchetes {}
         for cadaEqn in lista:
@@ -121,12 +128,11 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
     pyENL_inicio = time()  # Tiempo de inicio de llamada al solver
     # Llamada al solver
     # Si los objetos variables ya vienen entonces:
-    if pyENL_varsObjects:
-        variables_salida = pyENL_varsObjects
+    if varsObj:
+        variables_salida = varsObj
     pyENL_solved = False
     try:
-        pyENL_solucion = solver(lista, variables_salida,
-                                pyENL_iteraciones=600, pyENL_tol=1.49012e-08)
+        pyENL_solucion = solver(lista, variables_salida, method=method)
         pyENL_solved = True
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
@@ -136,11 +142,24 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
         # Intento aleatorio
         # Si el error es de sintaxis hay que detectarlo sin que intente
         # nuevamente buscar soluciones infructuosamente:
-        if 'de sintaxis' in str(e):
-            raise Exception(str(e))
-        if 'No se ha definido' in str(e):
+        er = str(e)
+        if 'Improper input parameters were entered.' in er:
+            raise Exception('Parámetros inválidos suministrados')
+        if 'de sintaxis' in er:
+            raise Exception(er)
+        if 'No se ha definido' in er:
             # Una función no está definida
-            raise Exception(str(e))
+            raise Exception(er)
+        if 'como variable en' in er:
+            raise Exception(er)
+        if 'Faltan argumentos' in er:
+            raise Exception(er)
+        if 'inadecuado en función' in er:
+            raise Exception(er)
+        if 'Mala entrada' in er:
+            raise Exception(er)
+        if 'No se tienen los valores' in er:
+            raise Exception(er)
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
         while pyENL_transcurrido < pyENL_timeout:
@@ -152,7 +171,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
             # Termina de actualizar, ahora:
             try:
                 pyENL_solucion = solver(lista, variables_salida,
-                                        pyENL_iteraciones=600, pyENL_tol=1.49012e-08)
+                                        tol=1.49012e-08)
                 pyENL_solved = True
                 break
             except:
@@ -171,13 +190,16 @@ def entradaTexto(ecuaciones, pyENL_timeout, pyENL_varsObjects=None):
 
 def main():
     parser = optparse.OptionParser('Uso: ' + sys.argv[0] + ' -f archivo_texto\
-    -t timeout(seg) -e archivo_exp')
+    -t timeout(seg) -m método -e archivo_exp')
     parser.add_option('-f', dest='foption', type='string',
                       help='Archivo de texto con el sistema de ecuaciones')
     parser.add_option('-t', dest='toption', type='float',
                       help='Tiempo de espera máximo para la solución')
     parser.add_option('-e', dest='eoption', type='string',
                       help='Archivo de exportación, puede ser .odt, .tex o .pdf (LaTeX)')
+    parser.add_option('-m', dest='moption', type='string',
+                      help='Métodos: hybr, lm, broyden1, broyden2, anderson, linearmixing, diagbroyden, excitingmixing, krylov, df-sane')
+
     (options, args) = parser.parse_args()
     if options.foption == None:
         print(parser.usage)
@@ -195,13 +217,18 @@ def main():
         pyENL_timeout = 10
     else:
         pyENL_timeout = options.toption
+    if options.moption:
+        metodo = options.moption
+    else:
+        metodo = 'hybr'
+
     with open(fichero, 'rb') as f:
         ecuaciones = (f.read()).decode('utf-8')
         ecuaciones = ecuaciones.splitlines()
     # Ahora a organizar lo de las variables tipo string
     ecuaciones = variables_string(ecuaciones)
     try:
-        solucion = entradaTexto(ecuaciones, pyENL_timeout)
+        solucion = entradaTexto(ecuaciones, pyENL_timeout, method=metodo)
     except Exception as e:
         print(str(e))
         exit(0)

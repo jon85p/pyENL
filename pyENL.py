@@ -26,8 +26,19 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
-        # print(dir(self.varsTable))
-        # print(dir(self.tabWidget))
+        # self.actionSalir.connect(self.salir)
+        # Atajo para resolver el sistema
+        self.solve_button.setShortcut('Ctrl+R')
+        self.actionSalir.setShortcut('Ctrl+Q')
+        # TODO En lugar de salir de una vez, crear función que verifique que
+        # se han guardado los cambios y así
+        self.actionSalir.triggered.connect(QtGui.qApp.quit)
+        # TODO Opciones del programa:
+        self.opt_method = 'hybr'
+        self.opt_tol = None
+        # TODO En Información incluir la máxima desviación
+        # print(dir(self))
+        # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
 
     def solve(self):
@@ -40,14 +51,17 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         try:
             pyENL_timeout = 10
             ecuaciones = self.cajaTexto.toPlainText().splitlines()
+            # Para poder soportar variables tipo texto
+            ecuaciones = variables_string(ecuaciones)
             self.solucion = entradaTexto(
-                ecuaciones, pyENL_timeout, pyENL_varsObjects=self.variables)
+                ecuaciones, pyENL_timeout, varsObj=self.variables, method='hybr')
             tiempo = self.solucion[1]
             variables = self.solucion[0][0]
             residuos = self.solucion[0][1]
             solved = self.solucion[0][2]
             QtGui.QMessageBox.about(self, "Información", 'Solucionado en ' +
-                                    str(tiempo) + ' segundos')
+                                    str(tiempo) + ' segundos.\nMayor desviación\
+                                    de ' + str(max(residuos)))
             # Ahora a enfocar la última pestaña de la aplicación:
             self.tabWidget.setCurrentIndex(2)
             # Ahora a imprimir la respuesta en la tabla si solved es True
@@ -55,11 +69,20 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 # Imprimir
                 self.solsTable.resizeColumnsToContents()
                 self.solsTable.resizeRowsToContents()
-                # La cantidad de filas es pues igual a la cantidad de variables.
+                # La cantidad de filas es pues igual a la cantidad de
+                # variables.
                 self.solsTable.setRowCount(len(self.variables))
-                # Muestra cuatro columnas, una para cada parámetro de la solución.
+                # Muestra cuatro columnas, una para cada parámetro de la
+                # solución.
                 self.solsTable.setColumnCount(4)
                 horHeaders = ['Variable', 'Solución', 'Unidades', 'Comentario']
+                # Ahora para la pestaña de residuos:
+                self.resTable.resizeColumnsToContents()
+                self.resTable.resizeRowsToContents()
+                self.resTable.setRowCount(len(self.variables))
+                self.resTable.setColumnCount(2)
+                resHeaders = ['Ecuación', 'Residuo']
+
                 for i, var in enumerate(variables):
                     # Por cada variable ahora a llenar la tabla!
                     # Empezamos con el nombre de variable:
@@ -83,8 +106,17 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                     newitem.setFlags(QtCore.Qt.ItemIsEditable)
                     self.solsTable.setItem(i, 3, newitem)
 
+                    # Residuos:
+                    newitem = QtGui.QTableWidgetItem(ecuaciones[i])
+                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
+                    self.resTable.setItem(i, 0, newitem)
+                    newitem = QtGui.QTableWidgetItem(str(residuos[i]))
+                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
+                    self.resTable.setItem(i, 1, newitem)
+
                 self.solsTable.setHorizontalHeaderLabels(horHeaders)
-                pass
+                self.resTable.setHorizontalHeaderLabels(resHeaders)
+
             else:
                 QtGui.QMessageBox.about(
                     self, "Problema", "No hubo convergencia a solución...")

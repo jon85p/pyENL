@@ -16,8 +16,17 @@ def corriente(str1, a, str2, b):
     '''
     V = ['V', 'v', 'voltaje', 'Voltaje']
     R = ['R', 'r', 'resistencia', 'Resistencia']
-    if str1 in V and str2 in R:
-        v, r = a, b
-    if str1 in R and str2 in V:
-        r, v = a, b
-    return v / r
+    try:
+        if str1 in V and str2 in R:
+            v, r = a, b
+        if str1 in R and str2 in V:
+            r, v = a, b
+        return v / r
+    except Exception as e:
+        if 'by zero' in str(e):
+            raise Exception
+        else:
+            # Esto es: A menos que el error sea por división por cero, lanzar
+            # una excepción especial que será tomada por el algoritmo de
+            # excepciones.
+            raise ValueError('No se tienen los valores requeridos por la función')
