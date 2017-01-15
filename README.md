@@ -1,5 +1,6 @@
 #pyENL
-
+[![Build Status](https://travis-ci.org/jon85p/pyENL.svg?branch=master)](https://travis-ci.org/jon85p/pyENL)
+[![license](https://img.shields.io/github/license/jon85p/pyENL.svg)]()
 <img src="GUI/imgs/icon240.png">*
 
 ###Descripción
