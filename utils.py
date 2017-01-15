@@ -207,9 +207,8 @@ def cantidadEqnVar(texto_caja):
     return ecuaciones, lista_vars
 
 def funcion_a(Diccionario):
-     '''Asociación de ecuaciones con variables (opción aleatoria)'''
+    '''Asociación de ecuaciones con variables (opción aleatoria)'''
     while True:
-
         lista_claves= tuple(Diccionario.keys())
         Diccionario_aleat = copy.deepcopy(Diccionario)
         lista_claves_check = list(lista_claves)
@@ -257,8 +256,8 @@ def funcion_e(Diccionario):
 
         Diccionario.pop(key_blue)  # se retira la clave del Dicc para no buscar ahí
         lista_claves= list(Diccionario.keys()) # ahora la lista tiene un elemento menos en el cual buscar
-        print(key_blue,variable)
-        print(Diccionario)
+        # print(key_blue,variable)
+        # print(Diccionario)
         contador +=1
         if contador >N_ecua +1 :  # Seguro por si ocurre algo
             raise Exception('Hubo un error D: , ni idea cual lo sentimos ')
