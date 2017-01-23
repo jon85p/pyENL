@@ -10,6 +10,16 @@ from entrada import pyENL_variable, entradaTexto
 
 form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
 
+def quitaComentarios(eqns):
+    '''
+    Elimina los comentarios de la lista de ecuaciones para solucionar problema
+    de que se muestren en la lista de residuos
+    '''
+    b = []
+    for eqn in eqns:
+        if '<<' not in eqn:
+            b.append(eqn)
+    return b
 
 class MyWindowClass(QtGui.QMainWindow, form_class):
 
@@ -53,6 +63,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             ecuaciones = self.cajaTexto.toPlainText().splitlines()
             # Para poder soportar variables tipo texto
             ecuaciones = variables_string(ecuaciones)
+            # Quitar los comentarios de las ecuaciones:
+            ecuaciones_s = quitaComentarios(ecuaciones)
             self.solucion = entradaTexto(
                 ecuaciones, pyENL_timeout, varsObj=self.variables, method='hybr')
             tiempo = self.solucion[1]
@@ -107,7 +119,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                     self.solsTable.setItem(i, 3, newitem)
 
                     # Residuos:
-                    newitem = QtGui.QTableWidgetItem(ecuaciones[i])
+                    newitem = QtGui.QTableWidgetItem(ecuaciones_s[i])
                     newitem.setFlags(QtCore.Qt.ItemIsEditable)
                     self.resTable.setItem(i, 0, newitem)
                     newitem = QtGui.QTableWidgetItem(str(residuos[i]))
