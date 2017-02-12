@@ -264,3 +264,14 @@ def funcion_e(Diccionario):
             break
 
     return Diccionario_orga
+
+    def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
+        '''
+        Recibe las ecuaciones y variables para resolver usando bloques mediante
+        algoritmo de Tarjan para separación de sistemas de ecuaciones
+        independientes entre sí.
+        Devuelve resultado pyENL
+        '''
+        # TODO: Optimizar el asunto de valores ya calculados para no repetición
+        # de cálculos de estas variables.
+        pass

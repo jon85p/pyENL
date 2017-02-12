@@ -186,6 +186,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             self.varsTable.setItem(i, 3, newitem)
 
             newitem = QtGui.QTableWidgetItem(var.units)
+            # Cambiar cuando las unidades estén listas
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.varsTable.setItem(i, 4, newitem)
 
             newitem = QtGui.QTableWidgetItem(var.comment)
