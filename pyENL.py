@@ -10,6 +10,7 @@ from entrada import pyENL_variable, entradaTexto
 
 form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
 
+
 def quitaComentarios(eqns):
     '''
     Elimina los comentarios de la lista de ecuaciones para solucionar problema
@@ -20,6 +21,7 @@ def quitaComentarios(eqns):
         if '<<' not in eqn:
             b.append(eqn)
     return b
+
 
 class MyWindowClass(QtGui.QMainWindow, form_class):
 
@@ -265,7 +267,11 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             self.infoLabel.setText(
                 'Error encontrando cantidad de variables y de ecuaciones')
 
-app = QtGui.QApplication(sys.argv)
-MyWindow = MyWindowClass(None)
-MyWindow.show()
-app.exec_()
+def main():
+    app = QtGui.QApplication(sys.argv)
+    MyWindow = MyWindowClass(None)
+    MyWindow.show()
+    app.exec_()
+
+if __name__ == '__main__':
+    main()

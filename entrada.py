@@ -11,8 +11,10 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 import os
-from expimp import sols2odt, sols2tex
-
+try:
+    from expimp import sols2odt, sols2tex
+except:
+    pass
 
 class pyENL_variable:
     '''

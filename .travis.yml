@@ -27,4 +27,6 @@ install:
   - pip install --no-deps .  # Test installation correctness
 
 script:
+  - wget https://raw.githubusercontent.com/jon85p/pyENL/master/test/input4.txt
+  - pyENL-cli -f input4.txt
   - py.test -vv  # Test against installed code

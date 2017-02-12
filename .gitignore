@@ -5,3 +5,5 @@ build
 .ipynb_checkpoints
 .ipynb
 tests
+dist
+pyENL.egg-info

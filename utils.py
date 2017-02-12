@@ -206,70 +206,88 @@ def cantidadEqnVar(texto_caja):
     # Regresa el número de ecuaciones y de variables.
     return ecuaciones, lista_vars
 
+
 def funcion_a(Diccionario):
     '''Asociación de ecuaciones con variables (opción aleatoria)'''
     while True:
-        lista_claves= tuple(Diccionario.keys())
+        lista_claves = tuple(Diccionario.keys())
         Diccionario_aleat = copy.deepcopy(Diccionario)
         lista_claves_check = list(lista_claves)
         for clave in lista_claves:
 
             try:
-                variable=random.choice(Diccionario_aleat[clave]) # Se intenta tomar al azar un elemento (variable) de la ecuacion clave
+                # Se intenta tomar al azar un elemento (variable) de la
+                # ecuacion clave
+                variable = random.choice(Diccionario_aleat[clave])
 
-            except:# Si no se puede es porque el contenido de la clave está vacio por lo que se rompe el bucle y se comienza again
+            except:  # Si no se puede es porque el contenido de la clave está vacio por lo que se rompe el bucle y se comienza again
                 break
-            Diccionario_aleat[clave]= variable # Para esa clave ahora solo existira el elemento variable
+            # Para esa clave ahora solo existira el elemento variable
+            Diccionario_aleat[clave] = variable
             lista_claves_check.remove(clave)
 
-            for key in lista_claves_check: # Se borra la variable del resto de ecuaciones
-                if variable in Diccionario_aleat[key]: Diccionario_aleat[key].remove(variable)
+            for key in lista_claves_check:  # Se borra la variable del resto de ecuaciones
+                if variable in Diccionario_aleat[key]:
+                    Diccionario_aleat[key].remove(variable)
 
-        else:# Si se termina el primer bucle for es porque se encontró una solución
+        else:  # Si se termina el primer bucle for es porque se encontró una solución
             print('Eureka!!')
             break
 
-
     return Diccionario_aleat
+
 
 def funcion_e(Diccionario):
     '''Asociación de ecuaciones con variables (opción organizada)'''
-    Diccionario_orga={}
-    lista_claves= list(Diccionario.keys())
+    Diccionario_orga = {}
+    lista_claves = list(Diccionario.keys())
     N_ecua = len(lista_claves)
-    contador= 0
+    contador = 0
 
-    while len(Diccionario.keys()) > 0: #Cuando las claves esta vacia será porque ya se encontró la solución
-        bandera=0
-        lista= min(Diccionario.values(), key=len )
+    # Cuando las claves esta vacia será porque ya se encontró la solución
+    while len(Diccionario.keys()) > 0:
+        bandera = 0
+        lista = min(Diccionario.values(), key=len)
         variable = lista[0]
 
-        for key in lista_claves: #Se barre todas las claves para borrar la variable del resto de Ecuaciones
+        for key in lista_claves:  # Se barre todas las claves para borrar la variable del resto de Ecuaciones
 
-            if lista == Diccionario[key] and bandera==0:
-                Diccionario_orga[key]= variable #Se almacena en el nuevo diccionario
-                key_blue = key # Se guarda la llave para borrarla luego del diccionario
-                bandera=1 # para cuando el contenido de una llave es igual al de otra
+            if lista == Diccionario[key] and bandera == 0:
+                # Se almacena en el nuevo diccionario
+                Diccionario_orga[key] = variable
+                key_blue = key  # Se guarda la llave para borrarla luego del diccionario
+                bandera = 1  # para cuando el contenido de una llave es igual al de otra
 
-            elif variable in Diccionario[key]:  #Para borrar la variable de las demas ecuaciones
+            # Para borrar la variable de las demas ecuaciones
+            elif variable in Diccionario[key]:
                 Diccionario[key].remove(variable)
 
-        Diccionario.pop(key_blue)  # se retira la clave del Dicc para no buscar ahí
-        lista_claves= list(Diccionario.keys()) # ahora la lista tiene un elemento menos en el cual buscar
+        # se retira la clave del Dicc para no buscar ahí
+        Diccionario.pop(key_blue)
+        # ahora la lista tiene un elemento menos en el cual buscar
+        lista_claves = list(Diccionario.keys())
         # print(key_blue,variable)
         # print(Diccionario)
-        contador +=1
-        if contador >N_ecua +1 :  # Seguro por si ocurre algo
+        contador += 1
+        if contador > N_ecua + 1:  # Seguro por si ocurre algo
             raise Exception('Hubo un error D: , ni idea cual lo sentimos ')
             break
 
     return Diccionario_orga
 
-    def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
+    def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
         '''
         Recibe las ecuaciones y variables para resolver usando bloques mediante
         algoritmo de Tarjan para separación de sistemas de ecuaciones
         independientes entre sí.
+
+        pyENL_eqns contiene ecuaciones, pyENL_variables las variables que hay,
+        tol se refiere a la tolerancia del método, method es el método a usar y
+        minEqns es la opción para que a partir de esa cantidad de ecuaciones se
+        usen bloques (un valor muy bajo podría ser contraproducente ya que se
+        tardaría más tiempo agrupando que solucionando el sistema de un solo
+        llamado a la función root() )
+        
         Devuelve resultado pyENL
         '''
         # TODO: Optimizar el asunto de valores ya calculados para no repetición
