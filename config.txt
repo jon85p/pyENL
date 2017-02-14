@@ -1,2 +1,2 @@
-lang=es
+lang=en
 method = hybr

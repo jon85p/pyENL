@@ -18,6 +18,7 @@ from translations import translations
 # form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
 from GUI.MainWindow import Ui_MainWindow as form_class
 
+
 def quitaComentarios(eqns):
     '''
     Elimina los comentarios de la lista de ecuaciones para solucionar problema
@@ -84,9 +85,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             variables = self.solucion[0][0]
             residuos = self.solucion[0][1]
             solved = self.solucion[0][2]
-            QtGui.QMessageBox.about(self, "Información", 'Solucionado en ' +
-                                    str(tiempo) + ' segundos.\nMayor desviación\
-                                    de ' + str(max(residuos)))
+            QtGui.QMessageBox.about(self, self.traduccion["Información"], self.traduccion['Solucionado en '] +
+                                    str(tiempo) + self.traduccion[' segundos.\nMayor desviación de '] + str(max(residuos)))
             # Ahora a enfocar la última pestaña de la aplicación:
             self.tabWidget.setCurrentIndex(2)
             # Ahora a imprimir la respuesta en la tabla si solved es True
@@ -100,13 +100,14 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 # Muestra cuatro columnas, una para cada parámetro de la
                 # solución.
                 self.solsTable.setColumnCount(4)
-                horHeaders = ['Variable', 'Solución', 'Unidades', 'Comentario']
+                horHeaders = [self.traduccion['Variable'], self.traduccion['Solución'],
+                              self.traduccion['Unidades'], self.traduccion['Comentario']]
                 # Ahora para la pestaña de residuos:
                 self.resTable.resizeColumnsToContents()
                 self.resTable.resizeRowsToContents()
                 self.resTable.setRowCount(len(self.variables))
                 self.resTable.setColumnCount(2)
-                resHeaders = ['Ecuación', 'Residuo']
+                resHeaders = [self.traduccion['Ecuación'], self.traduccion['Residuo']]
 
                 for i, var in enumerate(variables):
                     # Por cada variable ahora a llenar la tabla!
@@ -144,7 +145,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
 
             else:
                 QtGui.QMessageBox.about(
-                    self, "Problema", "No hubo convergencia a solución...")
+                    self, self.traduccion["Problema", "No hubo convergencia a solución..."])
         except Exception as e:
             QtGui.QMessageBox.about(self, "Error", str(e))
 
@@ -169,8 +170,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.varsTable.setRowCount(len(self.variables))
         # Muestra seis columnas, una para cada parámetro de la variable.
         self.varsTable.setColumnCount(6)
-        horHeaders = ['Variable', 'Valor Inicial',
-                      'Inf', 'Sup', 'Unidades', 'Comentario']
+        horHeaders = [self.traduccion['Variable'], self.traduccion['Valor Inicial'],
+                      self.traduccion['Inferior'], self.traduccion['Superior'], self.traduccion['Unidades'], self.traduccion['Comentario']]
         for i, var in enumerate(self.variables):
             # Por cada variable ahora a llenar la tabla!
             # Empezamos con el nombre de variable:
@@ -228,12 +229,12 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 units = self.varsTable.item(i, 4).text()
                 comment = self.varsTable.item(i, 5).text()
                 if lowerlim >= upperlim:
-                    raise Exception('El número ' + str(lowerlim) +
-                                    ' es mayor a ' + str(upperlim) +
-                                    ' en la variable ' + var.name)
+                    raise Exception(self.traduccion['El número '] + str(lowerlim) +
+                                    self.traduccion[' es mayor a '] + str(upperlim) +
+                                    self.traduccion[' en la variable '] + var.name)
                 if (guess < lowerlim) or (guess > upperlim):
-                    raise Exception('El valor inicial de ' + str(var.name) +
-                                    ' debe estar entre los dos límites.')
+                    raise Exception(self.traduccion['El valor inicial de '] + str(var.name) +
+                                    self.traduccion[' debe estar entre los dos límites.'])
                 # Ya que se recogieron los valores de la tabla, ahora a
                 # actualizar la lista de variables del programa:
                 self.variables[i].guess = guess
@@ -258,8 +259,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         try:
             cantidad_eqn, var_reco = cantidadEqnVar(texto)
             cantidad_var = len(var_reco)
-            a_mostrar = str(cantidad_eqn) + ' ecuaciones / ' + \
-                str(cantidad_var) + ' variables'
+            a_mostrar = str(cantidad_eqn) + self.traduccion[' ecuaciones / ' ]+ \
+                str(cantidad_var) + self.traduccion[' variables']
             self.infoLabel.setText(a_mostrar)
             # Ahora actualizar la lista de variables si es necesario
             # Recordar que var_reco contiene las variables reconocidas en la
@@ -276,7 +277,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                     self.variables.pop(i)
         except Exception as e:
             self.infoLabel.setText(
-                'Error encontrando cantidad de variables y de ecuaciones')
+                self.traduccion['Error encontrando cantidad de variables y de ecuaciones'])
 
 
 def main():
