@@ -7,6 +7,7 @@ import sys
 from PyQt4 import QtCore, QtGui, uic
 from utils import *
 from entrada import pyENL_variable, entradaTexto
+from translations import translations
 
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
@@ -33,6 +34,12 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
 
     def __init__(self, parent=None):
         QtGui.QMainWindow.__init__(self, parent)
+        # TODO Opciones del programa:
+        opciones_ = configFile("config.txt")
+        self.opt_method = opciones_.method
+        self.lang = opciones_.lang
+        self.traduccion = translations(self.lang)
+        self.opt_tol = None
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
         # Variables en el programa:
@@ -51,9 +58,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
         self.actionSalir.triggered.connect(QtGui.qApp.quit)
-        # TODO Opciones del programa:
-        self.opt_method = 'hybr'
-        self.opt_tol = None
+
         # TODO En Información incluir la máxima desviación
         # print(dir(self))
         # print(dir(self.actionSalir))

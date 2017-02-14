@@ -1,8 +1,9 @@
 #/usr/bin/env python3
 import random
 import copy
+import os
 '''
-Utilidades para reconocimiento de parámetros de ecuaciones
+Utilidades generales para uso de pyENL
 '''
 from numpy import *
 from pyENL_fcns import *
@@ -10,6 +11,50 @@ import re
 ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...
 haprop = log
+
+class configFile:
+    '''
+    Clase que facilita datos de configuración, su lectura y escritura
+    '''
+    def __init__(self, filename):
+        '''
+        Inicializada con el nombre de archivo que contiene la configuración
+        del programa
+        '''
+        # Primero verifica que exista el archivo, si no; carga configuración por
+        # defecto.
+        # TODO : Mejorar aspectos cuando está dañado o no existe config.txt
+        # items a configurar
+        self.items = ["lang", "method"]
+        self.lang = 'en'
+        self.method = 'hybr'
+        try:
+            f = open(filename, 'rb')
+            texto_config = f.read().decode("utf-8").splitlines()
+            f.close()
+            for i, elm in enumerate(texto_config):
+                valor = elm.split("=")[1].replace(" ", "")
+                if 'lang' in elm:
+                    self.lang = valor
+                if 'method' in elm:
+                    self.method = valor
+        except:
+            # Guardar con la configuración!
+            pass
+
+
+    def guardar_config(self, filename):
+        '''
+        Guarda la configuración actual del objeto en el archivo filename
+        '''
+        g = open(filename, 'wb')
+        for item in self.items:
+            # TODO Corregir asignaciones para guardar
+            print("propiedad = self." + item)
+            exec("propiedad = self." + item)
+            texto = item + "=" + propiedad + "\n"
+            g.write(texto.encode('utf-8'))
+        g.close()
 
 
 def ajustes(texto):
@@ -287,7 +332,7 @@ def funcion_e(Diccionario):
         usen bloques (un valor muy bajo podría ser contraproducente ya que se
         tardaría más tiempo agrupando que solucionando el sistema de un solo
         llamado a la función root() )
-        
+
         Devuelve resultado pyENL
         '''
         # TODO: Optimizar el asunto de valores ya calculados para no repetición
