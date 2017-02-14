@@ -8,8 +8,14 @@ from PyQt4 import QtCore, QtGui, uic
 from utils import *
 from entrada import pyENL_variable, entradaTexto
 
-form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
+# Cargar ahora interfaz desde archivo .py haciendo conversión con:
+# $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
+# Esto para efectos de traducciones!
+# NOTE
+# Cada vez que se actualice MainWindow.ui se debe actualizar MainWindow.py
 
+# form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
+from GUI.MainWindow import Ui_MainWindow as form_class
 
 def quitaComentarios(eqns):
     '''
@@ -266,6 +272,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         except Exception as e:
             self.infoLabel.setText(
                 'Error encontrando cantidad de variables y de ecuaciones')
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
