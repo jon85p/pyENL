@@ -107,7 +107,8 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 self.resTable.resizeRowsToContents()
                 self.resTable.setRowCount(len(self.variables))
                 self.resTable.setColumnCount(2)
-                resHeaders = [self.traduccion['Ecuación'], self.traduccion['Residuo']]
+                resHeaders = [self.traduccion['Ecuación'],
+                              self.traduccion['Residuo']]
 
                 for i, var in enumerate(variables):
                     # Por cada variable ahora a llenar la tabla!
@@ -259,7 +260,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         try:
             cantidad_eqn, var_reco = cantidadEqnVar(texto)
             cantidad_var = len(var_reco)
-            a_mostrar = str(cantidad_eqn) + self.traduccion[' ecuaciones / ' ]+ \
+            a_mostrar = str(cantidad_eqn) + self.traduccion[' ecuaciones / ' ] + \
                 str(cantidad_var) + self.traduccion[' variables']
             self.infoLabel.setText(a_mostrar)
             # Ahora actualizar la lista de variables si es necesario

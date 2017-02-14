@@ -16,6 +16,9 @@ def translations(lang='en'):
     # diccionario general; cada valor de diccionario será otro diccionario donde
     # las claves son los códigos de los idiomas y los valores son las
     # correspondientes traducciones.
+
+    # TODO: Traducción de excepciones
+
     idiomas = ['es', 'en', 'pt', 'fr']
     if lang not in idiomas:
         raise Exception('Idioma no listado, verificar opciones.')
@@ -172,10 +175,13 @@ def translations(lang='en'):
     dicc_gen['Solución'] = {'es': 'Solución', 'en': 'Solution',
                             'pt': 'Información', 'fr': 'Información'}
 
-    dicc_gen['Problema", "No hubo convergencia a solución...'] = {'es': 'Problema", "No hubo convergencia a solución...',
-                                                                  'en': 'Problem", "No convergence to solution...',
-                                                                  'pt': 'Problema", "No hubo convergencia a solución...',
-                                                                  'fr': 'Problema", "No hubo convergencia a solución...'}
+    dicc_gen['No hubo convergencia a solución...'] = {'es': 'No hubo convergencia a solución...',
+                                                      'en': 'No convergence to solution...',
+                                                      'pt': 'No hubo convergencia a solución...',
+                                                      'fr': 'No hubo convergencia a solución...'}
+
+    dicc_gen['Problema'] = {'es': 'Problema', 'en': 'Problem',
+                            'pt': 'Problema', 'fr': 'Problema'}
 
     dicc_gen['Variable'] = {'es': 'Variable', 'en': 'Variable',
                             'pt': 'Variable', 'fr': 'Variable'}
@@ -217,7 +223,7 @@ def translations(lang='en'):
                                                                            'fr': 'Error encontrando cantidad de variables y de ecuaciones'}
 
     dicc_gen["x Ecuaciones/y Variables"] = {'es': "x Ecuaciones/y Variables", 'en': 'x Equations/y Variables',
-                               'pt': "x Ecuaciones/y Variables", 'fr': "x Ecuaciones/y Variables"}
+                                            'pt': "x Ecuaciones/y Variables", 'fr': "x Ecuaciones/y Variables"}
 
     dicc_gen['Información'] = {'es': 'Información', 'en': 'Information',
                                'pt': 'Información', 'fr': 'Información'}

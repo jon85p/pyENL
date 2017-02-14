@@ -16,20 +16,24 @@ except AttributeError:
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
+
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig, _encoding)
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+
 class Ui_MainWindow(object):
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(800, 600)
         MainWindow.setMinimumSize(QtCore.QSize(800, 600))
         MainWindow.setWindowTitle(_fromUtf8("pyENL"))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/imgs/imgs/icon.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/imgs/imgs/icon.png")),
+                       QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -77,7 +81,8 @@ class Ui_MainWindow(object):
         self.solsTable.setColumnCount(0)
         self.solsTable.setRowCount(0)
         self.verticalLayout_3.addWidget(self.solsTable)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QtGui.QSpacerItem(
+            40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_3.addItem(spacerItem)
         self.info_button = QtGui.QPushButton(self.solTab)
         self.info_button.setObjectName(_fromUtf8("info_button"))
@@ -109,7 +114,8 @@ class Ui_MainWindow(object):
         self.menuArchivo = QtGui.QMenu(self.menubar)
         self.menuArchivo.setObjectName(_fromUtf8("menuArchivo"))
         self.menuExportar_reporte = QtGui.QMenu(self.menuArchivo)
-        self.menuExportar_reporte.setObjectName(_fromUtf8("menuExportar_reporte"))
+        self.menuExportar_reporte.setObjectName(
+            _fromUtf8("menuExportar_reporte"))
         self.menuImportar = QtGui.QMenu(self.menuArchivo)
         self.menuImportar.setObjectName(_fromUtf8("menuImportar"))
         self.menuEditar = QtGui.QMenu(self.menubar)
@@ -119,9 +125,11 @@ class Ui_MainWindow(object):
         self.menuHerramientas = QtGui.QMenu(self.menubar)
         self.menuHerramientas.setObjectName(_fromUtf8("menuHerramientas"))
         self.menuFunciones_Ingenieria = QtGui.QMenu(self.menuHerramientas)
-        self.menuFunciones_Ingenieria.setObjectName(_fromUtf8("menuFunciones_Ingenieria"))
+        self.menuFunciones_Ingenieria.setObjectName(
+            _fromUtf8("menuFunciones_Ingenieria"))
         self.menuFunciones_de_usuario = QtGui.QMenu(self.menuHerramientas)
-        self.menuFunciones_de_usuario.setObjectName(_fromUtf8("menuFunciones_de_usuario"))
+        self.menuFunciones_de_usuario.setObjectName(
+            _fromUtf8("menuFunciones_de_usuario"))
         self.menuAyuda = QtGui.QMenu(self.menubar)
         self.menuAyuda.setObjectName(_fromUtf8("menuAyuda"))
         MainWindow.setMenuBar(self.menubar)
@@ -142,7 +150,8 @@ class Ui_MainWindow(object):
         self.actionComentario = QtGui.QAction(MainWindow)
         self.actionComentario.setObjectName(_fromUtf8("actionComentario"))
         self.actionSeleccionar_todo = QtGui.QAction(MainWindow)
-        self.actionSeleccionar_todo.setObjectName(_fromUtf8("actionSeleccionar_todo"))
+        self.actionSeleccionar_todo.setObjectName(
+            _fromUtf8("actionSeleccionar_todo"))
         self.actionDeshacer = QtGui.QAction(MainWindow)
         self.actionDeshacer.setObjectName(_fromUtf8("actionDeshacer"))
         self.actionRehacer = QtGui.QAction(MainWindow)
@@ -158,13 +167,15 @@ class Ui_MainWindow(object):
         self.actionAyuda_NumPy = QtGui.QAction(MainWindow)
         self.actionAyuda_NumPy.setObjectName(_fromUtf8("actionAyuda_NumPy"))
         self.actionAyuda_CoolProp = QtGui.QAction(MainWindow)
-        self.actionAyuda_CoolProp.setObjectName(_fromUtf8("actionAyuda_CoolProp"))
+        self.actionAyuda_CoolProp.setObjectName(
+            _fromUtf8("actionAyuda_CoolProp"))
         self.actionSobre_pyENL = QtGui.QAction(MainWindow)
         self.actionSobre_pyENL.setObjectName(_fromUtf8("actionSobre_pyENL"))
         self.actionLicencias = QtGui.QAction(MainWindow)
         self.actionLicencias.setObjectName(_fromUtf8("actionLicencias"))
         self.actionTermodinamicas = QtGui.QAction(MainWindow)
-        self.actionTermodinamicas.setObjectName(_fromUtf8("actionTermodinamicas"))
+        self.actionTermodinamicas.setObjectName(
+            _fromUtf8("actionTermodinamicas"))
         self.actionPor_agregar = QtGui.QAction(MainWindow)
         self.actionPor_agregar.setObjectName(_fromUtf8("actionPor_agregar"))
         self.actionDisponibles = QtGui.QAction(MainWindow)
@@ -174,7 +185,8 @@ class Ui_MainWindow(object):
         self.actionUnidades = QtGui.QAction(MainWindow)
         self.actionUnidades.setObjectName(_fromUtf8("actionUnidades"))
         self.actionConfiguracion = QtGui.QAction(MainWindow)
-        self.actionConfiguracion.setObjectName(_fromUtf8("actionConfiguracion"))
+        self.actionConfiguracion.setObjectName(
+            _fromUtf8("actionConfiguracion"))
         self.actionImprimir = QtGui.QAction(MainWindow)
         self.actionImprimir.setObjectName(_fromUtf8("actionImprimir"))
         self.actionLibreOffice = QtGui.QAction(MainWindow)
@@ -211,8 +223,10 @@ class Ui_MainWindow(object):
         self.menuFunciones_Ingenieria.addAction(self.actionPor_agregar)
         self.menuFunciones_de_usuario.addAction(self.actionDisponibles)
         self.menuFunciones_de_usuario.addAction(self.actionAgregar)
-        self.menuHerramientas.addAction(self.menuFunciones_Ingenieria.menuAction())
-        self.menuHerramientas.addAction(self.menuFunciones_de_usuario.menuAction())
+        self.menuHerramientas.addAction(
+            self.menuFunciones_Ingenieria.menuAction())
+        self.menuHerramientas.addAction(
+            self.menuFunciones_de_usuario.menuAction())
         self.menuHerramientas.addAction(self.actionImprimir)
         self.menuAyuda.addAction(self.actionAyuda_pyENL)
         self.menuAyuda.addAction(self.actionAyuda_NumPy)
@@ -232,48 +246,93 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         # Texto traducido:
-        self.solve_button.setText(_translate("MainWindow", self.traduccion["Resolver"], None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.eqnTab), _translate("MainWindow", self.traduccion["Ecuaciones"], None))
-        self.Actualizar_Button.setText(_translate("MainWindow", self.traduccion["Actualizar"], None))
-        self.cleanVarButton.setText(_translate("MainWindow", self.traduccion["Limpiar"], None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.varTab), _translate("MainWindow", self.traduccion["Variables"], None))
-        self.info_button.setText(_translate("MainWindow", self.traduccion["Información"], None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.solTab), _translate("MainWindow", self.traduccion["Soluciones"], None))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.resTab), _translate("MainWindow", self.traduccion["Residuos"], None))
-        self.infoLabel.setText(_translate("MainWindow", self.traduccion["x Ecuaciones/y Variables"], None))
-        self.menuArchivo.setTitle(_translate("MainWindow", self.traduccion["Archivo"], None))
-        self.menuExportar_reporte.setTitle(_translate("MainWindow", self.traduccion["Exportar reporte"], None))
-        self.menuImportar.setTitle(_translate("MainWindow", self.traduccion["Importar"], None))
-        self.menuEditar.setTitle(_translate("MainWindow", self.traduccion["Editar"], None))
-        self.menuOpciones.setTitle(_translate("MainWindow", self.traduccion["Opciones"], None))
-        self.menuHerramientas.setTitle(_translate("MainWindow", self.traduccion["Herramientas"], None))
-        self.menuFunciones_Ingenieria.setTitle(_translate("MainWindow", self.traduccion["Funciones Ingeniería"], None))
-        self.menuFunciones_de_usuario.setTitle(_translate("MainWindow", self.traduccion["Funciones de usuario"], None))
-        self.menuAyuda.setTitle(_translate("MainWindow", self.traduccion["Ayuda"], None))
-        self.actionAbrir.setText(_translate("MainWindow", self.traduccion["Abrir"], None))
-        self.actionGuardar.setText(_translate("MainWindow", self.traduccion["Guardar"], None))
-        self.actionGuardar_Como.setText(_translate("MainWindow", self.traduccion["Guardar Como..."], None))
-        self.actionCerrar.setText(_translate("MainWindow", self.traduccion["Cerrar"], None))
-        self.actionSalir.setText(_translate("MainWindow", self.traduccion["Salir"], None))
-        self.actionComentario.setText(_translate("MainWindow", self.traduccion["Comentario"], None))
-        self.actionSeleccionar_todo.setText(_translate("MainWindow", self.traduccion["Seleccionar todo"], None))
-        self.actionDeshacer.setText(_translate("MainWindow", self.traduccion["Deshacer"], None))
-        self.actionRehacer.setText(_translate("MainWindow", self.traduccion["Rehacer"], None))
-        self.actionCopiar.setText(_translate("MainWindow", self.traduccion["Copiar"], None))
-        self.actionPegar.setText(_translate("MainWindow", self.traduccion["Cortar"], None))
-        self.actionPegar_2.setText(_translate("MainWindow", self.traduccion["Pegar"], None))
-        self.actionAyuda_pyENL.setText(_translate("MainWindow", self.traduccion["Ayuda pyENL"], None))
-        self.actionAyuda_NumPy.setText(_translate("MainWindow", self.traduccion["Ayuda NumPy"], None))
-        self.actionAyuda_CoolProp.setText(_translate("MainWindow", self.traduccion["Ayuda CoolProp"], None))
-        self.actionSobre_pyENL.setText(_translate("MainWindow", self.traduccion["Sobre pyENL"], None))
-        self.actionLicencias.setText(_translate("MainWindow", self.traduccion["Licencias"], None))
-        self.actionTermodinamicas.setText(_translate("MainWindow", self.traduccion["Termodinámicas"], None))
-        self.actionPor_agregar.setText(_translate("MainWindow", self.traduccion["Por agregar..."], None))
-        self.actionDisponibles.setText(_translate("MainWindow", self.traduccion["Disponibles"], None))
-        self.actionAgregar.setText(_translate("MainWindow", self.traduccion["Agregar..."], None))
-        self.actionUnidades.setText(_translate("MainWindow", self.traduccion["Unidades"], None))
-        self.actionConfiguracion.setText(_translate("MainWindow", self.traduccion["Configuración"], None))
-        self.actionImprimir.setText(_translate("MainWindow", self.traduccion["Imprimir"], None))
-        self.actionLibreOffice.setText(_translate("MainWindow", self.traduccion["Open Document Text"], None))
-        self.actionTeX.setText(_translate("MainWindow", self.traduccion["Archivo LaTeX"], None))
-        self.actionArchivo_EES.setText(_translate("MainWindow", self.traduccion["Archivo EES"], None))
+        self.solve_button.setText(_translate(
+            "MainWindow", self.traduccion["Resolver"], None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.eqnTab), _translate(
+            "MainWindow", self.traduccion["Ecuaciones"], None))
+        self.Actualizar_Button.setText(_translate(
+            "MainWindow", self.traduccion["Actualizar"], None))
+        self.cleanVarButton.setText(_translate(
+            "MainWindow", self.traduccion["Limpiar"], None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.varTab), _translate(
+            "MainWindow", self.traduccion["Variables"], None))
+        self.info_button.setText(_translate(
+            "MainWindow", self.traduccion["Información"], None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.solTab), _translate(
+            "MainWindow", self.traduccion["Soluciones"], None))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.resTab), _translate(
+            "MainWindow", self.traduccion["Residuos"], None))
+        self.infoLabel.setText(_translate("MainWindow", self.traduccion[
+                               "x Ecuaciones/y Variables"], None))
+        self.menuArchivo.setTitle(_translate(
+            "MainWindow", self.traduccion["Archivo"], None))
+        self.menuExportar_reporte.setTitle(_translate(
+            "MainWindow", self.traduccion["Exportar reporte"], None))
+        self.menuImportar.setTitle(_translate(
+            "MainWindow", self.traduccion["Importar"], None))
+        self.menuEditar.setTitle(_translate(
+            "MainWindow", self.traduccion["Editar"], None))
+        self.menuOpciones.setTitle(_translate(
+            "MainWindow", self.traduccion["Opciones"], None))
+        self.menuHerramientas.setTitle(_translate(
+            "MainWindow", self.traduccion["Herramientas"], None))
+        self.menuFunciones_Ingenieria.setTitle(_translate(
+            "MainWindow", self.traduccion["Funciones Ingeniería"], None))
+        self.menuFunciones_de_usuario.setTitle(_translate(
+            "MainWindow", self.traduccion["Funciones de usuario"], None))
+        self.menuAyuda.setTitle(_translate(
+            "MainWindow", self.traduccion["Ayuda"], None))
+        self.actionAbrir.setText(_translate(
+            "MainWindow", self.traduccion["Abrir"], None))
+        self.actionGuardar.setText(_translate(
+            "MainWindow", self.traduccion["Guardar"], None))
+        self.actionGuardar_Como.setText(_translate(
+            "MainWindow", self.traduccion["Guardar Como..."], None))
+        self.actionCerrar.setText(_translate(
+            "MainWindow", self.traduccion["Cerrar"], None))
+        self.actionSalir.setText(_translate(
+            "MainWindow", self.traduccion["Salir"], None))
+        self.actionComentario.setText(_translate(
+            "MainWindow", self.traduccion["Comentario"], None))
+        self.actionSeleccionar_todo.setText(_translate(
+            "MainWindow", self.traduccion["Seleccionar todo"], None))
+        self.actionDeshacer.setText(_translate(
+            "MainWindow", self.traduccion["Deshacer"], None))
+        self.actionRehacer.setText(_translate(
+            "MainWindow", self.traduccion["Rehacer"], None))
+        self.actionCopiar.setText(_translate(
+            "MainWindow", self.traduccion["Copiar"], None))
+        self.actionPegar.setText(_translate(
+            "MainWindow", self.traduccion["Cortar"], None))
+        self.actionPegar_2.setText(_translate(
+            "MainWindow", self.traduccion["Pegar"], None))
+        self.actionAyuda_pyENL.setText(_translate(
+            "MainWindow", self.traduccion["Ayuda pyENL"], None))
+        self.actionAyuda_NumPy.setText(_translate(
+            "MainWindow", self.traduccion["Ayuda NumPy"], None))
+        self.actionAyuda_CoolProp.setText(_translate(
+            "MainWindow", self.traduccion["Ayuda CoolProp"], None))
+        self.actionSobre_pyENL.setText(_translate(
+            "MainWindow", self.traduccion["Sobre pyENL"], None))
+        self.actionLicencias.setText(_translate(
+            "MainWindow", self.traduccion["Licencias"], None))
+        self.actionTermodinamicas.setText(_translate(
+            "MainWindow", self.traduccion["Termodinámicas"], None))
+        self.actionPor_agregar.setText(_translate(
+            "MainWindow", self.traduccion["Por agregar..."], None))
+        self.actionDisponibles.setText(_translate(
+            "MainWindow", self.traduccion["Disponibles"], None))
+        self.actionAgregar.setText(_translate(
+            "MainWindow", self.traduccion["Agregar..."], None))
+        self.actionUnidades.setText(_translate(
+            "MainWindow", self.traduccion["Unidades"], None))
+        self.actionConfiguracion.setText(_translate(
+            "MainWindow", self.traduccion["Configuración"], None))
+        self.actionImprimir.setText(_translate(
+            "MainWindow", self.traduccion["Imprimir"], None))
+        self.actionLibreOffice.setText(_translate(
+            "MainWindow", self.traduccion["Open Document Text"], None))
+        self.actionTeX.setText(_translate(
+            "MainWindow", self.traduccion["Archivo LaTeX"], None))
+        self.actionArchivo_EES.setText(_translate(
+            "MainWindow", self.traduccion["Archivo EES"], None))

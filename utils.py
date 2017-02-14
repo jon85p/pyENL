@@ -12,10 +12,12 @@ ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...
 haprop = log
 
+
 class configFile:
     '''
     Clase que facilita datos de configuración, su lectura y escritura
     '''
+
     def __init__(self, filename):
         '''
         Inicializada con el nombre de archivo que contiene la configuración
@@ -41,7 +43,6 @@ class configFile:
         except:
             # Guardar con la configuración!
             pass
-
 
     def guardar_config(self, filename):
         '''

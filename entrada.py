@@ -16,6 +16,7 @@ try:
 except:
     pass
 
+
 class pyENL_variable:
     '''
     Clase creadora de objetos de tipo variable para las resoluciones de las
