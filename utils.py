@@ -80,12 +80,13 @@ def ajustes(texto):
 
 
 def esalfanum(caracter):
-    '''Verifica que el caracter es alfanumérico'''
+    '''Verifica que el caracter es alfanumérico o punto'''
     suma = 0
     suma += (caracter >= '\x30' and caracter <= '\x39')
     suma += (caracter >= '\x41' and caracter <= '\x5a')
     suma += (caracter >= '\x61' and caracter <= '\x7a')
-    return bool(suma)
+    es_punto = (caracter == '.' or caracter == '_')
+    return bool(suma and es_punto)
 
 
 def buscainds(texto, busq):
