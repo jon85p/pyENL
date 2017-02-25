@@ -2,6 +2,9 @@
 
 (Python "Ecuaciones No Lineales")
 
+
+<sup>A baby tiny open-source alternative to Engineering Equation Solver (EES)<sub>
+
 [![Build Status](https://travis-ci.org/jon85p/pyENL.svg?branch=master)](https://travis-ci.org/jon85p/pyENL)
 [![license](https://img.shields.io/github/license/jon85p/pyENL.svg)]()
 
