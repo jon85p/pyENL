@@ -1,4 +1,4 @@
-#pyENL
+# pyENL
 
 (Python "Ecuaciones No Lineales")
 
@@ -11,17 +11,17 @@
 
 <img src="GUI/imgs/icon240.png">*
 
-###Description
+### Description
 
 Engineering nonlinear equations systems solver
-###Features
+### Features
 - Solve numerically systems equations from MINPACK method of SciPy.
 - More solvers available from: [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
 - Engineering functions inside (Issue 4, in development 💪)
 - Users functions (Python).
 - On development stage!
 
-###Use:
+### Use:
 - Terminal mode:
 <pre><code>entrada.py -f file_text -t[seconds]:</code></pre>
   Equations file with conditions of each variable.
@@ -47,7 +47,7 @@ File pyENL.py run the Qt interface for pyENL.
 <img src="https://jon85p.github.io/pyENL/images/s3.png">
 <img src="https://jon85p.github.io/pyENL/images/s4.png">
 
-###Thermodynamical properties
+### Thermodynamical properties
 Via CoolProp, an open source thermodynamical properties library.
 Install:
 <pre><code>pip install coolprop</code></pre>
@@ -56,7 +56,7 @@ Install:
 - Example: Water enthalpy at atmosferic pressure and 300 K:
  <pre><code>prop('H', 'P', 101325, 'T', 300, 'Water')</code></pre>
 
-###Strings variables:
+### Strings variables:
 
 <pre><code>#ref# = 'R134a'</code></pre>
 <pre><code>P = prop('P', 'T', 300, 'Q', 0, #ref#)</code></pre>
