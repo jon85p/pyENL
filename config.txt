@@ -1,2 +1,3 @@
 lang=en
 method = hybr
+format = {:,.5}

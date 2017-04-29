@@ -4,19 +4,20 @@
 Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
-from PyQt4 import QtCore, QtGui, uic
+from PyQt5 import QtCore, uic, QtGui, QtWidgets
 from utils import *
 from entrada import pyENL_variable, entradaTexto
 from translations import translations
 
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
+# Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.png")
 # Esto para efectos de traducciones!
 # NOTE
 # Cada vez que se actualice MainWindow.ui se debe actualizar MainWindow.py
 
 # form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
-from GUI.MainWindow import Ui_MainWindow as form_class
+from GUI.MainWindow5 import Ui_MainWindow as form_class
 
 
 def quitaComentarios(eqns):
@@ -31,12 +32,13 @@ def quitaComentarios(eqns):
     return b
 
 
-class MyWindowClass(QtGui.QMainWindow, form_class):
+class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def __init__(self, parent=None):
-        QtGui.QMainWindow.__init__(self, parent)
+        QtWidgets.QMainWindow.__init__(self, parent)
         # TODO Opciones del programa:
         opciones_ = configFile("config.txt")
+        self.format = opciones_.format
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
         self.traduccion = translations(self.lang)
@@ -58,7 +60,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
         self.actionSalir.setShortcut('Ctrl+Q')
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
-        self.actionSalir.triggered.connect(QtGui.qApp.quit)
+        self.actionSalir.triggered.connect(QtWidgets.qApp.quit)
 
         # TODO En Información incluir la máxima desviación
         # print(dir(self))
@@ -78,77 +80,81 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             # Para poder soportar variables tipo texto
             ecuaciones = variables_string(ecuaciones)
             # Quitar los comentarios de las ecuaciones:
-            ecuaciones_s = quitaComentarios(ecuaciones)
+            self.ecuaciones_s = quitaComentarios(ecuaciones)
             self.solucion = entradaTexto(
                 ecuaciones, pyENL_timeout, varsObj=self.variables, method='hybr')
             tiempo = self.solucion[1]
-            variables = self.solucion[0][0]
-            residuos = self.solucion[0][1]
+            self.variables = self.solucion[0][0]
+            self.residuos = self.solucion[0][1]
             solved = self.solucion[0][2]
-            QtGui.QMessageBox.about(self, self.traduccion["Información"], self.traduccion['Solucionado en '] +
-                                    str(tiempo) + self.traduccion[' segundos.\nMayor desviación de '] + str(max(residuos)))
+            QtWidgets.QMessageBox.about(self, self.traduccion["Información"], self.traduccion['Solucionado en '] +
+                                    str(tiempo) + self.traduccion[' segundos.\nMayor desviación de '] + str(max(self.residuos)))
             # Ahora a enfocar la última pestaña de la aplicación:
             self.tabWidget.setCurrentIndex(2)
             # Ahora a imprimir la respuesta en la tabla si solved es True
             if solved is True:
                 # Imprimir
-                self.solsTable.resizeColumnsToContents()
-                self.solsTable.resizeRowsToContents()
-                # La cantidad de filas es pues igual a la cantidad de
-                # variables.
-                self.solsTable.setRowCount(len(self.variables))
-                # Muestra cuatro columnas, una para cada parámetro de la
-                # solución.
-                self.solsTable.setColumnCount(4)
-                horHeaders = [self.traduccion['Variable'], self.traduccion['Solución'],
-                              self.traduccion['Unidades'], self.traduccion['Comentario']]
-                # Ahora para la pestaña de residuos:
-                self.resTable.resizeColumnsToContents()
-                self.resTable.resizeRowsToContents()
-                self.resTable.setRowCount(len(self.variables))
-                self.resTable.setColumnCount(2)
-                resHeaders = [self.traduccion['Ecuación'],
-                              self.traduccion['Residuo']]
-
-                for i, var in enumerate(variables):
-                    # Por cada variable ahora a llenar la tabla!
-                    # Empezamos con el nombre de variable:
-                    lista_items = []
-                    newitem = QtGui.QTableWidgetItem(var.name)
-                    # Nada se puede editar
-                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                    self.solsTable.setItem(i, 0, newitem)
-
-                    newitem = QtGui.QTableWidgetItem(str(var.guess))
-                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                    color = QtGui.QColor(255, 255, 0, 40)
-                    newitem.setBackgroundColor(color)
-                    self.solsTable.setItem(i, 1, newitem)
-
-                    newitem = QtGui.QTableWidgetItem(var.units)
-                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                    self.solsTable.setItem(i, 2, newitem)
-
-                    newitem = QtGui.QTableWidgetItem(var.comment)
-                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                    self.solsTable.setItem(i, 3, newitem)
-
-                    # Residuos:
-                    newitem = QtGui.QTableWidgetItem(ecuaciones_s[i])
-                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                    self.resTable.setItem(i, 0, newitem)
-                    newitem = QtGui.QTableWidgetItem(str(residuos[i]))
-                    newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                    self.resTable.setItem(i, 1, newitem)
-
-                self.solsTable.setHorizontalHeaderLabels(horHeaders)
-                self.resTable.setHorizontalHeaderLabels(resHeaders)
+                self.imprimeSol(self.format)
 
             else:
-                QtGui.QMessageBox.about(
+                QtWidgets.QMessageBox.about(
                     self, self.traduccion["Problema", "No hubo convergencia a solución..."])
         except Exception as e:
-            QtGui.QMessageBox.about(self, "Error", str(e))
+            QtWidgets.QMessageBox.about(self, "Error", str(e))
+
+    def imprimeSol(self, formateo):
+        self.solsTable.resizeColumnsToContents()
+        self.solsTable.resizeRowsToContents()
+        # La cantidad de filas es pues igual a la cantidad de
+        # variables.
+        self.solsTable.setRowCount(len(self.variables))
+        # Muestra cuatro columnas, una para cada parámetro de la
+        # solución.
+        self.solsTable.setColumnCount(4)
+        horHeaders = [self.traduccion['Variable'], self.traduccion['Solución'],
+                      self.traduccion['Unidades'], self.traduccion['Comentario']]
+        # Ahora para la pestaña de residuos:
+        self.resTable.resizeColumnsToContents()
+        self.resTable.resizeRowsToContents()
+        self.resTable.setRowCount(len(self.variables))
+        self.resTable.setColumnCount(2)
+        resHeaders = [self.traduccion['Ecuación'],
+                      self.traduccion['Residuo']]
+
+        for i, var in enumerate(self.variables):
+            # Por cada variable ahora a llenar la tabla!
+            # Empezamos con el nombre de variable:
+            lista_items = []
+            newitem = QtWidgets.QTableWidgetItem(var.name)
+            # Nada se puede editar
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            self.solsTable.setItem(i, 0, newitem)
+
+            # Acá se modificará el formato de la salida
+            newitem = QtWidgets.QTableWidgetItem(formateo.format(var.guess))
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            # color = QtGui.QColor(255, 255, 0, 40)
+            # newitem.setBackgroundColor(color)
+            self.solsTable.setItem(i, 1, newitem)
+
+            newitem = QtWidgets.QTableWidgetItem(var.units)
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            self.solsTable.setItem(i, 2, newitem)
+
+            newitem = QtWidgets.QTableWidgetItem(var.comment)
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            self.solsTable.setItem(i, 3, newitem)
+
+            # Residuos:
+            newitem = QtWidgets.QTableWidgetItem(self.ecuaciones_s[i])
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            self.resTable.setItem(i, 0, newitem)
+            newitem = QtWidgets.QTableWidgetItem(str(self.residuos[i]))
+            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            self.resTable.setItem(i, 1, newitem)
+
+        self.solsTable.setHorizontalHeaderLabels(horHeaders)
+        self.resTable.setHorizontalHeaderLabels(resHeaders)
 
     def actualizaVars(self):
         '''
@@ -177,39 +183,39 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
             # Por cada variable ahora a llenar la tabla!
             # Empezamos con el nombre de variable:
             lista_items = []
-            newitem = QtGui.QTableWidgetItem(var.name)
-            # color = QtGui.QColor(240,100,100)
+            newitem = QtWidgets.QTableWidgetItem(var.name)
+            # color = QtWidgets.QColor(240,100,100)
             # newitem.setBackgroundColor(color)
             # Esto es para que no se pueda editar el nombre de la variable
             # desde la tabla de variables:
             newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.varsTable.setItem(i, 0, newitem)
 
-            newitem = QtGui.QTableWidgetItem(str(var.guess))
-            color = QtGui.QColor(255, 255, 0, 40)
-            newitem.setBackgroundColor(color)
+            newitem = QtWidgets.QTableWidgetItem(str(var.guess))
+            # color = QtWidgets.QColor(255, 255, 0, 40)
+            # newitem.setBackgroundColor(color)
             self.varsTable.setItem(i, 1, newitem)
 
-            newitem = QtGui.QTableWidgetItem(str(var.lowerlim))
-            color = QtGui.QColor(0, 255, 0, 40)
-            newitem.setBackgroundColor(color)
+            newitem = QtWidgets.QTableWidgetItem(str(var.lowerlim))
+            # color = QtWidgets.QColor(0, 255, 0, 40)
+            # newitem.setBackgroundColor(color)
             self.varsTable.setItem(i, 2, newitem)
 
-            newitem = QtGui.QTableWidgetItem(str(var.upperlim))
-            color = QtGui.QColor(255, 0, 0, 40)
-            newitem.setBackgroundColor(color)
+            newitem = QtWidgets.QTableWidgetItem(str(var.upperlim))
+            # color = QtWidgets.QColor(255, 0, 0, 40)
+            # newitem.setBackgroundColor(color)
             self.varsTable.setItem(i, 3, newitem)
 
-            newitem = QtGui.QTableWidgetItem(var.units)
+            newitem = QtWidgets.QTableWidgetItem(var.units)
             # Cambiar cuando las unidades estén listas
             newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.varsTable.setItem(i, 4, newitem)
 
-            newitem = QtGui.QTableWidgetItem(var.comment)
+            newitem = QtWidgets.QTableWidgetItem(var.comment)
             self.varsTable.setItem(i, 5, newitem)
 
             # for m, item in enumerate(data[key]):
-            #     newitem = QtGui.QTableWidgetItem(item)
+            #     newitem = QtWidgets.QTableWidgetItem(item)
             #     self.varsTable.setItem(m, n, newitem)
         self.varsTable.setHorizontalHeaderLabels(horHeaders)
         # print(dir(newitem))
@@ -244,7 +250,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
                 self.variables[i].units = units
                 self.variables[i].comment = comment
         except Exception as e:
-            QtGui.QMessageBox.about(self, "Error", str(e))
+            QtWidgets.QMessageBox.about(self, "Error", str(e))
         self.showVarsTable()
 
     def actualizaInfo(self):
@@ -282,7 +288,7 @@ class MyWindowClass(QtGui.QMainWindow, form_class):
 
 
 def main():
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
     MyWindow = MyWindowClass(None)
     MyWindow.show()
     app.exec_()

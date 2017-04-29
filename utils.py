@@ -30,6 +30,7 @@ class configFile:
         self.items = ["lang", "method"]
         self.lang = 'en'
         self.method = 'hybr'
+        self.format = '{:,.3}'
         try:
             f = open(filename, 'rb')
             texto_config = f.read().decode("utf-8").splitlines()
@@ -40,6 +41,8 @@ class configFile:
                     self.lang = valor
                 if 'method' in elm:
                     self.method = valor
+                if 'format' in elm:
+                    self.format = valor
         except:
             # Guardar con la configuración!
             pass
