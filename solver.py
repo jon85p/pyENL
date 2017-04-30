@@ -16,6 +16,12 @@ import warnings
 
 
 def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
+    '''
+    Evalúa el sistema de ecuaciones que ingresa el usuario donde:
+    pyENL: Valores numéricos para evaluar
+    pyENL_variables: Objetos variables
+    pyENL_eqns: Ecuaciones (lista de strings)
+    '''
     cantidad_eqns = len(pyENL_variables)
     # Asignación de variables
     for cont, var in enumerate(pyENL_variables):

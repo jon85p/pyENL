@@ -33,8 +33,18 @@ def quitaComentarios(eqns):
 
 
 class MyWindowClass(QtWidgets.QMainWindow, form_class):
+    '''
+    Clase para generar objeto aplicación, que contiene todas las rutinas a usar
+    por la interfaz gráfica.
+    Cada una de los métodos de esta clase corresponden a acciones que llevan a
+    modificar parámetros de la interfaz gráfica.
+    '''
 
     def __init__(self, parent=None):
+        '''
+        Inicialización del objeto ventana principal; contiene lo que se lleva a
+        cabo para cargar la ventana principal.
+        '''
         QtWidgets.QMainWindow.__init__(self, parent)
         # TODO Opciones del programa:
         opciones_ = configFile("config.txt")
@@ -103,6 +113,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", str(e))
 
     def imprimeSol(self, formateo):
+        '''
+        Imprime en la pestaña de soluciones, las respuestas al sistema de
+        ecuaciones ingresado por el usuario en la caja de texto que se usa para
+        tal fin.
+        '''
         self.solsTable.resizeColumnsToContents()
         self.solsTable.resizeRowsToContents()
         # La cantidad de filas es pues igual a la cantidad de
@@ -288,6 +303,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
 
 def main():
+    '''
+    Una vez se arranca el script, se llama esta función que crea una instancia
+    de la aplicación con un objeto de ventana principal, la muestra y ejecuta
+    el aplicativo
+    '''
     app = QtWidgets.QApplication(sys.argv)
     MyWindow = MyWindowClass(None)
     MyWindow.show()

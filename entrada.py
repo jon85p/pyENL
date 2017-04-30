@@ -45,6 +45,10 @@ class pyENL_variable:
 
 
 def find_between(s, first, last):
+    '''
+    Busca una cadena de texto entre dos strings; first y last que hacen parte
+    del string s.
+    '''
     try:
         start = s.index(first) + len(first)
         end = s.index(last, start)
@@ -192,6 +196,9 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
 
 
 def main():
+    '''
+    Rutina principal de la versión CLI (Command Line Interface)
+    '''
     parser = optparse.OptionParser('Uso: ' + sys.argv[0] + ' -f archivo_texto\
     -t timeout(seg) -m método -e archivo_exp')
     parser.add_option('-f', dest='foption', type='string',
