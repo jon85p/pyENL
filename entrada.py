@@ -74,6 +74,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
     for eqn in ecuaciones:
         if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
             expresion = eqn.replace(" ", "")
+            expresion = eqn.replace('\t','')
             # Capacidad de interpretar pow
             expresion = expresion.replace("^", "**")
             izq_der = expresion.split('=')

@@ -243,6 +243,7 @@ def cantidadEqnVar(texto_caja):
         if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
             ecuaciones += 1
             expresion = eqn.replace(" ", "")
+            expresion = expresion.replace("\t", "")
             # Capacidad de interpretar pow
             expresion = expresion.replace("^", "**")
             izq_der = expresion.split('=')
