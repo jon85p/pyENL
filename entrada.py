@@ -33,7 +33,8 @@ class pyENL_variable:
         self.upperlim = 1e5
         self.lowerlim = -1e5
         self.comment = 'Variable'
-        self.units = '1'  # Unidades de la variable.
+        self.units = '1'  # Unidad de la variable.
+        self.dim = '1' #Dimensión de la variable
 
     def convert(self):
         '''

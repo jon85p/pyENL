@@ -1,0 +1,42 @@
+%L
+m     1
+meter 1
+metre 1
+Angstrom 1E-10
+nm 1E-9
+ft  0.3048
+dm 0.1
+in  0.0254
+inch 0.0254
+mm  0.001
+micron 1e-6
+micrometer 1e-6
+µm  1e-6
+nanometer 1e-9
+millimeter 0.001
+cm  0.01
+km  1000
+yd  0.9144
+yard 0.9144
+mile  1609.344
+fathom 1.8288
+mil 0.0000254
+rod  5.0292
+furlong 201.168
+league 5556
+
+%M
+kg   1
+lbm  0.453592374
+lb_m  0.453592374
+g    0.001
+ton  907.184749
+grain 6.4799e-5
+mg 1e-6
+oz 0.028349523
+ozm 0.028349523
+slug  14.593881
+stone 6.350293236
+amu 1.660531E-27
+µg 1e-9
+microgram 1e-9

@@ -76,6 +76,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self))
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
+        self.cargarUnidades()
+
 
     def solve(self):
         '''
@@ -223,6 +225,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
             newitem = QtWidgets.QTableWidgetItem(var.units)
             # Cambiar cuando las unidades estén listas
+            #TODO
             newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.varsTable.setItem(i, 4, newitem)
 
@@ -262,7 +265,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 self.variables[i].guess = guess
                 self.variables[i].lowerlim = lowerlim
                 self.variables[i].upperlim = upperlim
-                self.variables[i].units = units
+                if self.variables[i].units != units:
+                    self.variables[i].units = units
+                    # Se barre dimension por dimension hasta encontrar
+                    # la que contenga la unidad asignada
+                    for dim in self.dimension_list:
+                        if units in self.Dicc_dimen[dim]:
+                            self.variables[i].dim= dim
+                            break
+                    print(self.variables[i].dim)
                 self.variables[i].comment = comment
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
@@ -301,6 +312,29 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.infoLabel.setText(
                 self.traduccion['Error encontrando cantidad de variables y de ecuaciones'])
 
+    def cargarUnidades(self):
+        ''' Se carga la base de datos de unidades que se encuentra en el
+        archivo unidades.txt '''
+        self.Dicc_dimen = {}
+        self.dimension_list = []
+        archivo = open("units.txt")
+        texto= archivo.read()
+        dimensiones= texto.split('%') #separamos el txt en una lista donde cada elemento sea la dimension
+        del dimensiones[0] # el primer elemento es un espacio en blanco asi que se debe borrar
+        for indicador in dimensiones:
+
+            datos = indicador.splitlines()#convertir cada conversion en un elemento de una lista
+            datos.pop(-1) #Se elimina el espacio que hay entre dimensiones en el txt
+            key_dimension = datos.pop(0) #La primera linea indica la dimension asi que se remueve
+            self.dimension_list.append(key_dimension)
+
+            Dicc_unid= {}
+            for equivalencia in datos: #equivalencia va a tomar cada linea que contiene la unidad y la relacion de conversion
+
+                (key_unidad, conversion) = equivalencia.split()
+                Dicc_unid[key_unidad] = conversion
+            #Una vez terminado el diccionario de conversiones para una dimensión dada se agrega al Diccionario de dimensiones
+            self.Dicc_dimen[key_dimension]= Dicc_unid
 
 def main():
     '''
