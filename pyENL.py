@@ -180,6 +180,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         # print([obj.name for obj in self.variables])
         # Si se cambia justo a la segunda pestaña...
+        self.variables.sort(key=lambda x: x.name.lower())
         self.actualizaInfo()
         if self.tabWidget.currentIndex() == 1:
             self.showVarsTable()
