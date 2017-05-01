@@ -8,6 +8,7 @@ from PyQt5 import QtCore, uic, QtGui, QtWidgets
 from utils import *
 from entrada import pyENL_variable, entradaTexto
 from translations import translations
+from copy import deepcopy
 
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
@@ -86,6 +87,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         # 10 segundos de espera
         self.actualizaInfo()
+        backup_var = deepcopy(self.variables)
         try:
             pyENL_timeout = 10
             ecuaciones = self.cajaTexto.toPlainText().splitlines()
@@ -96,11 +98,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.solucion = entradaTexto(
                 ecuaciones, pyENL_timeout, varsObj=self.variables, method='hybr')
             tiempo = self.solucion[1]
+            tiempo = '{:,.4}'.format(tiempo)
             self.variables = self.solucion[0][0]
             self.residuos = self.solucion[0][1]
             solved = self.solucion[0][2]
-            QtWidgets.QMessageBox.about(self, self.traduccion["Información"], self.traduccion['Solucionado en '] +
-                                    str(tiempo) + self.traduccion[' segundos.\nMayor desviación de '] + str(max(self.residuos)))
+            QtWidgets.QMessageBox.about(self, self.traduccion["Información"], self.traduccion['Solucionado en '] + \
+              tiempo + self.traduccion[' segundos.\nMayor desviación de '] + str(max(self.residuos)))
             # Ahora a enfocar la última pestaña de la aplicación:
             self.tabWidget.setCurrentIndex(2)
             # Ahora a imprimir la respuesta en la tabla si solved es True
@@ -113,7 +116,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     self, self.traduccion["Problema", "No hubo convergencia a solución..."])
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
-
+            # Restaurar acá las variables copiadas
+            self.variables = backup_var
+            
     def imprimeSol(self, formateo):
         '''
         Imprime en la pestaña de soluciones, las respuestas al sistema de
