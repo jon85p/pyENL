@@ -72,13 +72,22 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
                'diagbroyden', 'excitingmixing', 'krylov', 'df-sane']
     if method not in methods:
         raise Exception('El método de resolución no está listado, ver ayuda.')
-    for eqn in ecuaciones:
+    for ie, eqn in enumerate(ecuaciones):
         if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
             expresion = eqn.replace(" ", "")
-            expresion = eqn.replace('\t','')
+            expresion = expresion.replace('\t','')
             # Capacidad de interpretar pow
             expresion = expresion.replace("^", "**")
             izq_der = expresion.split('=')
+            operandos = ["+", "-", "*", "/", "("]
+            # Revisar que no haya operadores incompletos
+            if (izq_der[0][-1] in operandos) or (izq_der[1][-1] in operandos):
+              raise Exception('Ecuación mal escrita: ' + str(ie+1))
+            # Revisar que no hayan paréntesis sin cerrar
+            par_err1 = izq_der[0].count("(") != izq_der[0].count(")")
+            par_err2 = izq_der[1].count("(") != izq_der[1].count(")")
+            if par_err1 or par_err2:
+              raise Exception("No cierran los paréntesis en " + str(ie+1))
             paraRaiz = izq_der[0] + \
                 '-(' + izq_der[1] + ')'  # Igualación de cero
             lista.append(paraRaiz)
