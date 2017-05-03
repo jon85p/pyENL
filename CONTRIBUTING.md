@@ -4,7 +4,7 @@ Awesome !!!
 
 Here you can find some guidelines.
 
-#Code of conduct
+### Code of conduct
 
 
 Open Source Code of Conduct
@@ -48,14 +48,14 @@ rights to thoughtbot Code of Conduct. This work is published from the Colombia.
 
 License: [Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) 
 
-#Getting Started
+### Getting Started
 
-Make sure you have a [GitHub account](https://github.com/signup/free)
-Submit a ticket for your issue, assuming one does not already exist.
+- Make sure you have a [GitHub account](https://github.com/signup/free)
+- Submit a ticket for your issue, assuming one does not already exist.
 
-   - Clearly describe the issue including steps to reproduce when it is a bug.
-   - Make sure you fill in the earliest version that you know has the issue.
+ * Clearly describe the issue including steps to reproduce when it is a bug.
+ * Make sure you fill in the earliest version that you know has the issue.
 
-Fork the repository on GitHub
+- Fork the repository on GitHub
 
 
