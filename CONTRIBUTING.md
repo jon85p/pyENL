@@ -41,7 +41,7 @@ Finally, don't forget that it is human to make mistakes! We all do. Let’s work
 resolve issues, and learn from the mistakes that we will all inevitably make from time to time.
 Thanks
 
-Especial tahanks to thoughtbot, they make all the work: https://thoughtbot.com/open-source-code-of-conduct
+Especial tahanks to thoughtbot, they make all the work: [thoughbot code of conduct](https://thoughtbot.com/open-source-code-of-conduct)
 
 To the extent possible under law, the pyENL team has waived all copyright and related or neighboring 
 rights to thoughtbot Code of Conduct. This work is published from the Colombia. 
@@ -49,10 +49,13 @@ rights to thoughtbot Code of Conduct. This work is published from the Colombia.
 License: [Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) 
 
 #Getting Started
+
 Make sure you have a [GitHub account](https://github.com/signup/free)
 Submit a ticket for your issue, assuming one does not already exist.
 
-    -Clearly describe the issue including steps to reproduce when it is a bug.
+   - Clearly describe the issue including steps to reproduce when it is a bug.
    - Make sure you fill in the earliest version that you know has the issue.
 
 Fork the repository on GitHub
+
+
