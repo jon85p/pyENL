@@ -46,7 +46,7 @@ Especial tahanks to thoughtbot, they make all the work: https://thoughtbot.com/o
 To the extent possible under law, the pyENL team has waived all copyright and related or neighboring 
 rights to thoughtbot Code of Conduct. This work is published from the Colombia. 
 
-License: [Public Domain] (https://creativecommons.org/publicdomain/zero/1.0/) 
+License: [Public Domain](https://creativecommons.org/publicdomain/zero/1.0/) 
 
 #Getting Started
 Make sure you have a [GitHub account](https://github.com/signup/free)
