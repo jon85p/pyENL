@@ -9,6 +9,8 @@ from utils import *
 from entrada import pyENL_variable, entradaTexto
 from translations import translations
 from copy import deepcopy
+import pint
+u = pint.UnitRegistry()
 
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
@@ -77,7 +79,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self))
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
-        self.cargarUnidades()
+        # self.cargarUnidades()
 
 
     def solve(self):
@@ -159,7 +161,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # newitem.setBackgroundColor(color)
             self.solsTable.setItem(i, 1, newitem)
 
-            newitem = QtWidgets.QTableWidgetItem(var.units)
+            newitem = QtWidgets.QTableWidgetItem(str(var.units))
             newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.solsTable.setItem(i, 2, newitem)
 
@@ -228,11 +230,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # color = QtWidgets.QColor(255, 0, 0, 40)
             # newitem.setBackgroundColor(color)
             self.varsTable.setItem(i, 3, newitem)
-
-            newitem = QtWidgets.QTableWidgetItem(var.units)
+            newitem = QtWidgets.QTableWidgetItem(str(var.units))
             # Cambiar cuando las unidades estén listas
             #TODO
-            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            # newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.varsTable.setItem(i, 4, newitem)
 
             newitem = QtWidgets.QTableWidgetItem(var.comment)
@@ -271,15 +272,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 self.variables[i].guess = guess
                 self.variables[i].lowerlim = lowerlim
                 self.variables[i].upperlim = upperlim
-                if self.variables[i].units != units:
-                    self.variables[i].units = units
-                    # Se barre dimension por dimension hasta encontrar
-                    # la que contenga la unidad asignada
-                    for dim in self.dimension_list:
-                        if units in self.Dicc_dimen[dim]:
-                            self.variables[i].dim= dim
-                            break
-                    print(self.variables[i].dim)
+                temp_unit = eval('u.parse_units("' + units + '")')
+                self.variables[i].dim = temp_unit.dimensionality
+                self.variables[i].units = temp_unit
+                print(self.variables[i].units)
+                #if self.variables[i].units != units:
+                    #self.variables[i].units = units
+                    ## Se barre dimension por dimension hasta encontrar
+                    ## la que contenga la unidad asignada
+                    #for dim in self.dimension_list:
+                        #if units in self.Dicc_dimen[dim]:
+                            #self.variables[i].dim= dim
+                            #break
+                    #print(self.variables[i].dim)
+                    
                 self.variables[i].comment = comment
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))

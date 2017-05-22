@@ -89,7 +89,7 @@ def esalfanum(caracter):
     suma += (caracter >= '\x41' and caracter <= '\x5a')
     suma += (caracter >= '\x61' and caracter <= '\x7a')
     es_punto = (caracter == '.' or caracter == '_')
-    return bool(suma and es_punto)
+    return bool(suma + es_punto)
 
 
 def buscainds(texto, busq):
@@ -133,6 +133,8 @@ def variables(texto_eqn):
     # por los +'s
     # Ir agregando los válidos siempre que no se repitan a la lista de salida
     # Return esa lista
+    # TODO
+    # Eliminar los [unit] para efectos de buscar variables
     texto_eqn = '1*' + texto_eqn
     texto_eqn = ajustes(texto_eqn)
     # print(texto_eqn)

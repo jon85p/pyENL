@@ -11,6 +11,9 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 import os
+import pint
+u = pint.UnitRegistry()
+sindim = ((1*u.m)/(1*u.m)).units
 try:
     from expimp import sols2odt, sols2tex
 except:
@@ -33,9 +36,12 @@ class pyENL_variable:
         self.upperlim = 1e5
         self.lowerlim = -1e5
         self.comment = 'Variable'
-        self.units = '1'  # Unidad de la variable.
-        self.dim = '1' #Dimensión de la variable
+        self.units = sindim  # Unidad de la variable.
+        self.dim = self.units.dimensionality #Dimensión de la variable
 
+    def __repr__(self):
+      return "pyENL variable <" + self.name + ">"
+    
     def convert(self):
         '''
         Regresa la cadena de texto con la que debería reemplazarse el nombre de

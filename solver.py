@@ -9,6 +9,8 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 ln = log
 log = log10
 import warnings
+import pint
+u = pint.UnitRegistry()
 # from time import time as pyENL_time
 
 # Definición de la función a resolver
@@ -30,7 +32,17 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     # Funciones para hallar raíces
     for cont, eqn in enumerate(pyENL_eqns):
         try:
-            salidapyENL[cont] = eval(eqn)
+          # TODO
+          # Editar eqn para soporte de unidades
+          # Añadir las unidades en los strings!
+          # Esto cada vez que aparezca una variable...
+          # Ejemplo:
+          # a = x**2 + y
+          # (a*a.unit) = (x*x.unit) + (y*y.unit)
+          # Reemplazar los strings de variables SI al lado no
+          # hay valores alfanuméricos
+            eqn2 = agregaUnidades(eqn, pyENL_variables)
+            salidapyENL[cont] = eval(eqn2)
         except Exception as e:
             er = str(e)
             if 'invalid syntax' in er:
@@ -148,6 +160,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         # de ese si está el que se supone se quiere.
         # print(str(e))
         er = str(e)
+        # print(er)
         if 'de sintaxis' in er:
             raise Exception(er)
         if 'No se ha definido' in er:
@@ -173,3 +186,49 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         pyENL_variables[cont].guess = pyENL_sol['x'][cont]
     pyENL_residuos = pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns)
     return pyENL_variables, pyENL_residuos, asegura_convergencia
+  
+def agregaUnidades(eqn_, pyENL_variables):
+  from utils import variables, esalfanum
+  vars_ = variables(eqn_)
+  # TODO
+  # Primero ajustar valores numéricos que vienen con unidades:
+  # Ejemplo, si "a" y "b" están en metros y...
+  # a = b + 5[m]
+  # poder reconocer esos 5 como metros reemplazando con:
+  # a = b + 5*u.parse_units("m")
+  
+  # print(vars_)
+  eqn__ = eqn_
+  for var_ in vars_:
+    # Por cada variable se reemplaza con su unidad
+    # eqn__ = eqn__.replace(var_, "(" + var_ + ")")
+    l_var = len(var_)
+    # Buscar la unidad de la variable asociada
+    # Primero el índice de la variable
+    indi = ([i for i, obj in enumerate(pyENL_variables) if obj.name == var_] )[0]
+    unidad = str(pyENL_variables[indi].units) # Unidad en string
+    enc = 0
+    # print(eqn__)
+    while enc != -1:
+      # Mientras hay por encontrar...
+      enc = enc + bool(enc)
+      enc = eqn__.find(var_, enc)
+      if enc == -1:
+        break
+      l_eqn = len(eqn__)
+      # Verifica que se deba reemplazar
+      # Condiciones: Que no hayan alfanuméricos antes o sea el primer puesto
+      # Y que no hayan alfanuméricos después o sea el último puesto
+      cond1 = (not esalfanum(eqn__[enc-1])) or enc == 0
+      # cond2 = not esalfanum(eqn_[enc+1]) or enc == l_eqn - l_var
+      if enc == l_eqn - l_var:
+        cond2 = True
+      else:
+        cond2 = (not esalfanum(eqn__[enc+l_var]))
+      if cond1 and cond2:
+        # Reemplazar
+        eqn__ = eqn__[0:enc] + "(" + eqn__[enc:enc+l_var] + \
+          "*u.parse_units('" + unidad + "'))" + eqn__[enc+l_var:]
+        enc = enc + 1
+  # print(eqn__)
+  return eqn__
