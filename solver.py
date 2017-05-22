@@ -42,7 +42,10 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
           # Reemplazar los strings de variables SI al lado no
           # hay valores alfanuméricos
             eqn2 = agregaUnidades(eqn, pyENL_variables)
-            salidapyENL[cont] = eval(eqn2)
+            eqn2 = eqn2.replace("[", "*u.parse_units('")
+            eqn2 = eqn2.replace("]", "')")
+            tempoo = eval(eqn2)
+            salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
             if 'invalid syntax' in er:
@@ -113,6 +116,13 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     for contd, vard in enumerate(pyENL_variables):
         pyENL_guesses[contd] = vard.guess
     pyENL_ones = ones(pyENL_cantidad)
+    # Formateo de las ecuaciones para tomar unidades de valores numéricos
+    # desde las ecuaciones de usuario tipo: 5[m]
+    #lista_eqns = []
+    #for cadaEqn in pyENL_eqns:
+        #temp = cadaEqn.replace("[", "*u.parse_units('")
+        #temp = temp.replace("]", "')")
+        #lista_eqns.append(temp)
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
                              args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)

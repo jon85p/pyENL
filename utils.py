@@ -173,7 +173,8 @@ def variables(texto_eqn):
         if variable != '':
             if probar(variable) == True:
                 if variable not in salida:
-                    salida.append(variable)
+                    if '[' not in variable:
+                        salida.append(variable)
 
     return salida
 
