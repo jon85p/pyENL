@@ -48,6 +48,8 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
+            if 'Cannot convert' in er:
+                raise Exception('Error de unidades en la ecuación ' + str(cont + 1) + ': ' +er)
             if 'invalid syntax' in er:
                 raise Exception(
                     'Error de sintaxis en la ecuación ' + str(cont + 1))
