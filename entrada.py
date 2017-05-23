@@ -13,6 +13,7 @@ import optparse
 import os
 import pint
 u = pint.UnitRegistry()
+u.load_definitions("units.txt")
 sindim = ((1*u.m)/(1*u.m)).units
 try:
     from expimp import sols2odt, sols2tex

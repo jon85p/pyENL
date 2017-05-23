@@ -11,6 +11,7 @@ log = log10
 import warnings
 import pint
 u = pint.UnitRegistry()
+u.load_definitions("units.txt")
 # from time import time as pyENL_time
 
 # Definición de la función a resolver

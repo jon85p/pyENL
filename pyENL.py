@@ -11,7 +11,7 @@ from translations import translations
 from copy import deepcopy
 import pint
 u = pint.UnitRegistry()
-
+u.load_definitions("units.txt")
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
 # Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.png")
