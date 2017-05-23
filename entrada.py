@@ -167,7 +167,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
         # Si el error es de sintaxis hay que detectarlo sin que intente
         # nuevamente buscar soluciones infructuosamente:
         er = str(e)
-        if 'Cannot convert' in er:
+        if 'Cannot convert' in er or 'is not defined in the unit registry' in er:
             raise Exception(er)
         if 'Improper input parameters were entered.' in er:
             raise Exception('Parámetros inválidos suministrados')

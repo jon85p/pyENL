@@ -162,6 +162,8 @@ def variables(texto_eqn):
     # Ahora se efectúan todos los cambios:
     for cambio in cambios:
         texto_eqn = texto_eqn.replace(cambio, '1+')
+    # Acá eliminar lo que hay entre corchetes []
+    texto_eqn = re.sub(r'\[[^)]*\]', '', texto_eqn) 
     # Reemplazos:
     A_reemplazar = ['(', ')', '-', '*', '/', '^', ',']
     for termino in A_reemplazar:
@@ -173,8 +175,7 @@ def variables(texto_eqn):
         if variable != '':
             if probar(variable) == True:
                 if variable not in salida:
-                    if ('[' not in variable) and (']' not in variable):
-                        salida.append(variable)
+                    salida.append(variable)
 
     return salida
 
