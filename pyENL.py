@@ -4,6 +4,7 @@
 Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
+import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 from utils import *
 from entrada import pyENL_variable, entradaTexto
@@ -66,7 +67,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
-        self.solve_button.clicked.connect(self.solve)
+        self.solve_button.clicked.connect(self.solveThread)
         # self.actionSalir.connect(self.salir)
         # Atajo para resolver el sistema
         self.solve_button.setShortcut('Ctrl+R')
@@ -80,7 +81,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
-
+    def solveThread(self):
+      self.thread = threading.Thread(target=self.solve)
+      self.thread.start()
 
     def solve(self):
         '''
@@ -88,6 +91,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         solver principal y calcula.
         '''
         # 10 segundos de espera
+        self.solve_button.setDisabled(True)
         self.actualizaInfo()
         backup_var = deepcopy(self.variables)
         try:
@@ -120,6 +124,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", str(e))
             # Restaurar acá las variables copiadas
             self.variables = backup_var
+        self.solve_button.setDisabled(False)
             
     def imprimeSol(self, formateo):
         '''
