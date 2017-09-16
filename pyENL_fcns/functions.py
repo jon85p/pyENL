@@ -13,6 +13,7 @@ u.load_definitions("units.txt")
 # TODO
 # Funciones de CoolProp pasarlas por un wrapper de unidades!
 
+
 def quadsum(x, y):
     return x**2 + y ** 2
 
@@ -173,13 +174,46 @@ def fluids_Panhandle_A(SG, Tavg, L=None, D=None, P1=None, P2=None,
     '''
     # Aa
     check = [L, D, P1, P2, Q]
+    unidades = ["m", "m", "Pa", "Pa", "m**3/s"]
     unknowns = check.count(None)
     if unknowns != 1:
         raise Exception('invalid syntax')
+    Tavg = Tavg.to("K")
+    registro = Tavg._REGISTRY
+    Tavg = Tavg.magnitude
+    try:
+      L = L.to("m")
+      L = L.magnitude
+    except:
+      pass
+    try:
+      D = D.to("m")
+      D = D.magnitude
+    except:
+      pass
+    try:
+      P1 = P1.to("Pa")
+      P1 = P1.magnitude
+    except:
+      pass
+    try:
+      P2 = P2.to("Pa")
+      P2 = P2.magnitude
+    except:
+      pass
+    try:
+      Q = Q.to("m**3/s")
+      Q = Q.magnitude
+    except:
+      pass
     output = comp.Panhandle_A(SG, Tavg, L, D, P1, P2, Q, Ts, Ps, Zavg, E)
     if output.imag != 0:
         # Hay parte imaginaria en la respuesta, lanzar excepción
         raise Exception
+    # Reconocer cuál fue la salida
+    unidad = unidades[check.index(None)]
+    output = output*u.parse_units(unidad)
+    output._REGISTRY = registro
     return output
 
 

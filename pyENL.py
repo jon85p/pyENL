@@ -4,6 +4,7 @@
 Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
+import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 from utils import *
 from entrada import pyENL_variable, entradaTexto
@@ -89,7 +90,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
-    
+        
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
         methods = {'hybr':0, 'lm':1, 'broyden1':2, 'broyden2':3, 'anderson':4,
