@@ -49,6 +49,9 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
+            clase = str(e.__class__)
+            if clase == "<class 'TypeError'>":
+                raise Exception("Error de tipeo en ecuación " + str(cont + 1))
             if 'Cannot convert' in er or 'is not defined in the unit registry' in er:
                 raise Exception('Error de unidades en la ecuación ' + str(cont + 1) + ': ' +er)
             if 'invalid syntax' in er:
@@ -174,6 +177,8 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         # print(str(e))
         er = str(e)
         # print(er)
+        if 'de tipeo' in er:
+            raise Exception(er)
         if 'de sintaxis' in er:
             raise Exception(er)
         if 'No se ha definido' in er:
@@ -238,7 +243,9 @@ def agregaUnidades(eqn_, pyENL_variables):
         cond2 = True
       else:
         cond2 = (not esalfanum(eqn__[enc+l_var]))
-      if cond1 and cond2:
+      comillas = ["'", '"']
+      cond3 = (eqn__[enc-1] not in comillas) and (eqn__[enc + l_var] not in comillas)
+      if (cond1 and cond2) and cond3:
         # Reemplazar
         eqn__ = eqn__[0:enc] + "(" + eqn__[enc:enc+l_var] + \
           "*u.parse_units('" + unidad + "'))" + eqn__[enc+l_var:]

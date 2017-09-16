@@ -5,6 +5,13 @@ Funciones propias de pyENL
 from fluids import atmosphere as atm
 from fluids import compressible as comp
 from fluids import control_valve as cv
+from CoolProp.CoolProp import PropsSI as prop
+from CoolProp.CoolProp import HAPropsSI as haprop
+import pint
+u = pint.UnitRegistry()
+u.load_definitions("units.txt")
+# TODO
+# Funciones de CoolProp pasarlas por un wrapper de unidades!
 
 
 def quadsum(x, y):
@@ -42,11 +49,18 @@ def fluids_atmosphere_1976(str1, Z, dt=0):
     US Standard Atmosphere 1976 class, which calculates T, P, rho, v_sonic,
     mu, k, and g as a function of altitude above sea level.
     '''
-    obj = atm.ATMOSPHERE_1976(Z, dt)
+    Za = Z.to("m")
+    Za = Za.magnitude
+    obj = atm.ATMOSPHERE_1976(Za, dt)
     salida = ['T', 'P', 'rho', 'v_sonic', 'mu', 'k', 'g']
-    out = [obj.T, obj.P, obj.rho, obj.v_sonic, obj.mu, obj.k, obj.g]
+    out = [obj.T*u.K, obj.P*u.Pa, obj.rho*u.kg/(u.m)**3,\
+      obj.v_sonic*u.m/u.s, obj.mu*u.Pa*u.s, obj.k*u.W/(u.m*u.K),\
+        obj.g*u.m/(u.s)**2]
     if str1 in salida:
-        return out[salida.index(str1)]
+        salida_fun =  out[salida.index(str1)]
+        # Ajustando el registro de unidades para concordancia
+        salida_fun._REGISTRY = Z._REGISTRY
+        return salida_fun
     else:
         raise Exception('Propiedad no listada')
 
@@ -65,16 +79,22 @@ def fluids_atmosphere_nrlmsise00(str1, Z, latitude=0, longitude=0, day=0, second
     pyENL plus: Density of gases in mol/m^3
     '''
     NA = 6.022140857 * 1e23  # Avogadro number
-    obj = atm.ATMOSPHERE_NRLMSISE00(Z, latitude, longitude, day, seconds,
+    Za = Z.to("m")
+    Za = Za.magnitude
+    mol3 = u.mol/((u.m)**3)
+    obj = atm.ATMOSPHERE_NRLMSISE00(Za, latitude, longitude, day, seconds,
                                     f107, f107_avg,
                                     geomagnetic_disturbance_indices)
     salida = ["rho", "T", "P", "He_density", "O_density", "N2_density", "O2_density",
               "Ar_density", "H_density", "N_density", "O_anomalous_density"]
-    out = [obj.rho, obj.T, obj.P, obj.He_density / NA, obj.O_density / NA,
-           obj.N2_density / NA, obj.O2_density / NA, obj.Ar_density / NA,
-           obj.H_density / NA, obj.N_density / NA, obj.O_anomalous_density / NA]
+    out = [obj.rho*u.kg/(u.m)**3, obj.T*u.K, obj.P*u.Pa, (obj.He_density / NA)*mol3,\
+        (obj.O_density / NA)*mol3, (obj.N2_density / NA)*mol3, (obj.O2_density / NA)*mol3,\
+            (obj.Ar_density / NA)*mol3, (obj.H_density / NA)*mol3,\
+                (obj.N_density / NA)*mol3, (obj.O_anomalous_density / NA)*mol3]
     if str1 in salida:
-        return out[salida.index(str1)]
+        salida_fun = out[salida.index(str1)]
+        salida_fun._REGISTRY = Z._REGISTRY
+        return salida_fun
     else:
         raise Exception('invalid syntax')
 
@@ -154,13 +174,46 @@ def fluids_Panhandle_A(SG, Tavg, L=None, D=None, P1=None, P2=None,
     '''
     # Aa
     check = [L, D, P1, P2, Q]
+    unidades = ["m", "m", "Pa", "Pa", "m**3/s"]
     unknowns = check.count(None)
     if unknowns != 1:
         raise Exception('invalid syntax')
+    Tavg = Tavg.to("K")
+    registro = Tavg._REGISTRY
+    Tavg = Tavg.magnitude
+    try:
+      L = L.to("m")
+      L = L.magnitude
+    except:
+      pass
+    try:
+      D = D.to("m")
+      D = D.magnitude
+    except:
+      pass
+    try:
+      P1 = P1.to("Pa")
+      P1 = P1.magnitude
+    except:
+      pass
+    try:
+      P2 = P2.to("Pa")
+      P2 = P2.magnitude
+    except:
+      pass
+    try:
+      Q = Q.to("m**3/s")
+      Q = Q.magnitude
+    except:
+      pass
     output = comp.Panhandle_A(SG, Tavg, L, D, P1, P2, Q, Ts, Ps, Zavg, E)
     if output.imag != 0:
         # Hay parte imaginaria en la respuesta, lanzar excepción
         raise Exception
+    # Reconocer cuál fue la salida
+    unidad = unidades[check.index(None)]
+    output = output*u.parse_units(unidad)
+    output._REGISTRY = registro
     return output
 
 

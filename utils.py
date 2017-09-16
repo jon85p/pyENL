@@ -31,6 +31,8 @@ class configFile:
         self.lang = 'en'
         self.method = 'hybr'
         self.format = '{:,.3}'
+        self.tol = 1e-4
+        self.timeout = 10
         try:
             f = open(filename, 'rb')
             texto_config = f.read().decode("utf-8").splitlines()
@@ -43,6 +45,10 @@ class configFile:
                     self.method = valor
                 if 'format' in elm:
                     self.format = valor
+                if 'tol' in elm:
+                    self.tol = float(valor)
+                if 'timeout' in elm:
+                    self.timeout = float(valor)
         except:
             # Guardar con la configuración!
             pass

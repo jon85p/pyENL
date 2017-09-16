@@ -65,7 +65,7 @@ def find_between(s, first, last):
         return ""
 
 
-def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
+def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr'):
     '''
     ecuaciones es una lista de cadenas de texto con ecuaciones de entrada.
     varsObj define si llegan objetos variable como entrada.
@@ -157,7 +157,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
         variables_salida = varsObj
     pyENL_solved = False
     try:
-        pyENL_solucion = solver(lista, variables_salida, method=method)
+        pyENL_solucion = solver(lista, variables_salida, tol=tol, method=method)
         pyENL_solved = True
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
@@ -168,6 +168,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, method='hybr'):
         # Si el error es de sintaxis hay que detectarlo sin que intente
         # nuevamente buscar soluciones infructuosamente:
         er = str(e)
+        if 'de tipeo' in er:
+            raise Exception(er)
         if 'Cannot convert' in er or 'is not defined in the unit registry' in er:
             raise Exception(er)
         if 'Improper input parameters were entered.' in er:
