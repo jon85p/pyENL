@@ -1,3 +1,5 @@
 lang=en
-method = hybr
-format = {:,.5}
+method=hybr
+format={:,.5}
+tol=1e-05
+timeout=10

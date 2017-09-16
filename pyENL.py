@@ -10,6 +10,7 @@ from entrada import pyENL_variable, entradaTexto
 from translations import translations
 from copy import deepcopy
 import pint
+from functools import partial
 u = pint.UnitRegistry()
 u.load_definitions("units.txt")
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -19,8 +20,13 @@ u.load_definitions("units.txt")
 # NOTE
 # Cada vez que se actualice MainWindow.ui se debe actualizar MainWindow.py
 
+#TODO
+# Cuando salga error de no convergencia, no mostrar ventana de tiempo de solución
+
 # form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
 from GUI.MainWindow5 import Ui_MainWindow as form_class
+from GUI.props import prop_class
+from GUI.settings import Ui_Dialog as settings_class
 
 
 def quitaComentarios(eqns):
@@ -55,7 +61,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
         self.traduccion = translations(self.lang)
-        self.opt_tol = None
+        self.opt_tol = opciones_.tol
+        self.timeout = opciones_.timeout
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
         # Variables en el programa:
@@ -67,6 +74,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
+        # self.actionTermodinamicas.triggered.connect(self.propWindow)
+        self.actionConfiguracion.triggered.connect(self.settingsWindow)
         # self.actionSalir.connect(self.salir)
         # Atajo para resolver el sistema
         self.solve_button.setShortcut('Ctrl+R')
@@ -80,7 +89,69 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
-
+    
+    def settingsWindow(self):
+        langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
+        methods = {'hybr':0, 'lm':1, 'broyden1':2, 'broyden2':3, 'anderson':4,
+                   'linearmixing':5, 'diagbroyden':6, 'excitingmixing':7, 'krylov':8, 'df-sane':9}
+        dialog = QtWidgets.QDialog()
+        dialog.ui = settings_class()
+        dialog.ui.setupUi(dialog)
+        # Hay que conectar ANTES de que se cierre la ventana de diálogo
+        dialog.ui.buttonBox.accepted.connect(partial(self.saveSettings, dialog.ui))
+        dialog.ui.comboBox.setCurrentIndex(langs[self.lang])
+        dialog.ui.format_line.setText(self.format)
+        dialog.ui.method_opt.setCurrentIndex(methods[self.opt_method])
+        dialog.ui.tol_line.setText(str(self.opt_tol))
+        dialog.ui.timeout_spin.setValue(self.timeout)
+        dialog.exec_()
+        dialog.show()
+        # dialog.ui.buttonBox.accepted.connect(self.pruebaprint)
+        # print(dir(dialog.ui.comboBox))
+    
+    def saveSettings(self, ui):
+        langs = {0: "es", 1: "en", 2: "fr", 3:"pt"}
+        methods = {0:'hybr', 1:'lm', 2:'broyden1', 3:'broyden2', 4:'anderson',
+                   5:'linearmixing', 6:'diagbroyden', 7:'excitingmixing', 8:'krylov', 9:'df-sane'}
+        self.lang = langs[ui.comboBox.currentIndex()]
+        self.opt_method = methods[ui.method_opt.currentIndex()]
+        try:
+            self.opt_tol = float(str(ui.tol_line.text()))
+        except Exception as e: 
+            QtWidgets.QMessageBox.about(self, "Error", "No se entiende el formato de la tolerancia")
+            self.settingsWindow()
+        try:
+            format_str = str(ui.format_line.text())
+            if '{' not in format_str or '}' not in format_str:
+                raise Exception("Error")
+            pi_test = format_str.format(3.141592)
+            self.format = format_str
+        except:
+            QtWidgets.QMessageBox.about(self, "Error", "No se entiende el formato de presentación de números")
+            self.settingsWindow()
+        "Actualizar fichero"
+        try:
+            bufferr = 'lang=' + self.lang + '\n'
+            bufferr = bufferr + 'method=' + self.opt_method + '\n'
+            bufferr = bufferr + 'format=' + self.format + '\n'
+            bufferr = bufferr + 'tol=' + str(self.opt_tol) + '\n'
+            bufferr = bufferr + 'timeout=' + str(self.timeout) + '\n'
+            g = open("config.txt", 'wb')
+            g.write(bufferr.encode('utf-8'))
+            g.close()
+        except Exception as e:
+            QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config.txt'")
+            print(str(e))
+        
+    def propWindow(self):
+        dialog = QtWidgets.QDialog()
+        dialog.ui = prop_class()
+        dialog.ui.setupUi(dialog)
+        dialog.exec_()
+        dialog.show()
+        # window = PropWindow(self)
+        # if window.exec_():
+         #    print("Listo!")
 
     def solve(self):
         '''
@@ -88,22 +159,25 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         solver principal y calcula.
         '''
         # 10 segundos de espera
+        #self.solve_button.setDisabled()
         self.actualizaInfo()
         backup_var = deepcopy(self.variables)
         try:
-            pyENL_timeout = 10
+            pyENL_timeout = self.timeout
             ecuaciones = self.cajaTexto.toPlainText().splitlines()
             # Para poder soportar variables tipo texto
             ecuaciones = variables_string(ecuaciones)
             # Quitar los comentarios de las ecuaciones:
             self.ecuaciones_s = quitaComentarios(ecuaciones)
             self.solucion = entradaTexto(
-                ecuaciones, pyENL_timeout, varsObj=self.variables, method='hybr')
+                ecuaciones, pyENL_timeout, varsObj=self.variables, tol = self.opt_tol, method=self.opt_method)
             tiempo = self.solucion[1]
             tiempo = '{:,.4}'.format(tiempo)
             self.variables = self.solucion[0][0]
             self.residuos = self.solucion[0][1]
             solved = self.solucion[0][2]
+            if not solved:
+                raise Exception("No hubo convergencia a la solución")
             QtWidgets.QMessageBox.about(self, self.traduccion["Información"], self.traduccion['Solucionado en '] + \
               tiempo + self.traduccion[' segundos.\nMayor desviación de '] + str(max(self.residuos)))
             # Ahora a enfocar la última pestaña de la aplicación:
@@ -120,6 +194,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", str(e))
             # Restaurar acá las variables copiadas
             self.variables = backup_var
+        #self.solve_button.setEnabled()
             
     def imprimeSol(self, formateo):
         '''
@@ -347,6 +422,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 Dicc_unid[key_unidad] = conversion
             #Una vez terminado el diccionario de conversiones para una dimensión dada se agrega al Diccionario de dimensiones
             self.Dicc_dimen[key_dimension]= Dicc_unid
+
+class PropWindow(QtWidgets.QMainWindow, prop_class):
+    def __init__(self, parent=None):
+        QtWidgets.QDialog.__init__(self, parent)
+        self.setupUi(self)
+
 
 def main():
     '''
