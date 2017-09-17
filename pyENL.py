@@ -4,6 +4,7 @@
 Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
+import os
 import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 from utils import *
@@ -12,6 +13,8 @@ from translations import translations
 from copy import deepcopy
 import pint
 from functools import partial
+from zipfile import ZipFile
+import tempfile
 u = pint.UnitRegistry()
 u.load_definitions("units.txt")
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -83,6 +86,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # actionPegar es del botón cortar y pegar_2 del botón pegar
         self.actionPegar.triggered.connect(self.cajaTexto.cut)
         self.actionPegar_2.triggered.connect(self.cajaTexto.paste)
+        # Guardar archivo
+        self.actionGuardar.triggered.connect(self.guardaArchivo)
+        self.actionGuardar_Como.triggered.connect(self.guardaArchivoComo)
+        self.actionAbrir.triggered.connect(self.abreArchivo)
+        self.output_save = None
         # self.actionSalir.connect(self.salir)
         # Atajo para resolver el sistema
         self.solve_button.setShortcut('Ctrl+R')
@@ -161,6 +169,52 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         for i in range(len(hint)):
             self.cajaTexto.moveCursor(posicion.Left, posicion.KeepAnchor)
         # posicion.movePosition(posicion.Left, posicion.MoveAnchor, 2)
+        
+    def guardaArchivoComo(self):
+        try:
+            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.pyENL)")[0]
+        except:
+            pass
+        # print(self.output_save)
+        self.guardaArchivo()
+        
+    def guardaArchivo(self):
+        # Guarda un archivo, ya pasándole el nombre por self.output_save
+        # Si no está, guardar como
+        if not self.output_save:
+            self.guardaArchivoComo()
+        else:
+            # Guarda el archivo como tal
+            # Pasar texto a fichero para comprimirlo, al igual que vars1.dat
+            # Creación de carpeta temporal
+            tmp_dir = tempfile.TemporaryDirectory(prefix="pyENL")
+            tmp_route = str(tmp_dir).split("'")[1] + '/' # Cuidado con el "/", comprobar en Windows
+            # Crea carpetas a usar:
+            folders = ['src', 'vars', 'imgs', 'tables', 'graphs']
+            for folder in folders:
+                os.makedirs(tmp_route + folder)
+            # Ahora guarda el texto en src/eqns1.txt
+            f = open(tmp_route + 'src/eqns1.txt', 'wb')
+            texto = self.cajaTexto.toPlainText()
+            texto_b = texto.encode('utf-8')
+            f.write(texto_b)
+            f.close()
+            # Listo por ahora para comprimir
+            archivo_zip = ZipFile(self.output_save, 'w')
+            for folder in folders:
+                archivo_zip.write(tmp_route + folder)
+            archivo_zip.close()
+            # Listo, ahora a borrar la carpeta temporal
+            tmp_dir.cleanup()
+        
+    def abreArchivo(self):
+        self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.pyENL)")[0]
+        # Open stuff
+        # De momento que muestre el texto y cargue a vars1.dat
+        
+        # Esto es para que use el nombre de abierto para sobreescribir el archivo luego
+        self.output_save = self.open_file
+        
         
     def propWindow(self):
         dialog = QtWidgets.QDialog()
