@@ -77,6 +77,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.solve_button.clicked.connect(self.solve)
         # self.actionTermodinamicas.triggered.connect(self.propWindow)
         self.actionConfiguracion.triggered.connect(self.settingsWindow)
+        self.actionComentario.triggered.connect(self.agregaComentario)
+        self.actionSeleccionar_todo.triggered.connect(self.cajaTexto.selectAll)
+        self.actionCopiar.triggered.connect(self.cajaTexto.copy)
+        # actionPegar es del botón cortar y pegar_2 del botón pegar
+        self.actionPegar.triggered.connect(self.cajaTexto.cut)
+        self.actionPegar_2.triggered.connect(self.cajaTexto.paste)
         # self.actionSalir.connect(self.salir)
         # Atajo para resolver el sistema
         self.solve_button.setShortcut('Ctrl+R')
@@ -143,6 +149,18 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config.txt'")
             print(str(e))
+        
+    def agregaComentario(self):
+        # QtWidgets.QMessageBox.about(self, "Prueba", "Se ha activado la alarma")
+        posicion = self.cajaTexto.textCursor()
+        self.cajaTexto.insertPlainText("<< >>")
+        hint = self.traduccion["Acá va el comentario"]
+        self.cajaTexto.moveCursor(posicion.Left, posicion.MoveAnchor)
+        self.cajaTexto.moveCursor(posicion.Left, posicion.MoveAnchor)
+        self.cajaTexto.insertPlainText(hint)
+        for i in range(len(hint)):
+            self.cajaTexto.moveCursor(posicion.Left, posicion.KeepAnchor)
+        # posicion.movePosition(posicion.Left, posicion.MoveAnchor, 2)
         
     def propWindow(self):
         dialog = QtWidgets.QDialog()

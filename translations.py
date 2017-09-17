@@ -233,6 +233,9 @@ def translations(lang='en'):
 
     dicc_gen['Información'] = {'es': 'Información', 'en': 'Information',
                                'pt': 'Información', 'fr': 'Información'}
+    
+    dicc_gen['Acá va el comentario'] = {'es': 'Acá va el comentario', 'en': 'Comment goes here',
+                                        'pt': 'Acá va el comentario', 'fr': 'Acá va el comentario'}
 
     # Salida de la función
     output = {}
