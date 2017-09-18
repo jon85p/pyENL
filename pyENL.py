@@ -95,6 +95,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Atajo para resolver el sistema
         self.solve_button.setShortcut('Ctrl+R')
         self.actionSalir.setShortcut('Ctrl+Q')
+        self.actionGuardar.setShortcut('Ctrl+S')
+        self.actionAbrir.setShortcut('Ctrl+O')
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
         self.actionSalir.triggered.connect(QtWidgets.qApp.quit)
@@ -172,7 +174,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         
     def guardaArchivoComo(self):
         try:
-            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.pyENL)")[0]
+            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.enl)")[0]
         except:
             pass
         # print(self.output_save)
@@ -188,7 +190,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Pasar texto a fichero para comprimirlo, al igual que vars1.dat
             # Creación de carpeta temporal
             tmp_dir = tempfile.TemporaryDirectory(prefix="pyENL")
-            tmp_route = str(tmp_dir).split("'")[1] + '/' # Cuidado con el "/", comprobar en Windows
+            tmp_route = str(tmp_dir).split("'")[1] + os.sep # Cuidado con el "/", comprobar en Windows
             # Crea carpetas a usar:
             folders = ['src', 'vars', 'imgs', 'tables', 'graphs']
             for folder in folders:
@@ -199,19 +201,41 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             texto_b = texto.encode('utf-8')
             f.write(texto_b)
             f.close()
+            # Guardar index.txt (solamente eqns1.txt y vars1.dat
+            f = open(tmp_route + 'index.txt', 'wb')
+            indice = ['src/eqns1.txt\n']
+            for archivo in indice:
+                f.write(archivo.encode('utf-8'))
+            f.close()
             # Listo por ahora para comprimir
             archivo_zip = ZipFile(self.output_save, 'w')
             for folder in folders:
-                archivo_zip.write(tmp_route + folder)
+                archivo_zip.write(tmp_route + folder, folder)
+            for archivo in indice:
+                archivo_zip.write(tmp_route + archivo[0:-1], archivo[0:-1])
+            # Por último añadir el índice
+            archivo_zip.write(tmp_route + 'index.txt', 'index.txt')
             archivo_zip.close()
             # Listo, ahora a borrar la carpeta temporal
             tmp_dir.cleanup()
         
     def abreArchivo(self):
-        self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.pyENL)")[0]
+        self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)")[0]
         # Open stuff
         # De momento que muestre el texto y cargue a vars1.dat
-        
+        # Generación de la carpeta temporal para la descompresión de archivos
+        tmp_dir = tempfile.TemporaryDirectory(prefix="pyENL")
+        tmp_route = str(tmp_dir).split("'")[1] + os.sep # Cuidado con el "/", comprobar en Windows
+        zipAbrir = ZipFile(self.open_file)
+        zipAbrir.extractall(tmp_route)
+        zipAbrir.close()
+        # Lee eqns1.txt (De momento)
+        f = open(tmp_route + os.sep + 'src/eqns1.txt')
+        texto_a = f.read()
+        f.close()
+        self.cajaTexto.setPlainText(texto_a)
+        # Borrado de carpeta temporal
+        tmp_dir.cleanup()
         # Esto es para que use el nombre de abierto para sobreescribir el archivo luego
         self.output_save = self.open_file
         
