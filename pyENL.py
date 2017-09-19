@@ -15,7 +15,7 @@ import pint
 from functools import partial
 from zipfile import ZipFile
 import tempfile
-from pathlib import Path
+from expimp import sols2odt, sols2tex
 u = pint.UnitRegistry()
 u.load_definitions("units.txt")
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -92,6 +92,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionGuardar_Como.triggered.connect(self.guardaArchivoComo)
         self.actionAbrir.triggered.connect(self.abreArchivo)
         self.actionCerrar.triggered.connect(self.cierraArchivo)
+        self.actionLibreOffice.triggered.connect(self.exportaODT)
+        self.actionTeX.triggered.connect(self.exportaTex)
         self.output_save = None
         # Para saber si el archivo se ha modificado sin guardarse
         self.archivoModificado = False
@@ -102,7 +104,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionGuardar.setShortcut('Ctrl+S')
         self.actionAbrir.setShortcut('Ctrl+O')
         self.actionCerrar.setShortcut('Ctrl+W')
-        self.home_dir = str(Path.home())
+        self.home_dir = os.path.expanduser('~')
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
         self.actionSalir.triggered.connect(self.cerrarPyENL)
@@ -165,6 +167,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config.txt'")
             print(str(e))
+	
+    def exportaTex(self):
+        try:
+            tex_out = QtWidgets.QFileDialog.getSaveFileName(filter="TeX (*.tex)", directory=self.home_dir)[0]
+            sols2tex(self.variables, tex_out, self.cajaTexto.toPlainText().splitlines(), "John Doe")
+        except Exception as e:
+            QtWidgets.QMessageBox.about(self, "Error", "No se pudo exportar")
+            #print("ERROOOOOOR-------")
+            #print(str(e))
+
+    def exportaODT(self):
+        try:
+            odt_out = QtWidgets.QFileDialog.getSaveFileName(filter="Open Document Format (*.odt)", directory=self.home_dir)[0]
+            sols2odt(self.variables, odt_out, self.cajaTexto.toPlainText().splitlines())
+        except Exception as e:
+            QtWidgets.QMessageBox.about(self, "Error", "No se pudo exportar")
+            #print("EROOOOOOR------------")
+            # print(str(e))
         
     def agregaComentario(self):
         # QtWidgets.QMessageBox.about(self, "Prueba", "Se ha activado la alarma")

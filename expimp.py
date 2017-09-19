@@ -65,7 +65,7 @@ def sols2odt(variables, file_name, user_input):
         # Primero insertar el nombre de la variable con su valor y finalmente
         # El comentario de la misma:
         p = P(text=variable.name + ' = ' + str(variable.guess) + ' ' +
-              variable.units)
+              str(variable.units))
         textdoc.text.addElement(p)
         p = P(text=variable.comment)
         textdoc.text.addElement(p)
