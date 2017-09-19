@@ -5,5 +5,8 @@ build
 .ipynb_checkpoints
 .ipynb
 tests
+envs
 dist
 pyENL.egg-info
+.kdev4
+pyENL.kdev4
