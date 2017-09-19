@@ -15,6 +15,7 @@ import pint
 from functools import partial
 from zipfile import ZipFile
 import tempfile
+from pathlib import Path
 u = pint.UnitRegistry()
 u.load_definitions("units.txt")
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -90,16 +91,21 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionGuardar.triggered.connect(self.guardaArchivo)
         self.actionGuardar_Como.triggered.connect(self.guardaArchivoComo)
         self.actionAbrir.triggered.connect(self.abreArchivo)
+        self.actionCerrar.triggered.connect(self.cierraArchivo)
         self.output_save = None
+        # Para saber si el archivo se ha modificado sin guardarse
+        self.archivoModificado = False
         # self.actionSalir.connect(self.salir)
         # Atajo para resolver el sistema
         self.solve_button.setShortcut('Ctrl+R')
         self.actionSalir.setShortcut('Ctrl+Q')
         self.actionGuardar.setShortcut('Ctrl+S')
         self.actionAbrir.setShortcut('Ctrl+O')
+        self.actionCerrar.setShortcut('Ctrl+W')
+        self.home_dir = str(Path.home())
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
-        self.actionSalir.triggered.connect(QtWidgets.qApp.quit)
+        self.actionSalir.triggered.connect(self.cerrarPyENL)
 
         # TODO En Información incluir la máxima desviación
         # print(dir(self))
@@ -172,13 +178,66 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.cajaTexto.moveCursor(posicion.Left, posicion.KeepAnchor)
         # posicion.movePosition(posicion.Left, posicion.MoveAnchor, 2)
         
+    def cerrarPyENL(self, event=None):
+        # QtWidgets.QMessageBox.about(self, "Advertencia", "Estoy saliendo")
+        if self.archivoModificado:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setText("El documento se ha modificado")
+            msgBox.setInformativeText("¿Desea guardar los cambios?");
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
+            msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
+            ret = msgBox.exec_()
+            if ret == QtWidgets.QMessageBox.Save:
+                self.guardaArchivo()
+                QtWidgets.qApp.quit()
+            elif ret == QtWidgets.QMessageBox.Discard:
+                QtWidgets.qApp.quit()
+            elif ret == QtWidgets.QMessageBox.Cancel:
+                if event:
+                    event.ignore()
+            else:
+                QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
+        else:
+            QtWidgets.qApp.quit()
+        
+    def closeEvent(self, event):
+        # Modifica la acción de salir con el botón X para que pase por la función cerrarPyENL()
+        self.cerrarPyENL(event)
+        
+    def cierraArchivo(self):
+        if self.archivoModificado:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setText("El documento se ha modificado")
+            msgBox.setInformativeText("¿Desea guardar los cambios?");
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
+            msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
+            ret = msgBox.exec_()
+            if ret == QtWidgets.QMessageBox.Save:
+                self.guardaArchivo()
+                self.limpiaTrasCierre()
+            elif ret == QtWidgets.QMessageBox.Discard:
+                self.limpiaTrasCierre()
+            elif ret == QtWidgets.QMessageBox.Cancel:
+                pass
+            else:
+                QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
+        else:
+            self.limpiaTrasCierre()
+        
+    def limpiaTrasCierre(self):
+        self.output_save = None
+        self.cajaTexto.setPlainText('')
+        self.setWindowTitle('pyENL')
+        self.archivoModificado = False
+        
     def guardaArchivoComo(self):
         try:
-            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.enl)")[0]
+            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
         except:
             pass
         # print(self.output_save)
-        self.guardaArchivo()
+        if self.output_save != '':
+            self.guardaArchivo()
         
     def guardaArchivo(self):
         # Guarda un archivo, ya pasándole el nombre por self.output_save
@@ -216,29 +275,57 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Por último añadir el índice
             archivo_zip.write(tmp_route + 'index.txt', 'index.txt')
             archivo_zip.close()
+            # Ya no hay cambios por guardar
+            self.archivoModificado = False
             # Listo, ahora a borrar la carpeta temporal
             tmp_dir.cleanup()
-        
+            self.setWindowTitle("pyENL: " +  self.output_save.split('/')[-1])
+    
     def abreArchivo(self):
-        self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)")[0]
-        # Open stuff
-        # De momento que muestre el texto y cargue a vars1.dat
-        # Generación de la carpeta temporal para la descompresión de archivos
-        tmp_dir = tempfile.TemporaryDirectory(prefix="pyENL")
-        tmp_route = str(tmp_dir).split("'")[1] + os.sep # Cuidado con el "/", comprobar en Windows
-        zipAbrir = ZipFile(self.open_file)
-        zipAbrir.extractall(tmp_route)
-        zipAbrir.close()
-        # Lee eqns1.txt (De momento)
-        f = open(tmp_route + os.sep + 'src/eqns1.txt')
-        texto_a = f.read()
-        f.close()
-        self.cajaTexto.setPlainText(texto_a)
-        # Borrado de carpeta temporal
-        tmp_dir.cleanup()
-        # Esto es para que use el nombre de abierto para sobreescribir el archivo luego
-        self.output_save = self.open_file
+        if self.archivoModificado:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setText("El documento se ha modificado")
+            msgBox.setInformativeText("¿Desea guardar los cambios?");
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
+            msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
+            ret = msgBox.exec_()
+            if ret == QtWidgets.QMessageBox.Save:
+                self.guardaArchivo()
+                self.abreArchivoAccion()
+            elif ret == QtWidgets.QMessageBox.Discard:
+                self.abreArchivoAccion()
+            elif ret == QtWidgets.QMessageBox.Cancel:
+                pass
+            else:
+                QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
+        else:
+            self.abreArchivoAccion()
         
+        
+    def abreArchivoAccion(self):
+        try:
+            self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
+            # Open stuff
+            # De momento que muestre el texto y cargue a vars1.dat
+            # Generación de la carpeta temporal para la descompresión de archivos
+            tmp_dir = tempfile.TemporaryDirectory(prefix="pyENL")
+            tmp_route = str(tmp_dir).split("'")[1] + os.sep # Cuidado con el "/", comprobar en Windows
+            zipAbrir = ZipFile(self.open_file)
+            zipAbrir.extractall(tmp_route)
+            zipAbrir.close()
+            # Lee eqns1.txt (De momento)
+            f = open(tmp_route + os.sep + 'src/eqns1.txt')
+            texto_a = f.read()
+            f.close()
+            self.cajaTexto.setPlainText(texto_a)
+            # Borrado de carpeta temporal
+            tmp_dir.cleanup()
+            # Esto es para que use el nombre de abierto para sobreescribir el archivo luego
+            self.output_save = self.open_file
+            self.setWindowTitle('pyENL: ' + self.output_save.split('/')[-1])
+            self.archivoModificado = False
+        except:
+            QtWidgets.QMessageBox.about(self, "Error", "No se abrió un archivo")
         
     def propWindow(self):
         dialog = QtWidgets.QDialog()
@@ -462,6 +549,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
         self.showVarsTable()
+        self.archivoModificado = True
 
     def actualizaInfo(self):
         '''
@@ -469,6 +557,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         variables con respecto al sistema de ecuaciones que el usuario está
         ingresando
         '''
+        # Se modificó ya el archivo
+        self.archivoModificado = True
         texto = self.cajaTexto.toPlainText()
         texto = texto.splitlines()
         # self.infoLabel.setText((len(texto)))
