@@ -5,14 +5,88 @@ Funciones propias de pyENL
 from fluids import atmosphere as atm
 from fluids import compressible as comp
 from fluids import control_valve as cv
-from CoolProp.CoolProp import PropsSI as prop
-from CoolProp.CoolProp import HAPropsSI as haprop
-import pint
-u = pint.UnitRegistry()
+from CoolProp.CoolProp import PropsSI as proppyENL
+from CoolProp.CoolProp import HAPropsSI as haproppyENP
+from pint import _DEFAULT_REGISTRY as u
 u.load_definitions("units.txt")
+parse = u.parse_units
+unit_pyENL = u.m
+
 # TODO
 # Funciones de CoolProp pasarlas por un wrapper de unidades!
+# Diccionario Coolprop
 
+dicc_coolprop = {'DMOLAR':parse('mole/m^3'), 'Dmolar':parse('mole/m^3'),
+                 'D':parse('kg/m^3'), 'DMASS':parse('kg/m^3'), 'Dmass':'kg/m^3',
+                 'HMOLAR':parse('J/mol'), 'Hmolar':parse('J/mol'),
+                 'H':parse('J/kg'), 'HMASS':parse('J/kg'), 'Hmass':parse('J/kg'),
+                 'P':parse('Pa'), 'Q':parse('mol/mol'), 
+                 'SMOLAR':parse('J/mol/K'), 'Smolar':parse('J/mol/K'),
+                 'S':parse('J/kg/K'), 'SMASS': parse('J/kg/K'), 'Smass': parse('J/kg/K'),
+                 'T': parse('K'), 'UMOLAR': parse('J/mol'), 'Umolar': parse('J/mol'),
+                 'A': parse('m/s'), 'SPEED_OF_SOUND': parse('m/s'), 'speed_of_sound': parse('m/s'),
+                 'CONDUCTIVITY':parse('W/m/K'), 'L':parse('W/m/K'), 'conductivity':parse('W/m/K'),
+                 'CP0MASS': parse('J/kg/K'), 'Cp0mass': parse('J/kg/K'),
+                 'CP0MOLAR': parse('J/mol/K'), 'Cp0molar': parse('J/mol/K'),
+                 'CPMOLAR': parse('J/mol/K'), 'Cpmolar': parse('J/mol/K'),
+                 'CVMASS': parse('J/kg/K'), 'Cvmass': parse('J/kg/K'), 'O': parse('J/kg/K'),
+                 'CVMOLAR': parse('J/mol/K'), 'Cvmolar': parse('J/mol/K'),
+                 'C':parse('J/kg/K'), 'CPMASS':parse('J/kg/K'), 'Cpmass':parse('J/kg/K'),
+                 'DIPOLE_MOMENT':parse('C*m'), 'dipole_moment':parse('C*m'),
+                 'GAS_CONSTANT': parse('J/mol/K'), 'gas_constant':parse('J/mol/K'),
+                 'GMOLAR': parse('J/mol'), 'Gmolar': parse('J/mol'),
+                 'G': parse('J/kg'), 'GMASS': parse('J/kg'), 'Gmass': parse('J/kg'),
+                 'HELMHOLTZMASS': parse('J/kg'), 'Helmholtzmass': parse('J/kg'),
+                 'HELMHOLTZMOLAR': parse('J/mol'), 'Helmholtzmolar': parse('J/mol'),
+                 'ISOBARIC_EXPANSION_COEFFICIENT': parse('1/K'), 'isobaric_expansion_coefficient': parse('1/K'),
+                 'ISOTHERMAL_COMPRESSIBILITY': parse('1/Pa'), 'isothermal_compressibility': parse('1/Pa'),
+                 'I': parse('N/m'), 'SURFACE_TENSION': parse('N/m'), 'surface_tension': parse('N/m'),
+                 'M': parse('kg/mol'), 'MOLARMASS': parse('kg/mol'), 'MOLAR_MASS': parse('kg/mol'),
+                 'MOLEMASS': parse('kg/mol'), 'molar_mass': parse('kg/mol'),
+                 'molarmass': parse('kg/mol'), 'molemass': parse('kg/mol'),
+                 'PCRIT': parse('Pa'), 'P_CRITICAL': parse('Pa'), 'Pcrit': parse('Pa'),
+                 'p_critical': parse('Pa'), 'pcrit': parse('Pa'), 'PMAX': parse('Pa'),
+                 'P_MAX': parse('Pa'), 'P_max': parse('Pa'), 'pmax': parse('Pa'),
+                 'PMIN': parse('Pa'), 'P_MIN': parse('Pa'), 'P_min': parse('Pa'), 'pmin': parse('Pa'),
+                 'PTRIPLE': parse('Pa'), 'P_TRIPLE': parse('Pa'), 'p_triple': parse('Pa'),
+                 'ptriple': parse('Pa'), 'P_REDUCING': parse('Pa'), 'p_reducing': parse('Pa'),
+                 'RHOCRIT': parse('kg/m^3'), 'RHOMASS_CRITICAL': parse('kg/m^3'),
+                 'rhocrit': parse('kg/m^3'), 'rhomass_critical': parse('kg/m^3'),
+                 'RHOMASS_REDUCING': parse('kg/m^3'), 'rhomass_reducing': parse('kg/m^3'),
+                 'RHOMOLAR_CRITICAL':parse('mol/m^3'), 'rhomolar_critical':parse('mol/m^3'),
+                 'RHOMOLAR_REDUCING':parse('mol/m^3'), 'rhomolar_reducing':parse('mol/m^3'),
+                 'SMOLAR_RESIDUAL': parse('J/mol/K'), 'Smolar_residual': parse('J/mol/K'),
+                 'TCRIT': u.K, 'T_CRITICAL': u.K, 'T_critical': u.K, 'Tcrit': u.K,
+                 'TMAX': u.K, 'T_MAX': u.K, 'T_max': u.K, 'Tmax': u.K,
+                 'TMIN': u.K, 'T_MIN': u.K, 'T_min': u.K, 'Tmin': u.K,
+                 'TTRIPLE': u.K, 'T_TRIPLE': u.K, 'T_triple': u.K, 'Ttriple': u.K,
+                 'T_FREEZE': u.K, 'T_freeze': u.K, 'T_REDUCING': u.K, 'T_reducing': u.K,
+                 'V': parse('Pa*s'), 'VISCOSITY': parse('Pa*s'), 'viscosity': parse('Pa*s')}
+# TODO: Agregar las adimensionales!
+
+def prop(des, *args):
+    # des es lo que se quiere
+    # Convertir a unidades base, esto verificará también que pueda hacerse
+    # TODO Problema con el registro, ¿cómo abordarlo desde CoolProp?
+    # print(args)
+    query = 'dicc_coolprop["' + des+ '"] * proppyENL("' + des + '",'
+    for i, arg in enumerate(args):
+        # Si es texto, dejarlo igual
+        if 'str' not in str(arg.__class__):
+           # Hacer lo de las unidades, convertir a la del término anterior de texto
+           try:
+             nuevoarg = arg.to(dicc_coolprop[args[i-1]])
+           except:
+             raise Exception("Argumento de prop() debe tener unidades")
+           query = query + str(nuevoarg.magnitude) + ','
+        elif i == len(args) - 1:
+            query += '"' + arg + '")'
+        else:
+            query += '"' + arg + '",'
+    # print(query)
+    out = eval(query)
+    #out._REGISTRY = _REGISTRY
+    return out
 
 def quadsum(x, y):
     return x**2 + y ** 2

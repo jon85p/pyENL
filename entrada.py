@@ -11,8 +11,7 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 import os
-import pint
-u = pint.UnitRegistry()
+from pint import _DEFAULT_REGISTRY as u
 u.load_definitions("units.txt")
 sindim = ((1*u.m)/(1*u.m)).units
 try:
@@ -188,6 +187,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
         if 'Mala entrada' in er:
             raise Exception(er)
         if 'No se tienen los valores' in er:
+            raise Exception(er)
+        if 'debe tener unidades' in er:
             raise Exception(er)
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio

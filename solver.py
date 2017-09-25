@@ -4,13 +4,10 @@
 import scipy.optimize as opt
 from numpy import *
 from pyENL_fcns import *
-from CoolProp.CoolProp import PropsSI as prop
-from CoolProp.CoolProp import HAPropsSI as haprop
 ln = log
 log = log10
 import warnings
-import pint
-u = pint.UnitRegistry()
+from pint import _DEFAULT_REGISTRY as u
 u.load_definitions("units.txt")
 # from time import time as pyENL_time
 
@@ -82,6 +79,8 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             elif 'No se tienen los valores' in er:
                 # La funció pyENL lanza la excepción por no tener suficientes
                 # variables para operar
+                raise Exception(er + ' en la ecuación ' + str(cont + 1))
+            elif 'debe tener unidades' in er:
                 raise Exception(er + ' en la ecuación ' + str(cont + 1))
             else:
                 raise Exception
@@ -192,6 +191,8 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         if 'Mala entrada' in er:
             raise Exception(er)
         if 'No se tienen los valores' in er:
+            raise Exception(er)
+        if 'debe tener unidades' in er:
             raise Exception(er)
     asegura_convergencia = True
     try:

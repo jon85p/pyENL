@@ -11,12 +11,11 @@ from utils import *
 from entrada import pyENL_variable, entradaTexto
 from translations import translations
 from copy import deepcopy
-import pint
 from functools import partial
 from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
-u = pint.UnitRegistry()
+from pint import _DEFAULT_REGISTRY as u
 u.load_definitions("units.txt")
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
