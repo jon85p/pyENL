@@ -46,6 +46,7 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
+            # print(er)
             clase = str(e.__class__)
             if clase == "<class 'TypeError'>":
                 raise Exception("Error de tipeo en ecuación " + str(cont + 1))

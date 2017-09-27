@@ -279,9 +279,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             texto_b = texto.encode('utf-8')
             f.write(texto_b)
             f.close()
+            # Crear el archivo vars/vars1.txt
+            f = open(tmp_route + 'vars/vars1.txt', 'wb')
+            dict_vars = {}
+            for var in self.variables:
+                lista_a_guardar = []
+                lista_a_guardar.append('{:.50}'.format(var.guess))
+                lista_a_guardar.append('{:.50}'.format(var.lowerlim))
+                lista_a_guardar.append('{:.50}'.format(var.upperlim))
+                lista_a_guardar.append(var.comment)
+                lista_a_guardar.append(str(var.units))
+                dict_vars[var.name] = lista_a_guardar
+            texto_dicc = dict_vars.__repr__()
+            texto_dicc_b = texto_dicc.encode('utf-8')
+            f.write(texto_dicc_b)
+            f.close()
             # Guardar index.txt (solamente eqns1.txt y vars1.dat
             f = open(tmp_route + 'index.txt', 'wb')
-            indice = ['src/eqns1.txt\n']
+            indice = ['src/eqns1.txt\n','vars/vars1.txt\n']
             for archivo in indice:
                 f.write(archivo.encode('utf-8'))
             f.close()
@@ -337,6 +352,22 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             texto_a = f.read()
             f.close()
             self.cajaTexto.setPlainText(texto_a)
+            g = open(tmp_route + os.sep + 'vars/vars1.txt')
+            dic_str_var = g.read()
+            g.close()
+            # Diccionario con las variables del archivo guardado
+            dic_var = eval(dic_str_var)
+            self.variables = []
+            for var in dic_var.keys():
+                lista = dic_var[var]
+                var_a_lista = pyENL_variable(var)
+                var_a_lista.guess = float(lista[0])
+                var_a_lista.lowerlim = float(lista[1])
+                var_a_lista.upperlim = float(lista[2])
+                var_a_lista.comment = lista[3]
+                var_a_lista.units = u.parse_units(lista[4])
+                var_a_lista.dim = var_a_lista.units.dimensionality
+                self.variables.append(var_a_lista)
             # Borrado de carpeta temporal
             tmp_dir.cleanup()
             # Esto es para que use el nombre de abierto para sobreescribir el archivo luego
