@@ -32,7 +32,7 @@ class pyENL_variable:
         variable. El nombre es una cadena de texto
         '''
         self.name = nombre
-        self.guess = 1
+        self.guess = 1.0
         self.upperlim = 1e5
         self.lowerlim = -1e5
         self.comment = 'Variable'
@@ -204,8 +204,33 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
                                         tol=1.49012e-08)
                 pyENL_solved = True
                 break
-            except:
-                pass
+            except Exception as e:
+                er = str(e)
+                if 'de tipeo' in er:
+                    raise Exception(er)
+                if 'Cannot convert' in er or 'is not defined in the unit registry' in er:
+                    raise Exception(er)
+                if 'Improper input parameters were entered.' in er:
+                    raise Exception('Parámetros inválidos suministrados')
+                if 'de sintaxis' in er:
+                    raise Exception(er)
+                if 'No se ha definido' in er:
+                    # Una función no está definida
+                    raise Exception(er)
+                if 'como variable en' in er:
+                    raise Exception(er)
+                if 'Faltan argumentos' in er:
+                    raise Exception(er)
+                if 'inadecuado en función' in er:
+                    raise Exception(er)
+                if 'Mala entrada' in er:
+                    raise Exception(er)
+                if 'No se tienen los valores' in er:
+                    raise Exception(er)
+                if 'debe tener unidades' in er:
+                    raise Exception(er)
+                if 'Error de unidades' in er:
+                    raise Exception(er)
             # Actualiza el tiempo que ha transcurido:
             pyENL_final = time()
             pyENL_transcurrido = pyENL_final - pyENL_inicio
