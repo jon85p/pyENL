@@ -77,7 +77,9 @@ def prop(des, *args):
            try:
              nuevoarg = arg.to(dicc_coolprop[args[i-1]])
            except:
-             raise Exception("Argumento de prop() debe tener unidades")
+             # Si no tiene unidades, asignar auto dimensionless
+             # raise Exception("Argumento de prop() debe tener unidades")
+             nuevoarg = arg * u.m/u.m
            query = query + str(nuevoarg.magnitude) + ','
         elif i == len(args) - 1:
             query += '"' + arg + '")'

@@ -228,7 +228,7 @@ def variables_string(texto):
         if '<<' not in eqn:
             try:
                 result = pattern.sub(lambda x: dicc[x.group()], eqn)
-                print(eqn)
+                # print(eqn)
                 # El reemplazo:
                 texto[i] = result
             except:

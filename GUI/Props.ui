@@ -13,189 +13,76 @@
   <property name="windowTitle">
    <string>Propiedades fluido</string>
   </property>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>6</y>
-     <width>186</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Uso de propiedades de fluidos</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_2">
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>30</y>
-     <width>41</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Fluido:</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_3">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>30</y>
-     <width>63</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Propiedad</string>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="listWidget">
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>54</y>
-     <width>235</width>
-     <height>89</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="listWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>54</y>
-     <width>246</width>
-     <height>89</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>149</y>
-     <width>74</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Propiedad 1</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_5">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>149</y>
-     <width>74</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Propiedad 2</string>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="listWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>173</y>
-     <width>235</width>
-     <height>90</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="listWidget_4">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>173</y>
-     <width>246</width>
-     <height>90</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_6">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>269</y>
-     <width>74</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Propiedad 3</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_7">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>269</y>
-     <width>37</width>
-     <height>18</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Salida</string>
-   </property>
-  </widget>
-  <widget class="QListWidget" name="listWidget_5">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
-   <property name="geometry">
-    <rect>
-     <x>6</x>
-     <y>293</y>
-     <width>235</width>
-     <height>89</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="textEdit">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>293</y>
-     <width>246</width>
-     <height>89</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="reject">
-   <property name="geometry">
-    <rect>
-     <x>247</x>
-     <y>388</y>
-     <width>84</width>
-     <height>34</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Cancelar</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="accept">
-   <property name="geometry">
-    <rect>
-     <x>127</x>
-     <y>388</y>
-     <width>84</width>
-     <height>34</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Aceptar</string>
-   </property>
-  </widget>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0" colspan="2">
+    <widget class="QListWidget" name="listWidget"/>
+   </item>
+   <item row="6" column="0" colspan="3">
+    <widget class="QTextEdit" name="textEdit"/>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Uso de propiedades de fluidos</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Primer argumento</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Propiedad buscada</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Salida</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QListWidget" name="listWidget_2"/>
+   </item>
+   <item row="3" column="2">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Segundo Argumento</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QListWidget" name="listWidget_3"/>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Fluido:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QListWidget" name="listWidget_4">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>
