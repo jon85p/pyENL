@@ -17,6 +17,8 @@ import tempfile
 from expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as u
 u.load_definitions("units.txt")
+from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information
+from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
 # Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.png")
@@ -29,7 +31,7 @@ u.load_definitions("units.txt")
 
 # form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
 from GUI.MainWindow5 import Ui_MainWindow as form_class
-from GUI.props import prop_class
+from GUI.props import Ui_Dialog as prop_class
 from GUI.settings import Ui_Dialog as settings_class
 
 
@@ -78,7 +80,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
-        # self.actionTermodinamicas.triggered.connect(self.propWindow)
+        self.actionTermodinamicas.triggered.connect(self.propWindow)
         self.actionConfiguracion.triggered.connect(self.settingsWindow)
         self.actionComentario.triggered.connect(self.agregaComentario)
         self.actionSeleccionar_todo.triggered.connect(self.cajaTexto.selectAll)
@@ -384,11 +386,42 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         dialog = QtWidgets.QDialog()
         dialog.ui = prop_class()
         dialog.ui.setupUi(dialog)
+        dialog.ui.buttonBox.accepted.connect(partial(self.insertProp, dialog.ui))
+        lista1 = sorted(FluidsList())
+        # Lista de fluidos
+        for item in lista1:
+            dialog.ui.listWidget.addItem(item)
+        # Lista de propiedades
+        #props_l = 
+        
+        lista2 = dicc_coolprop.keys()
+        # Items no repetidos
+        items_no_rep = []
+        # Lista de propiedades
+        for item in lista2:
+            indice = get_parameter_index(item)
+            if indice not in items_no_rep:
+                items_no_rep.append(indice)
+                # Long se refiere a la descripción larga de la propiedad
+                description = get_parameter_information(indice, "long")
+                unidad_item = get_parameter_information(indice, "units")
+                dialog.ui.listWidget_2.addItem(description + ' [' + unidad_item + ']')
+                # Agregar parámetros de entrada
+                IO = get_parameter_information(indice, "IO")
+                if IO == 'IO':
+                    dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
+                    dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
+        
+        
         dialog.exec_()
         dialog.show()
         # window = PropWindow(self)
         # if window.exec_():
          #    print("Listo!")
+    
+    def insertProp(self, ui):
+        # Inserta texto con llamado a función prop()
+        print("Holaaa")
 
     def solve(self):
         '''
@@ -587,7 +620,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 temp_unit = eval('u.parse_units("' + units + '")')
                 self.variables[i].dim = temp_unit.dimensionality
                 self.variables[i].units = temp_unit
-                print(self.variables[i].units)
+                # print(self.variables[i].units)
                 #if self.variables[i].units != units:
                     #self.variables[i].units = units
                     ## Se barre dimension por dimension hasta encontrar
