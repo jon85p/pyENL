@@ -115,7 +115,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
-        
+
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
         methods = {'hybr':0, 'lm':1, 'broyden1':2, 'broyden2':3, 'anderson':4,
@@ -134,8 +134,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         dialog.show()
         # dialog.ui.buttonBox.accepted.connect(self.pruebaprint)
         # print(dir(dialog.ui.comboBox))
-    
-    
+
     def saveSettings(self, ui):
         langs = {0: "es", 1: "en", 2: "fr", 3:"pt"}
         methods = {0:'hybr', 1:'lm', 2:'broyden1', 3:'broyden2', 4:'anderson',
@@ -144,7 +143,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.opt_method = methods[ui.method_opt.currentIndex()]
         try:
             self.opt_tol = float(str(ui.tol_line.text()))
-        except Exception as e: 
+        except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", "No se entiende el formato de la tolerancia")
             self.settingsWindow()
         try:
@@ -169,7 +168,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config.txt'")
             print(str(e))
-	
+
     def exportaTex(self):
         try:
             tex_out = QtWidgets.QFileDialog.getSaveFileName(filter="TeX (*.tex)", directory=self.home_dir)[0]
@@ -187,7 +186,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", "No se pudo exportar")
             #print("EROOOOOOR------------")
             # print(str(e))
-        
+
     def agregaComentario(self):
         # QtWidgets.QMessageBox.about(self, "Prueba", "Se ha activado la alarma")
         posicion = self.cajaTexto.textCursor()
@@ -199,7 +198,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         for i in range(len(hint)):
             self.cajaTexto.moveCursor(posicion.Left, posicion.KeepAnchor)
         # posicion.movePosition(posicion.Left, posicion.MoveAnchor, 2)
-        
+
     def cerrarPyENL(self, event=None):
         # QtWidgets.QMessageBox.about(self, "Advertencia", "Estoy saliendo")
         if self.archivoModificado:
@@ -221,11 +220,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
         else:
             QtWidgets.qApp.quit()
-        
+
     def closeEvent(self, event):
         # Modifica la acción de salir con el botón X para que pase por la función cerrarPyENL()
         self.cerrarPyENL(event)
-        
+
     def cierraArchivo(self):
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
@@ -245,13 +244,13 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
         else:
             self.limpiaTrasCierre()
-        
+
     def limpiaTrasCierre(self):
         self.output_save = None
         self.cajaTexto.setPlainText('')
         self.setWindowTitle('pyENL')
         self.archivoModificado = False
-        
+
     def guardaArchivoComo(self):
         try:
             self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
@@ -260,7 +259,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(self.output_save)
         if self.output_save != '':
             self.guardaArchivo()
-        
+
     def guardaArchivo(self):
         # Guarda un archivo, ya pasándole el nombre por self.output_save
         # Si no está, guardar como
@@ -317,7 +316,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Listo, ahora a borrar la carpeta temporal
             tmp_dir.cleanup()
             self.setWindowTitle("pyENL: " +  self.output_save.split('/')[-1])
-    
+
     def abreArchivo(self):
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
@@ -337,11 +336,14 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
         else:
             self.abreArchivoAccion()
-        
-        
-    def abreArchivoAccion(self):
+
+
+    def abreArchivoAccion(self,file2Open=None):
         try:
-            self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
+            if file2Open == None:
+                self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
+            else:
+                self.open_file =file2Open
             # Open stuff
             # De momento que muestre el texto y cargue a vars1.dat
             # Generación de la carpeta temporal para la descompresión de archivos
@@ -379,7 +381,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.archivoModificado = False
         except:
             QtWidgets.QMessageBox.about(self, "Error", "No se abrió un archivo")
-        
+
     def propWindow(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = prop_class()
@@ -463,7 +465,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Restaurar acá las variables copiadas
             self.variables = backup_var
         #self.solve_button.setEnabled()
-            
+
     def imprimeSol(self, formateo):
         '''
         Imprime en la pestaña de soluciones, las respuestas al sistema de
@@ -628,7 +630,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                             #self.variables[i].dim= dim
                             #break
                     #print(self.variables[i].dim)
-                    
+
                 self.variables[i].comment = comment
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
@@ -708,6 +710,11 @@ def main():
     '''
     app = QtWidgets.QApplication(sys.argv)
     MyWindow = MyWindowClass(None)
+    # Si se comienza abriendo un archivo especifico:
+    if len(sys.argv) == 2 :
+        file2Open = sys.argv[1]
+        currentDir_open = os.path.dirname(os.path.abspath(__file__)) + os.sep + file2Open
+        MyWindow.abreArchivoAccion(currentDir_open)
     MyWindow.show()
     app.exec_()
 
