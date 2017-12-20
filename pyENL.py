@@ -141,6 +141,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                    5:'linearmixing', 6:'diagbroyden', 7:'excitingmixing', 8:'krylov', 9:'df-sane'}
         self.lang = langs[ui.comboBox.currentIndex()]
         self.opt_method = methods[ui.method_opt.currentIndex()]
+        self.timeout = ui.timeout_spin.value()
         try:
             self.opt_tol = float(str(ui.tol_line.text()))
         except Exception as e:
