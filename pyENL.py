@@ -115,6 +115,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print(dir(self.actionSalir))
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
+        #
+        # ACA van las cosas que luego se activarán
+        self.actionUnidades.setEnabled(False)
+        self.actionPor_agregar.setEnabled(False)
+        self.menuFunciones_de_usuario.setEnabled(False)
+        self.actionImprimir.setEnabled(False)
 
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
