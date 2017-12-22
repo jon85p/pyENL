@@ -17,7 +17,7 @@ import tempfile
 from expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as u
 u.load_definitions("units.txt")
-from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information
+from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
@@ -389,6 +389,30 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except:
             QtWidgets.QMessageBox.about(self, "Error", "No se abrió un archivo")
 
+    def actualizaFuncionTermo(self, dialog, items_no_rep,args_no_rep):
+        '''
+        Actualiza el texto a copiar para la llamada de la función termodinámica asociada
+        '''
+        dialog.listWidget_4.setEnabled(True)
+        id_fluido = dialog.listWidget.currentRow()
+        id_prop_busc = dialog.listWidget_2.currentRow()
+        id_arg1 = dialog.listWidget_3.currentRow()
+        id_arg2 = dialog.listWidget_4.currentRow()
+        fluido = dialog.lista_fluidos[id_fluido]
+        prop_busc = get_parameter_information(items_no_rep[id_prop_busc], "short")
+        arg_1 = get_parameter_information(args_no_rep[id_arg1], "short")
+        unit1 = get_parameter_information(args_no_rep[id_arg1], "units")
+        arg_2 = get_parameter_information(args_no_rep[id_arg2], "short")
+        unit2 = get_parameter_information(args_no_rep[id_arg2], "units")
+        cadena = 'prop("' + prop_busc + '","'+ arg_1+ '",0['+ unit1 +'],"'+ arg_2+'",0['+ unit2 +'],"' + fluido + '")'
+        if is_trivial_parameter(items_no_rep[id_prop_busc]):
+            cadena = 'prop("' + prop_busc + '","' + fluido + '")'
+        cadena = prop_busc + "_1 = " + cadena
+        dialog.textEdit.setText(cadena)
+        # Este atributo enmarca el texto a agregar que hace referencia a la llamada de
+        # función termodinámica
+        self.texto_termo_a_agregar = cadena
+    
     def propWindow(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = prop_class()
@@ -402,8 +426,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         #props_l = 
         
         lista2 = dicc_coolprop.keys()
+        dialog.ui.lista_fluidos = lista1
         # Items no repetidos
         items_no_rep = []
+        args_no_rep = []
         # Lista de propiedades
         for item in lista2:
             indice = get_parameter_index(item)
@@ -416,10 +442,17 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 # Agregar parámetros de entrada
                 IO = get_parameter_information(indice, "IO")
                 if IO == 'IO':
+                    args_no_rep.append(indice)
                     dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
                     dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
-        
-        
+        dialog.ui.listWidget.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
+                                                                dialog.ui,items_no_rep,args_no_rep))
+        dialog.ui.listWidget_2.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
+                                                                dialog.ui,items_no_rep,args_no_rep))
+        dialog.ui.listWidget_3.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
+                                                                dialog.ui,items_no_rep,args_no_rep))
+        dialog.ui.listWidget_4.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
+                                                                dialog.ui,items_no_rep,args_no_rep))
         dialog.exec_()
         dialog.show()
         # window = PropWindow(self)
@@ -428,7 +461,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     
     def insertProp(self, ui):
         # Inserta texto con llamado a función prop()
-        print("Holaaa")
+        # este texto está almacenado en self.texto_termo_a_agregar
+        # print("Holaaa")
+        posicion = self.cajaTexto.textCursor()
+        self.cajaTexto.insertPlainText(self.texto_termo_a_agregar)
 
     def solve(self):
         '''
@@ -703,10 +739,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             #Una vez terminado el diccionario de conversiones para una dimensión dada se agrega al Diccionario de dimensiones
             self.Dicc_dimen[key_dimension]= Dicc_unid
 
-class PropWindow(QtWidgets.QMainWindow, prop_class):
-    def __init__(self, parent=None):
-        QtWidgets.QDialog.__init__(self, parent)
-        self.setupUi(self)
 
 
 def main():
