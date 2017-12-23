@@ -448,6 +448,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Items no repetidos
         items_no_rep = []
         args_no_rep = []
+        descriptions = []
+        unit_items = []
         # Lista de propiedades
         for item in lista2:
             indice = get_parameter_index(item)
@@ -455,14 +457,33 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 items_no_rep.append(indice)
                 # Long se refiere a la descripción larga de la propiedad
                 description = get_parameter_information(indice, "long")
+                descriptions.append(description)
                 unidad_item = get_parameter_information(indice, "units")
-                dialog.ui.listWidget_2.addItem(description + ' [' + unidad_item + ']')
+                unit_items.append(unidad_item)
+                # Ordenar por descripción y añadir los siguientes en ese orden
+                # dialog.ui.listWidget_2.addItem(description + ' [' + unidad_item + ']')
                 # Agregar parámetros de entrada
-                IO = get_parameter_information(indice, "IO")
-                if IO == 'IO':
-                    args_no_rep.append(indice)
-                    dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
-                    dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
+                # IO = get_parameter_information(indice, "IO")
+                # if IO == 'IO':
+                    # args_no_rep.append(indice)
+                    # dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
+                    # dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
+        # Orden alfabético
+        # Hay que ordenar, unit_items, descriptions, items_no_rep
+        unit_items = sorted(unit_items, key= lambda x: descriptions[unit_items.index(x)])
+        items_no_rep = sorted(items_no_rep, key =  lambda x: descriptions[items_no_rep.index(x)])
+        descriptions = sorted(descriptions, key= lambda x:x)
+        
+        for i, item in enumerate(items_no_rep):
+            description = descriptions[i]
+            unidad_item = unit_items[i]
+            dialog.ui.listWidget_2.addItem(description + ' [' + unidad_item + ']')
+            IO = get_parameter_information(item, "IO")
+            if IO == 'IO':
+                args_no_rep.append(item)
+                dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
+                dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
+                
         dialog.ui.listWidget.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
                                                                 dialog.ui,items_no_rep,args_no_rep))
         dialog.ui.listWidget_2.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
