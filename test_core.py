@@ -56,7 +56,13 @@ def test_variables_string():
 	texto = ["#f#='R510'","#g#='R134A'",
 		"H1=prop('H','P', 101325, 'T', 300, #f#)",
 		"H2=prop('H','P', 101325, 'T', 300, #g#)"]
-	check = ["'R510'='R510'","'R134A'='R134A'",
-		"H1=prop('H','P', 101325, 'T', 300, 'R510')",
+	check = ["H1=prop('H','P', 101325, 'T', 300, 'R510')",
 		"H2=prop('H','P', 101325, 'T', 300, 'R134A')"]
 	assert variables_string(texto) == check
+
+def test_cantidadEqnVar():
+    eqns = [['x+5=y*e^2'], ['x-cos(y) = 8','z = 5*pi'],
+            ['<<Comentario>>', '#f# = "R22"', 'H = prop("H", "P", 1[atm], "Q", 1, "Water")']]
+    cantidades = [[1,2],[2,3],[1,1]]
+    for i, eqn in enumerate(eqns):
+        assert cantidadEqnVar(eqn)

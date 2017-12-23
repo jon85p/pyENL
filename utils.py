@@ -220,8 +220,8 @@ def variables_string(texto):
                     to_del.append(i)
             except:
                 pass
-    for num in to_del:
-        texto.pop(num)
+    for i, num in enumerate(to_del):
+        texto.pop(num-i)
     # Segunda iteración para reemplazos
     pattern = re.compile('|'.join(dicc.keys()))
     for i, eqn in enumerate(texto):
