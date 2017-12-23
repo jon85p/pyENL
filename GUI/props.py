@@ -9,7 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog):
+    def setupUi(self, Dialog, traduccion):
         Dialog.setObjectName("Dialog")
         Dialog.resize(499, 428)
         self.gridLayout = QtWidgets.QGridLayout(Dialog)
@@ -53,12 +53,12 @@ class Ui_Dialog(object):
         self.buttonBox.setObjectName("buttonBox")
         self.gridLayout.addWidget(self.buttonBox, 7, 2, 1, 1)
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(Dialog, traduccion)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, Dialog, traduccion):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Propiedades fluido"))
         self.label.setText(_translate("Dialog", "Uso de propiedades de fluidos"))

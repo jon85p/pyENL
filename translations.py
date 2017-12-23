@@ -236,6 +236,59 @@ def translations(lang='en'):
     
     dicc_gen['Acá va el comentario'] = {'es': 'Acá va el comentario', 'en': 'Comment goes here',
                                         'pt': 'Acá va el comentario', 'fr': 'Acá va el comentario'}
+    dicc_gen['El documento se ha modificado'] = {'es' : 'El documento se ha modificado',
+                                                 'en': 'The file was modified',
+                                                 'pt': 'El archivo ha sido modificado',
+                                                 'fr': 'El archivo ha sido modificado'}
+
+    dicc_gen["¿Desea guardar los cambios?"] = {'es' : '¿Desea guardar los cambios?',
+                                                 'en': 'Save changes?',
+                                                 'pt': '¿Desea guardar los cambios?',
+                                                 'fr': '¿Desea guardar los cambios?'}
+    
+    dicc_gen["Idioma (requiere reiniciar pyENL)"] = {'es' : "Idioma (requiere reiniciar pyENL)",
+                                                     'en': 'Language (pyENL restart)',
+                                                     'pt': '"Idioma (requiere reiniciar pyENL)"',
+                                                     'fr': '"Idioma (requiere reiniciar pyENL)"'}    
+    
+    dicc_gen['Spanish'] = {'es' : 'Español', 'en': 'Spanish',
+                        'pt': 'Espanhol', 'fr': 'Español'}
+    
+    dicc_gen['English'] = {'es' : 'Inglés', 'en': 'English',
+                        'pt': 'Inglês', 'fr': 'Anglais'}
+    
+    dicc_gen['French'] = {'es' : 'Francés', 'en': 'French',
+                        'pt': 'Francês', 'fr': 'Français'}
+    
+    dicc_gen['Portuguese'] = {'es' : 'Portugués', 'en': 'Portiguese',
+                        'pt': 'Portugues', 'fr': 'Portugais'}
+    
+    dicc_gen['Formato'] = {'es' : 'Formato', 'en': 'Format',
+                        'pt': 'Format', 'fr': 'Format'}
+
+    dicc_gen['Interfaz'] = {'es' : 'Interfaz', 'en': 'Interface',
+                        'pt': 'Interface', 'fr': 'Interface'}    
+    
+    dicc_gen['Método'] = {'es' : 'Método', 'en': 'Method',
+                        'pt': 'Method', 'fr': 'Method'}
+    
+    dicc_gen['Formato'] = {'es' : 'Formato', 'en': 'Format',
+                        'pt': 'Format', 'fr': 'Format'}
+    
+    dicc_gen['Tolerancia'] = {'es' : 'Tolerancia', 'en': 'Tolerance',
+                        'pt': 'Tolerance', 'fr': 'Tolerance'}
+    
+    dicc_gen['Tiempo máximo de espera en segundos'] = {'es' : 'Tiempo máximo de espera (segundos)', 'en': 'Timeout (seconds)',
+                        'pt': 'Timeout (seconds)', 'fr': 'Timeout (seconds)'}
+    
+    dicc_gen['Solver'] = {'es' : 'Solucionador', 'en': 'Solver',
+                        'pt': 'Solver', 'fr': 'Solver'}
+    
+    dicc_gen['Unidades'] = {'es' : 'Unidades', 'en': 'Units',
+                        'pt': 'Units', 'fr': 'Units'}
+    
+    # dicc_gen['Algo'] = {'es' : 'Algo', 'en': 'Something',
+    #                     'pt': 'Alginho', 'fr': 'Algué'}
 
     # Salida de la función
     output = {}

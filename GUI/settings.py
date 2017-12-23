@@ -9,7 +9,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 class Ui_Dialog(object):
-    def setupUi(self, Dialog):
+    def setupUi(self, Dialog, traduccion):
         Dialog.setObjectName("Dialog")
         Dialog.resize(510, 346)
         self.verticalLayout = QtWidgets.QVBoxLayout(Dialog)
@@ -89,24 +89,24 @@ class Ui_Dialog(object):
         self.buttonBox.setObjectName("buttonBox")
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(Dialog, traduccion)
         self.tabWidget.setCurrentIndex(0)
         self.buttonBox.accepted.connect(Dialog.accept)
         self.buttonBox.rejected.connect(Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, Dialog, traduccion):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Configuración"))
-        self.label.setText(_translate("Dialog", "Idioma (requiere reiniciar pyENL)"))
+        Dialog.setWindowTitle(_translate("Dialog", traduccion["Configuración"]))
+        self.label.setText(_translate("Dialog", traduccion["Idioma (requiere reiniciar pyENL)"]))
         self.comboBox.setCurrentText(_translate("Dialog", "Spanish"))
-        self.comboBox.setItemText(0, _translate("Dialog", "Spanish"))
-        self.comboBox.setItemText(1, _translate("Dialog", "English"))
-        self.comboBox.setItemText(2, _translate("Dialog", "French"))
-        self.comboBox.setItemText(3, _translate("Dialog", "Portuguese"))
-        self.label_5.setText(_translate("Dialog", "Formato"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Dialog", "Interfaz"))
-        self.label_2.setText(_translate("Dialog", "Método"))
+        self.comboBox.setItemText(0, _translate("Dialog", traduccion["Spanish"]))
+        self.comboBox.setItemText(1, _translate("Dialog", traduccion["English"]))
+        self.comboBox.setItemText(2, _translate("Dialog", traduccion["French"]))
+        self.comboBox.setItemText(3, _translate("Dialog", traduccion["Portuguese"]))
+        self.label_5.setText(_translate("Dialog", traduccion["Formato"]))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_3), _translate("Dialog", traduccion["Interfaz"]))
+        self.label_2.setText(_translate("Dialog", traduccion["Método"]))
         self.method_opt.setItemText(0, _translate("Dialog", "hybr"))
         self.method_opt.setItemText(1, _translate("Dialog", "lm"))
         self.method_opt.setItemText(2, _translate("Dialog", "broyden1"))
@@ -117,8 +117,8 @@ class Ui_Dialog(object):
         self.method_opt.setItemText(7, _translate("Dialog", "excitingmixing"))
         self.method_opt.setItemText(8, _translate("Dialog", "krylov"))
         self.method_opt.setItemText(9, _translate("Dialog", "df-sane"))
-        self.label_3.setText(_translate("Dialog", "Tolerancia"))
-        self.label_4.setText(_translate("Dialog", "Tiempo máximo de espera en segundos"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", "Solver"))
-        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", "Unidades"))
+        self.label_3.setText(_translate("Dialog", traduccion["Tolerancia"]))
+        self.label_4.setText(_translate("Dialog", traduccion["Tiempo máximo de espera en segundos"]))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("Dialog", traduccion["Solver"]))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_2), _translate("Dialog", traduccion["Unidades"]))
 

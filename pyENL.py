@@ -5,6 +5,7 @@ Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
 import os
+import subprocess
 import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 from utils import *
@@ -109,7 +110,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
         self.actionSalir.triggered.connect(self.cerrarPyENL)
-
+        self.actionAyuda_NumPy.triggered.connect(partial(self.open_url,'https://docs.scipy.org/doc/numpy/reference/'))
+        self.actionAyuda_CoolProp.triggered.connect(partial(self.open_url,'http://www.coolprop.org/coolprop/HighLevelAPI.html'))
+        self.actionAyuda_pyENL.triggered.connect(partial(self.open_url,'https://jon85p.github.io/pyENL/help'))
+        self.actionLicencias.triggered.connect(partial(self.open_url,'https://raw.githubusercontent.com/jon85p/pyENL/master/COPYING'))
+        
         # TODO En Información incluir la máxima desviación
         # print(dir(self))
         # print(dir(self.actionSalir))
@@ -121,6 +126,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionPor_agregar.setEnabled(False)
         self.menuFunciones_de_usuario.setEnabled(False)
         self.actionImprimir.setEnabled(False)
+        self.actionArchivo_EES.setEnabled(False)
 
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
@@ -128,7 +134,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                    'linearmixing':5, 'diagbroyden':6, 'excitingmixing':7, 'krylov':8, 'df-sane':9}
         dialog = QtWidgets.QDialog()
         dialog.ui = settings_class()
-        dialog.ui.setupUi(dialog)
+        dialog.ui.setupUi(dialog, self.traduccion)
         # Hay que conectar ANTES de que se cierre la ventana de diálogo
         dialog.ui.buttonBox.accepted.connect(partial(self.saveSettings, dialog.ui))
         dialog.ui.comboBox.setCurrentIndex(langs[self.lang])
@@ -210,8 +216,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # QtWidgets.QMessageBox.about(self, "Advertencia", "Estoy saliendo")
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
-            msgBox.setText("El documento se ha modificado")
-            msgBox.setInformativeText("¿Desea guardar los cambios?");
+            msgBox.setText(self.traduccion["El documento se ha modificado"])
+            msgBox.setInformativeText(self.traduccion["¿Desea guardar los cambios?"]);
             msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
             ret = msgBox.exec_()
@@ -235,8 +241,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def cierraArchivo(self):
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
-            msgBox.setText("El documento se ha modificado")
-            msgBox.setInformativeText("¿Desea guardar los cambios?");
+            msgBox.setText(self.traduccion["El documento se ha modificado"])
+            msgBox.setInformativeText(self.traduccion["¿Desea guardar los cambios?"]);
             msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
             ret = msgBox.exec_()
@@ -327,8 +333,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def abreArchivo(self):
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
-            msgBox.setText("El documento se ha modificado")
-            msgBox.setInformativeText("¿Desea guardar los cambios?");
+            msgBox.setText(self.traduccion["El documento se ha modificado"])
+            msgBox.setInformativeText(self.traduccion["¿Desea guardar los cambios?"]);
             msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
             ret = msgBox.exec_()
@@ -387,7 +393,19 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.setWindowTitle('pyENL: ' + self.output_save.split('/')[-1])
             self.archivoModificado = False
         except:
-            QtWidgets.QMessageBox.about(self, "Error", "No se abrió un archivo")
+            QtWidgets.QMessageBox.about(self, "Error", "No se abrió bien el archivo")
+
+    def open_url(self, url):
+        
+        if "win" in sys.platform:
+            os.startfile(url)
+        elif sys.platform=='darwin':
+            subprocess.Popen(['open', url])
+        else:
+            try:
+                subprocess.Popen(['xdg-open', url])
+            except OSError:
+                QtWidgets.QMessageBox.about(self, "Error", "Open: " + url)
 
     def actualizaFuncionTermo(self, dialog, items_no_rep,args_no_rep):
         '''
@@ -416,7 +434,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def propWindow(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = prop_class()
-        dialog.ui.setupUi(dialog)
+        dialog.ui.setupUi(dialog, self.traduccion)
         dialog.ui.buttonBox.accepted.connect(partial(self.insertProp, dialog.ui))
         lista1 = sorted(FluidsList())
         # Lista de fluidos
@@ -576,7 +594,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # print([obj.name for obj in self.variables])
         # Si se cambia justo a la segunda pestaña...
         self.variables.sort(key=lambda x: x.name.lower())
-        self.actualizaInfo()
+        # self.actualizaInfo()
         if self.tabWidget.currentIndex() == 1:
             self.showVarsTable()
 
