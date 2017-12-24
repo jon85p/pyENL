@@ -79,7 +79,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
     if method not in methods:
         raise Exception('El método de resolución no está listado, ver ayuda.')
     for ie, eqn in enumerate(ecuaciones):
-        if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
+        if ((eqn.replace(' ','').replace('\t', '') != '') and ('{' not in eqn)) and ('<<' not in eqn):
             expresion = eqn.replace(" ", "")
             expresion = expresion.replace('\t','')
             # Capacidad de interpretar pow

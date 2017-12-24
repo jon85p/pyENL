@@ -254,7 +254,7 @@ def cantidadEqnVar(texto_caja):
     ecuaciones = 0
     lista = []
     for eqn in texto_fcn:
-        if ((eqn != '') and ('{' not in eqn)) and ('<<' not in eqn):
+        if ((eqn.replace(' ','').replace('\t', '') != '') and ('{' not in eqn)) and ('<<' not in eqn):
             ecuaciones += 1
             expresion = eqn.replace(" ", "")
             expresion = expresion.replace("\t", "")

@@ -43,7 +43,7 @@ def quitaComentarios(eqns):
     '''
     b = []
     for eqn in eqns:
-        if '<<' not in eqn:
+        if ('<<' not in eqn) and not (eqn.replace(' ','').replace('\t', '') == ''):
             b.append(eqn)
     return b
 
