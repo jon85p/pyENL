@@ -31,4 +31,5 @@ script:
   - py.test -vv  # Test against installed code
 
 after_success:
+  - coverage run test_core.py
   - codecov
