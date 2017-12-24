@@ -29,3 +29,6 @@ install:
 script:
   - python3 entrada.py -f test/input4.txt
   - py.test -vv  # Test against installed code
+
+after_success:
+  - codecov
