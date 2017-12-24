@@ -70,6 +70,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.traduccion = translations(self.lang)
         self.opt_tol = opciones_.tol
         self.timeout = opciones_.timeout
+        self.cuDir = opciones_.cuDir
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
         # Variables en el programa:
@@ -114,7 +115,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionAyuda_CoolProp.triggered.connect(partial(self.open_url,'http://www.coolprop.org/coolprop/HighLevelAPI.html'))
         self.actionAyuda_pyENL.triggered.connect(partial(self.open_url,'https://jon85p.github.io/pyENL/help'))
         self.actionLicencias.triggered.connect(partial(self.open_url,'https://raw.githubusercontent.com/jon85p/pyENL/master/COPYING'))
-        
+
         # TODO En Información incluir la máxima desviación
         # print(dir(self))
         # print(dir(self.actionSalir))
@@ -175,6 +176,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             bufferr = bufferr + 'format=' + self.format + '\n'
             bufferr = bufferr + 'tol=' + str(self.opt_tol) + '\n'
             bufferr = bufferr + 'timeout=' + str(self.timeout) + '\n'
+            bufferr = bufferr + 'cuDir=' + str(self.cuDir) + '\n'
             g = open("config.txt", 'wb')
             g.write(bufferr.encode('utf-8'))
             g.close()
@@ -214,6 +216,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def cerrarPyENL(self, event=None):
         # QtWidgets.QMessageBox.about(self, "Advertencia", "Estoy saliendo")
+        actualizar_directorio(self.cuDir)
+
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
             msgBox.setText(self.traduccion["El documento se ha modificado"])
@@ -266,7 +270,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def guardaArchivoComo(self):
         try:
-            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
+            self.output_save = QtWidgets.QFileDialog.getSaveFileName(filter="pyENL (*.enl)", directory=self.cuDir)[0]
+            if self.output_save!='': #si no se guardó nada se almacena un '' entonces no acutalizar el cuDir
+                self.cuDir = '/'.join(self.output_save.split('/')[0:-1]) #se elimina el nombreArchivo.enl de la ruta
         except:
             pass
         # print(self.output_save)
@@ -354,7 +360,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def abreArchivoAccion(self,file2Open=None):
         try:
             if file2Open == None:
-                self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)", directory=self.home_dir)[0]
+                self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)", directory=self.cuDir)[0]
             else:
                 self.open_file =file2Open
             # Open stuff
@@ -392,11 +398,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.output_save = self.open_file
             self.setWindowTitle('pyENL: ' + self.output_save.split('/')[-1])
             self.archivoModificado = False
+            #El archivo que se abrió esta OK then se alamacena la nueva direccion de la carpeta
+            self.cuDir = '/'.join(self.output_save.split('/')[0:-1]) # se elimina el "nombreArchivo.enl" de la ruta a guardar
+        except IOError: # si no se abre ningun archivo que no muestre ningun mensaje
+            pass
         except:
             QtWidgets.QMessageBox.about(self, "Error", "No se abrió bien el archivo")
 
     def open_url(self, url):
-        
+
         if "win" in sys.platform:
             os.startfile(url)
         elif sys.platform=='darwin':
@@ -430,7 +440,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Este atributo enmarca el texto a agregar que hace referencia a la llamada de
         # función termodinámica
         self.texto_termo_a_agregar = cadena
-    
+
     def propWindow(self):
         dialog = QtWidgets.QDialog()
         dialog.ui = prop_class()
@@ -441,8 +451,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         for item in lista1:
             dialog.ui.listWidget.addItem(item)
         # Lista de propiedades
-        #props_l = 
-        
+        #props_l =
+
         lista2 = dicc_coolprop.keys()
         dialog.ui.lista_fluidos = lista1
         # Items no repetidos
@@ -497,7 +507,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # window = PropWindow(self)
         # if window.exec_():
          #    print("Listo!")
-    
+
     def insertProp(self, ui):
         # Inserta texto con llamado a función prop()
         # este texto está almacenado en self.texto_termo_a_agregar
