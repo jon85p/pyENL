@@ -1,8 +1,15 @@
 #!/usr/bin/env python3
 
 # Unit test for pyENL core
-from utils import *
 import numpy as np
+import sys
+
+try:
+    sys.path.append('/home/travis/build/jon85p/pyENL')
+except:
+    pass
+
+from utils import *
 
 def test_esalfanum():
 	pruebas = [".", "a", "g", "c", "e", "z", "5", "0", "9", "4", "s"]
