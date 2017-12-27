@@ -8,6 +8,8 @@ import os
 import subprocess
 import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
+# import qdarkstyle
+# import qdarkgraystyle
 from utils import *
 from entrada import pyENL_variable, entradaTexto
 from translations import translations
@@ -56,13 +58,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     modificar parámetros de la interfaz gráfica.
     '''
 
-    def __init__(self, parent=None):
+    def __init__(self, parent, theme):
         '''
         Inicialización del objeto ventana principal; contiene lo que se lleva a
         cabo para cargar la ventana principal.
         '''
         QtWidgets.QMainWindow.__init__(self, parent)
-        # TODO Opciones del programa:
         opciones_ = configFile("config.txt")
         self.format = opciones_.format
         self.opt_method = opciones_.method
@@ -71,6 +72,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.opt_tol = opciones_.tol
         self.timeout = opciones_.timeout
         self.cuDir = opciones_.cuDir
+        self.theme = theme
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
         # Variables en el programa:
@@ -133,12 +135,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
         methods = {'hybr':0, 'lm':1, 'broyden1':2, 'broyden2':3, 'anderson':4,
                    'linearmixing':5, 'diagbroyden':6, 'excitingmixing':7, 'krylov':8, 'df-sane':9}
+        temas = {"Default":0, "DarkBlack":1,"Dracula":2,"Blue":3,"BreezeDark":4, "BreezeLight":5,
+                 "Gray":6,"GrayDark":7}
         dialog = QtWidgets.QDialog()
         dialog.ui = settings_class()
         dialog.ui.setupUi(dialog, self.traduccion)
         # Hay que conectar ANTES de que se cierre la ventana de diálogo
         dialog.ui.buttonBox.accepted.connect(partial(self.saveSettings, dialog.ui))
         dialog.ui.comboBox.setCurrentIndex(langs[self.lang])
+        dialog.ui.temas.setCurrentIndex(temas[self.theme])
         dialog.ui.format_line.setText(self.format)
         dialog.ui.method_opt.setCurrentIndex(methods[self.opt_method])
         dialog.ui.tol_line.setText(str(self.opt_tol))
@@ -152,7 +157,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         langs = {0: "es", 1: "en", 2: "fr", 3:"pt"}
         methods = {0:'hybr', 1:'lm', 2:'broyden1', 3:'broyden2', 4:'anderson',
                    5:'linearmixing', 6:'diagbroyden', 7:'excitingmixing', 8:'krylov', 9:'df-sane'}
+        temas = {0:"Default", 1:"DarkBlack",2:"Dracula",3:"Blue",4:"BreezeDark",5:"BreezeLight",
+                 6:"Gray",7:"GrayDark"}
         self.lang = langs[ui.comboBox.currentIndex()]
+        self.theme = temas[ui.temas.currentIndex()]
         self.opt_method = methods[ui.method_opt.currentIndex()]
         self.timeout = ui.timeout_spin.value()
         try:
@@ -172,6 +180,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         "Actualizar fichero"
         try:
             bufferr = 'lang=' + self.lang + '\n'
+            bufferr = bufferr + 'theme=' + self.theme + '\n'
             bufferr = bufferr + 'method=' + self.opt_method + '\n'
             bufferr = bufferr + 'format=' + self.format + '\n'
             bufferr = bufferr + 'tol=' + str(self.opt_tol) + '\n'
@@ -796,8 +805,29 @@ def main():
     de la aplicación con un objeto de ventana principal, la muestra y ejecuta
     el aplicativo
     '''
+    theme = 'Default'
+    themes = {'Default':None, 'DarkBlack':'Dark.qss', 'Blue':'Style_Blue.qss',
+              'BreezeDark':'BreezeDark.qss','Dracula':'dracula.qss' ,'Gray':'Style_Gray.qss',
+              'BreezeLight':'BreezeLight.qss','GrayDark':'GrayDark.qss'}
+    # Leer archivo de configuración para encontrar el tema
+    try:
+        with open('config.txt', 'rb') as f:
+            lineas = f.read().decode('utf-8').splitlines()
+            
+        for linea in lineas:
+            if 'theme' in linea:
+                theme = linea.split('=')[1]
+    except:
+        pass
     app = QtWidgets.QApplication(sys.argv)
-    MyWindow = MyWindowClass(None)
+    theme_file = themes[theme]
+    if theme_file:
+        f = open("themes/" + theme_file, "rb")
+        qss = f.read().decode("utf-8")
+        f.close()
+        app.setStyleSheet(qss)
+        
+    MyWindow = MyWindowClass(None, theme)
     # Si se comienza abriendo un archivo especifico:
     if len(sys.argv) == 2 :
         file2Open = sys.argv[1]

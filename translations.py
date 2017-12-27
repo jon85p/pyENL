@@ -286,6 +286,12 @@ def translations(lang='en'):
     
     dicc_gen['Unidades'] = {'es' : 'Unidades', 'en': 'Units',
                         'pt': 'Units', 'fr': 'Units'}
+
+    dicc_gen['Tema'] = {'es' : 'Tema', 'en': 'Theme',
+                        'pt': 'Theme', 'fr': 'Theme'}
+    
+    dicc_gen['Predeterminado'] = {'es' : 'Predeterminado', 'en': 'Default',
+                        'pt': 'Default', 'fr': 'Default'}
     
     # dicc_gen['Algo'] = {'es' : 'Algo', 'en': 'Something',
     #                     'pt': 'Alginho', 'fr': 'Algué'}

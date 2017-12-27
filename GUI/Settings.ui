@@ -26,13 +26,13 @@
       <attribute name="title">
        <string>Interfaz</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
-         <x>7</x>
-         <y>7</y>
+         <x>8</x>
+         <y>8</y>
          <width>203</width>
-         <height>120</height>
+         <height>182</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -80,6 +80,40 @@
         <item>
          <widget class="QLineEdit" name="format_line"/>
         </item>
+        <item>
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Tema</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="temas">
+          <property name="currentText">
+           <string>Default</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>Default</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BlackDark</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>BreezeDark</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>GrayDark</string>
+           </property>
+          </item>
+         </widget>
+        </item>
        </layout>
       </widget>
      </widget>
@@ -87,7 +121,7 @@
       <attribute name="title">
        <string>Solver</string>
       </attribute>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>10</x>
