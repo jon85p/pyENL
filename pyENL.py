@@ -492,7 +492,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         unit_items = sorted(unit_items, key= lambda x: descriptions[unit_items.index(x)])
         items_no_rep = sorted(items_no_rep, key =  lambda x: descriptions[items_no_rep.index(x)])
         descriptions = sorted(descriptions, key= lambda x:x)
-        
+
         for i, item in enumerate(items_no_rep):
             description = descriptions[i]
             unidad_item = unit_items[i]
@@ -502,7 +502,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 args_no_rep.append(item)
                 dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
                 dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
-                
+
         dialog.ui.listWidget.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
                                                                 dialog.ui,items_no_rep,args_no_rep))
         dialog.ui.listWidget_2.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
@@ -659,7 +659,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # newitem.setBackgroundColor(color)
             # Esto es para que no se pueda editar el nombre de la variable
             # desde la tabla de variables:
-            newitem.setFlags(QtCore.Qt.ItemIsEditable)
+            #newitem.setFlags(QtCore.Qt.ItemIsEditable)
             self.varsTable.setItem(i, 0, newitem)
 
             newitem = QtWidgets.QTableWidgetItem(str(var.guess))
@@ -699,8 +699,19 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         los parámetros de las variables de programa.
         '''
         try:
+            #Inicialmente se revisa que no la hayan embarrado repitiendo Variables
+            #Ojalá se encuentre una mejor manera de hacer esto , y no con un for repetido xD
+            list_names = []
+            # se guarda en una lista todas los nombres de las variables de la tabla
+            for i, var in enumerate(self.variables):
+                list_names.append(self.varsTable.item(i,0).text())
+            #si el # de elementos de ambas listas son diferentes entonces habian variables repetidas
+            if len(list_names) !=len(set(list_names)): # set() elimina duplicados
+                raise Exception(self.traduccion["Hay nombres de variables repetidos"])
+
             for i, var in enumerate(self.variables):
                 # print(self.varsTable.item(i, 1).text())
+                new_name = self.varsTable.item(i,0).text()
                 guess = float(self.varsTable.item(i, 1).text())
                 lowerlim = float(self.varsTable.item(i, 2).text())
                 upperlim = float(self.varsTable.item(i, 3).text())
@@ -713,6 +724,32 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 if (guess < lowerlim) or (guess > upperlim):
                     raise Exception(self.traduccion['El valor inicial de '] + str(var.name) +
                                     self.traduccion[' debe estar entre los dos límites.'])
+
+                # lo dentro del sig if salió de : https://stackoverflow.com/questions/13981824/how-can-i-find-a-substring-and-highlight-it-in-qtextedit
+                # si se cambió el nombre de la variable se debe reemplazar en la ventana de ecuaciones
+                actual_name = self.variables[i].name
+                if actual_name != new_name:
+                    cursor = self.cajaTexto.textCursor() #crea el objeto cursor
+                    #texto a buscar en self.cajaTexto
+                    toFind = "\\b"+self.variables[i].name + "\\b"   #el "\\b" para que solo busque palabras completas
+                    regex = QtCore.QRegExp(toFind) #ni idea el porqué, toca crear el objeto
+                    # posicion inicial (en la caja de texto se va contando cada caracter como una posicion (los saltos de linea ocupan dos posicion al ser :"\n"))
+                    pos= 0
+                    # index da la posicion donde está el primer elemento "toFind" en self.cajaTexto
+                    index = regex.indexIn(self.cajaTexto.toPlainText(),pos)
+                    while(index != -1): #si indexIn  no encuentra nada retorna un -1
+
+                        cursor.setPosition(index)
+                        cursor.movePosition(QtGui.QTextCursor.EndOfWord,1) #selecciona la variable
+                        cursor.insertText(new_name) # sobreescribe lo seleccionado
+                        #la siguiente linea será útil para ventana de buscar variables en el texto
+                        #pos = index + regex.matchedLength()
+                        #Por ahora al ir reemplazando la palabra cada vez que la encuentra no es necesario cambiar la poscion de busqueda
+                        pos= 0
+                        index = regex.indexIn(self.cajaTexto.toPlainText(),pos)
+                    #si todo funka entonces se reemplaza el nombre en el objeto variable
+                    self.variables[i].name =new_name
+
                 # Ya que se recogieron los valores de la tabla, ahora a
                 # actualizar la lista de variables del programa:
                 self.variables[i].guess = guess
@@ -744,6 +781,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         variables con respecto al sistema de ecuaciones que el usuario está
         ingresando
         '''
+        #solo se actualiza si se está modificando directamente en la caja de texto
+        if self.tabWidget.currentIndex() != 0: #si no esta en la pestaña de la caja de texto
+            return #vemos loca
         # Se modificó ya el archivo
         self.archivoModificado = True
         texto = self.cajaTexto.toPlainText()
@@ -813,7 +853,7 @@ def main():
     try:
         with open('config.txt', 'rb') as f:
             lineas = f.read().decode('utf-8').splitlines()
-            
+
         for linea in lineas:
             if 'theme' in linea:
                 theme = linea.split('=')[1]
@@ -826,7 +866,7 @@ def main():
         qss = f.read().decode("utf-8")
         f.close()
         app.setStyleSheet(qss)
-        
+
     MyWindow = MyWindowClass(None, theme)
     # Si se comienza abriendo un archivo especifico:
     if len(sys.argv) == 2 :
