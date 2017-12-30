@@ -276,6 +276,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cajaTexto.setPlainText('')
         self.setWindowTitle('pyENL')
         self.archivoModificado = False
+        self.variables = []
+        self.solucion = []
+        self.imprimeSol(self.format)
 
     def guardaArchivoComo(self):
         try:
@@ -364,9 +367,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
         else:
             self.abreArchivoAccion()
-
+        
 
     def abreArchivoAccion(self,file2Open=None):
+        self.variables = []
+        self.solucion = []
+        self.imprimeSol(self.format)
         try:
             if file2Open == None:
                 self.open_file = QtWidgets.QFileDialog.getOpenFileName(filter="pyENL (*.enl)", directory=self.cuDir)[0]
