@@ -57,18 +57,7 @@ class configFile:
             # Guardar con la configuración!
             pass
 
-    def guardar_config(self, filename):
-        '''
-        Guarda la configuración actual del objeto en el archivo filename
-        '''
-        g = open(filename, 'wb')
-        for item in self.items:
-            # TODO Corregir asignaciones para guardar
-            print("propiedad = self." + item)
-            exec("propiedad = self." + item)
-            texto = item + "=" + propiedad + "\n"
-            g.write(texto.encode('utf-8'))
-        g.close()
+    
 
 
 def ajustes(texto):

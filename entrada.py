@@ -127,9 +127,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
         # especificado por los corchetes {}
         for cadaEqn in lista:
             varAux = cadaEqn
-            A_reemplazar = [objeto.name, '-', '(', ')']
-            for termino_areemplazar in A_reemplazar:
-                varAux = varAux.replace(termino_areemplazar, '')
+            varAux = varAux.replace(objeto.name + '-', '')
             try:
                 objeto.guess = eval(varAux)
             except:
