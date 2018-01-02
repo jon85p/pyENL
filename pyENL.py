@@ -125,6 +125,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
         #
+        # Fuente, prueba
+        self.cajaTexto.setFont(QtGui.QFont("Times", 12, QtGui.QFont.Light))
+        self.cajaTexto.setLineWidth(2)
+        # self.cajaNumeracion.setEnabled(True)
+        self.cajaNumeracion.setFont(QtGui.QFont("Times", 12, QtGui.QFont.Light))
+        # self.cajaNumeracion.setEnabled(False)
+        
+        # eliminar márgenes superiores:
+        doc1 = self.cajaNumeracion.document()
+        doc1.setDocumentMargin(0)
+        doc2 = self.cajaTexto.document()
+        doc2.setDocumentMargin(0)
+        
+        
         # ACA van las cosas que luego se activarán
         self.actionUnidades.setEnabled(False)
         self.actionPor_agregar.setEnabled(False)
