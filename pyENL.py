@@ -81,6 +81,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.solucion = None
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
+        self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
@@ -367,7 +368,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
         else:
             self.abreArchivoAccion()
-        
+
 
     def abreArchivoAccion(self,file2Open=None):
         self.variables = []
@@ -780,6 +781,44 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", str(e))
         self.showVarsTable()
         self.archivoModificado = True
+
+    def actualizarNumeroLinea(self):
+      '''
+      Actualiza en todo momento la numeración de las lineas
+      de la caja de texto de ecuaciones
+      '''
+      #Espero encontrar mejores formas para hacer esto, pero por ahora...Funcionaaaa! xD
+      #Se define los objetos cursor de la caja de ecuaciones y el cursor
+      #de la cajaTexto de numeracion
+      cursor = self.cajaTexto.textCursor()
+      cursor_nume = self.cajaNumeracion.textCursor()
+      #se mueve a la primera linea visible de la caja de numeracion
+      cursor_nume.movePosition(QtGui.QTextCursor.Start,1)
+      #Se borra todo
+      self.cajaNumeracion.selectAll()
+      cursor_nume.insertText('')
+      # se define el objeto bloque
+      bloque = self.cajaTexto.firstVisibleBlock()
+      formatoBloque = bloque.charFormat()
+
+      bloqueNum = self.cajaTexto.firstVisibleBlock()
+      formatoBloqueNum = bloqueNum.charFormat()
+      formatoBloqueNum.setFont(formatoBloque.font())
+      #El primer numero será el correspondiente al numero de la primera linea
+      #visible de la caja de ecuaciones
+      numFirstLine = bloque.firstLineNumber()
+      numEndLine = self.cajaTexto.blockCount()
+      #Se barre desde el start hasta l
+
+      # if self.cajaTexto.verticalScrollBar().value() ==1:
+      #     print('hands')
+      #     self.cajaNumeracion.setVerticalScrollBarPolicy(2)
+      #     self.cajaTexto.verticalScrollBar().setValue(2)
+
+      for i in range(numFirstLine,numEndLine):
+          # se agrega el +1 ya que la numeracion de las lineas start in 0
+          cursor_nume.insertText(str(i +1) )
+          cursor_nume.insertBlock()
 
     def actualizaInfo(self):
         '''
