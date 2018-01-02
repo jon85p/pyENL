@@ -73,8 +73,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timeout = opciones_.timeout
         self.cuDir = opciones_.cuDir
         self.theme = theme
+        self.sizeFont = 12
+        self.fontUI = QtGui.QFont()
+        if opciones_.sFontUI:
+            self.fontUI.fromString(opciones_.sFontUI)
+            self.sizeFont = int(opciones_.sFontUI.split(",")[1])
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
+        # Dejar en una sola línea el texto
+        self.cajaTexto.setLineWrapMode(0)
         # Variables en el programa:
         self.cajaTexto.setFocus()
         self.variables = []
@@ -126,10 +133,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.cargarUnidades()
         #
         # Fuente, prueba
-        self.cajaTexto.setFont(QtGui.QFont("Times", 12, QtGui.QFont.Light))
-        self.cajaTexto.setLineWidth(2)
+        self.fontUI.setPointSize(self.sizeFont)
+        self.cajaTexto.setFont(self.fontUI)
         # self.cajaNumeracion.setEnabled(True)
-        self.cajaNumeracion.setFont(QtGui.QFont("Times", 12, QtGui.QFont.Light))
+        self.cajaNumeracion.setFont(self.fontUI)
         # self.cajaNumeracion.setEnabled(False)
 
         # eliminar márgenes superiores:
@@ -163,6 +170,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         dialog.ui.method_opt.setCurrentIndex(methods[self.opt_method])
         dialog.ui.tol_line.setText(str(self.opt_tol))
         dialog.ui.timeout_spin.setValue(self.timeout)
+        dialog.ui.sizeFont.setValue(self.sizeFont)
         dialog.exec_()
         dialog.show()
         # dialog.ui.buttonBox.accepted.connect(self.pruebaprint)
@@ -178,6 +186,13 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.theme = temas[ui.temas.currentIndex()]
         self.opt_method = methods[ui.method_opt.currentIndex()]
         self.timeout = ui.timeout_spin.value()
+        self.fontUI = ui.fontText.currentFont()
+        self.sizeFont = ui.sizeFont.value()
+        self.fontUI.setPointSize(self.sizeFont)
+        self.cajaTexto.setFont(self.fontUI)
+        # self.cajaNumeracion.setEnabled(True)
+        self.cajaNumeracion.setFont(self.fontUI)
+        fontString = self.fontUI.toString()
         try:
             self.opt_tol = float(str(ui.tol_line.text()))
         except Exception as e:
@@ -200,6 +215,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             bufferr = bufferr + 'format=' + self.format + '\n'
             bufferr = bufferr + 'tol=' + str(self.opt_tol) + '\n'
             bufferr = bufferr + 'timeout=' + str(self.timeout) + '\n'
+            bufferr = bufferr + 'font=' + fontString + '\n'
             bufferr = bufferr + 'cuDir=' + str(self.cuDir) + '\n'
             g = open("config.txt", 'wb')
             g.write(bufferr.encode('utf-8'))
