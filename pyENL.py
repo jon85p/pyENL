@@ -131,14 +131,14 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.cajaNumeracion.setEnabled(True)
         self.cajaNumeracion.setFont(QtGui.QFont("Times", 12, QtGui.QFont.Light))
         # self.cajaNumeracion.setEnabled(False)
-        
+
         # eliminar márgenes superiores:
         doc1 = self.cajaNumeracion.document()
         doc1.setDocumentMargin(0)
         doc2 = self.cajaTexto.document()
         doc2.setDocumentMargin(0)
-        
-        
+
+
         # ACA van las cosas que luego se activarán
         self.actionUnidades.setEnabled(False)
         self.actionPor_agregar.setEnabled(False)
@@ -810,14 +810,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
       cursor_nume.movePosition(QtGui.QTextCursor.Start,1)
       #Se borra todo
       self.cajaNumeracion.selectAll()
-      cursor_nume.insertText('')
       # se define el objeto bloque
       bloque = self.cajaTexto.firstVisibleBlock()
-      formatoBloque = bloque.charFormat()
-
-      bloqueNum = self.cajaTexto.firstVisibleBlock()
-      formatoBloqueNum = bloqueNum.charFormat()
-      formatoBloqueNum.setFont(formatoBloque.font())
       #El primer numero será el correspondiente al numero de la primera linea
       #visible de la caja de ecuaciones
       numFirstLine = bloque.firstLineNumber()
