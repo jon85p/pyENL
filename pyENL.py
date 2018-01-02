@@ -816,13 +816,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
       #visible de la caja de ecuaciones
       numFirstLine = bloque.firstLineNumber()
       numEndLine = self.cajaTexto.blockCount()
-      #Se barre desde el start hasta l
-
-      # if self.cajaTexto.verticalScrollBar().value() ==1:
-      #     print('hands')
-      #     self.cajaNumeracion.setVerticalScrollBarPolicy(2)
-      #     self.cajaTexto.verticalScrollBar().setValue(2)
-
+      #Se barre desde el start(firstline) hasta el total de lineas (endline)
       for i in range(numFirstLine,numEndLine):
           # se agrega el +1 ya que la numeracion de las lineas start in 0
           cursor_nume.insertText(str(i +1) )
