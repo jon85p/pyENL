@@ -171,6 +171,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         dialog.ui.tol_line.setText(str(self.opt_tol))
         dialog.ui.timeout_spin.setValue(self.timeout)
         dialog.ui.sizeFont.setValue(self.sizeFont)
+        dialog.ui.fontText.setCurrentFont(self.fontUI)
         dialog.exec_()
         dialog.show()
         # dialog.ui.buttonBox.accepted.connect(self.pruebaprint)

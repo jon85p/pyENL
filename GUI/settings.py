@@ -27,6 +27,7 @@ class Ui_Dialog(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.fontText = QtWidgets.QFontComboBox(self.widget)
         self.fontText.setObjectName("fontText")
+        self.fontText.setFontFilters(QtWidgets.QFontComboBox.MonospacedFonts)
         self.horizontalLayout.addWidget(self.fontText)
         self.sizeFont = QtWidgets.QSpinBox(self.widget)
         self.sizeFont.setMinimum(6)

@@ -33,7 +33,7 @@ class configFile:
         self.format = '{:,.3}'
         self.tol = 1e-4
         self.timeout = 10
-        self.sFontUI = 'AnyStyle,12,-1,5,25,0,0,0,0,0'
+        self.sFontUI = 'Monospace,12,-1,5,25,0,0,0,0,0'
         self.cuDir = os.path.expanduser('~')
         try:
             f = open(filename, 'rb')
