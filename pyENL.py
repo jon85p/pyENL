@@ -171,7 +171,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         dialog.ui.tol_line.setText(str(self.opt_tol))
         dialog.ui.timeout_spin.setValue(self.timeout)
         dialog.ui.sizeFont.setValue(self.sizeFont)
-        dialog.ui.fontText.setCurrentFont(self.fontUI)
         dialog.exec_()
         dialog.show()
         # dialog.ui.buttonBox.accepted.connect(self.pruebaprint)
@@ -814,30 +813,32 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.archivoModificado = True
 
     def actualizarNumeroLinea(self):
-      '''
-      Actualiza en todo momento la numeración de las lineas
-      de la caja de texto de ecuaciones
-      '''
-      #Espero encontrar mejores formas para hacer esto, pero por ahora...Funcionaaaa! xD
-      #Se define los objetos cursor de la caja de ecuaciones y el cursor
-      #de la cajaTexto de numeracion
-      cursor = self.cajaTexto.textCursor()
-      cursor_nume = self.cajaNumeracion.textCursor()
-      #se mueve a la primera linea visible de la caja de numeracion
-      cursor_nume.movePosition(QtGui.QTextCursor.Start,1)
-      #Se borra todo
-      self.cajaNumeracion.selectAll()
-      # se define el objeto bloque
-      bloque = self.cajaTexto.firstVisibleBlock()
-      #El primer numero será el correspondiente al numero de la primera linea
-      #visible de la caja de ecuaciones
-      numFirstLine = bloque.firstLineNumber()
-      numEndLine = self.cajaTexto.blockCount()
-      #Se barre desde el start(firstline) hasta el total de lineas (endline)
-      for i in range(numFirstLine,numEndLine):
-          # se agrega el +1 ya que la numeracion de las lineas start in 0
-          cursor_nume.insertText(str(i +1) )
-          cursor_nume.insertBlock()
+        '''
+        Actualiza cada cierto tiempo la numeración de las lineas
+        de la caja de texto de ecuaciones
+        '''
+        #Quizá no es la mejor manera de hacerlo pero funciona! tómalo!
+        #Se define los cursores de la caja de ecuaciones y el de la
+        #caja de numeración
+        cursor = self.cajaTexto.textCursor()
+        cursor_nume = self.cajaNumeracion.textCursor()
+        #se mueve a la primera linea visible de la caja de numeracion
+        cursor_nume.movePosition(QtGui.QTextCursor.Start,1)
+        self.cajaNumeracion.clear() #Se borra todo
+        # se define el objeto bloque
+        bloque = self.cajaTexto.firstVisibleBlock()
+        numFirstLine = bloque.firstLineNumber() #first line visible
+        numEndLine = self.cajaTexto.blockCount() #numero de la ultima linea
+        #Se lee la fuente del texto
+        fuente = QtGui.QFontMetrics(self.fontUI)
+        width=fuente.width('0') #ancho en pixeles del caracter 0
+        #numero de caracteres por linea
+        nucaporli = 50//width #50 : ancho predefinido de cadaNumeracion
+        #Se barre desde el start(firstline) hasta el total de lineas (endline)
+        for i in range(numFirstLine,numEndLine):
+            # se suma el 1 ya que la numeracion de las lineas start in 0
+            cursor_nume.insertText((str(i +1)).rjust(nucaporli) )
+            cursor_nume.insertBlock()
 
     def actualizaInfo(self):
         '''
