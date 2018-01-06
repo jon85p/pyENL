@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'GUI/MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created by: PyQt5 UI code generator 5.5.1
+# Created by: PyQt5 UI code generator 5.6
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -27,17 +27,32 @@ class Ui_MainWindow(object):
         self.eqnTab = QtWidgets.QWidget()
         self.eqnTab.setObjectName("eqnTab")
         self.gridLayout = QtWidgets.QGridLayout(self.eqnTab)
+        self.gridLayout.setContentsMargins(0, 0, 0, 0)
         self.gridLayout.setObjectName("gridLayout")
         self.cajaTexto = QtWidgets.QPlainTextEdit(self.eqnTab)
         self.cajaTexto.setObjectName("cajaTexto")
-        self.gridLayout.addWidget(self.cajaTexto, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.cajaTexto, 0, 1, 1, 1)
         self.solve_button = QtWidgets.QPushButton(self.eqnTab)
         self.solve_button.setObjectName("solve_button")
-        self.gridLayout.addWidget(self.solve_button, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.solve_button, 1, 1, 1, 1)
+        self.cajaNumeracion = QtWidgets.QPlainTextEdit(self.eqnTab)
+        self.cajaNumeracion.setEnabled(False)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.cajaNumeracion.sizePolicy().hasHeightForWidth())
+        self.cajaNumeracion.setSizePolicy(sizePolicy)
+        self.cajaNumeracion.setMaximumSize(QtCore.QSize(50, 16777215))
+        self.cajaNumeracion.setFrameShape(QtWidgets.QFrame.NoFrame)
+        self.cajaNumeracion.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.cajaNumeracion.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.cajaNumeracion.setObjectName("cajaNumeracion")
+        self.gridLayout.addWidget(self.cajaNumeracion, 0, 0, 1, 1)
         self.tabWidget.addTab(self.eqnTab, "")
         self.varTab = QtWidgets.QWidget()
         self.varTab.setObjectName("varTab")
         self.gridLayout_3 = QtWidgets.QGridLayout(self.varTab)
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
@@ -57,6 +72,7 @@ class Ui_MainWindow(object):
         self.solTab = QtWidgets.QWidget()
         self.solTab.setObjectName("solTab")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.solTab)
+        self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.solsTable = QtWidgets.QTableWidget(self.solTab)
         self.solsTable.setObjectName("solsTable")
@@ -72,6 +88,7 @@ class Ui_MainWindow(object):
         self.resTab = QtWidgets.QWidget()
         self.resTab.setObjectName("resTab")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.resTab)
+        self.gridLayout_4.setContentsMargins(0, 0, 0, 0)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.resTable = QtWidgets.QTableWidget(self.resTab)
         self.resTable.setObjectName("resTable")
@@ -90,7 +107,7 @@ class Ui_MainWindow(object):
         self.gridLayout_2.addWidget(self.infoLabel, 2, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setObjectName("menubar")
         self.menuArchivo = QtWidgets.QMenu(self.menubar)
         self.menuArchivo.setObjectName("menuArchivo")
@@ -219,6 +236,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         self.solve_button.setText(_translate("MainWindow", self.traduccion["Resolver"]))
+        # self.cajaNumeracion.setHtml(_translate("MainWindow", self.traduccion["<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+# "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+# "p, li { white-space: pre-wrap; }\n"
+# "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
+# "<p align=\"right\" style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>"]))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.eqnTab), _translate("MainWindow", self.traduccion["Ecuaciones"]))
         self.Actualizar_Button.setText(_translate("MainWindow", self.traduccion["Actualizar"]))
         self.cleanVarButton.setText(_translate("MainWindow", self.traduccion["Limpiar"]))

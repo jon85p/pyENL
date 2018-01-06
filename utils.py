@@ -33,6 +33,7 @@ class configFile:
         self.format = '{:,.3}'
         self.tol = 1e-4
         self.timeout = 10
+        self.sFontUI = 'Monospace,12,-1,5,25,0,0,0,0,0'
         self.cuDir = os.path.expanduser('~')
         try:
             f = open(filename, 'rb')
@@ -50,6 +51,8 @@ class configFile:
                     self.tol = float(valor)
                 if 'timeout' in elm:
                     self.timeout = float(valor)
+                if 'font' in elm:
+                    self.sFontUI = valor
                 if 'cuDir' in elm:
                     if os.path.exists(valor): #se confirma que la ruta si existe, si no se deja la de usuario
                         self.cuDir = valor

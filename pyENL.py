@@ -73,14 +73,22 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timeout = opciones_.timeout
         self.cuDir = opciones_.cuDir
         self.theme = theme
+        self.sizeFont = 12
+        self.fontUI = QtGui.QFont()
+        if opciones_.sFontUI:
+            self.fontUI.fromString(opciones_.sFontUI)
+            self.sizeFont = int(opciones_.sFontUI.split(",")[1])
         self.setupUi(self)
         # self.solve_button.clicked.connect(self.prueba)
+        # Dejar en una sola línea el texto
+        self.cajaTexto.setLineWrapMode(0)
         # Variables en el programa:
         self.cajaTexto.setFocus()
         self.variables = []
         self.solucion = None
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
+        self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
@@ -124,6 +132,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.tabWidget.setCurrentIndex(2)
         # self.cargarUnidades()
         #
+        # Fuente, prueba
+        self.fontUI.setPointSize(self.sizeFont)
+        self.cajaTexto.setFont(self.fontUI)
+        # self.cajaNumeracion.setEnabled(True)
+        self.cajaNumeracion.setFont(self.fontUI)
+        # self.cajaNumeracion.setEnabled(False)
+
+        # eliminar márgenes superiores:
+        doc1 = self.cajaNumeracion.document()
+        doc1.setDocumentMargin(0)
+        doc2 = self.cajaTexto.document()
+        doc2.setDocumentMargin(0)
+
+
         # ACA van las cosas que luego se activarán
         self.actionUnidades.setEnabled(False)
         self.actionPor_agregar.setEnabled(False)
@@ -148,6 +170,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         dialog.ui.method_opt.setCurrentIndex(methods[self.opt_method])
         dialog.ui.tol_line.setText(str(self.opt_tol))
         dialog.ui.timeout_spin.setValue(self.timeout)
+        dialog.ui.sizeFont.setValue(self.sizeFont)
         dialog.exec_()
         dialog.show()
         # dialog.ui.buttonBox.accepted.connect(self.pruebaprint)
@@ -163,6 +186,13 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.theme = temas[ui.temas.currentIndex()]
         self.opt_method = methods[ui.method_opt.currentIndex()]
         self.timeout = ui.timeout_spin.value()
+        self.fontUI = ui.fontText.currentFont()
+        self.sizeFont = ui.sizeFont.value()
+        self.fontUI.setPointSize(self.sizeFont)
+        self.cajaTexto.setFont(self.fontUI)
+        # self.cajaNumeracion.setEnabled(True)
+        self.cajaNumeracion.setFont(self.fontUI)
+        fontString = self.fontUI.toString()
         try:
             self.opt_tol = float(str(ui.tol_line.text()))
         except Exception as e:
@@ -185,6 +215,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             bufferr = bufferr + 'format=' + self.format + '\n'
             bufferr = bufferr + 'tol=' + str(self.opt_tol) + '\n'
             bufferr = bufferr + 'timeout=' + str(self.timeout) + '\n'
+            bufferr = bufferr + 'font=' + fontString + '\n'
             bufferr = bufferr + 'cuDir=' + str(self.cuDir) + '\n'
             g = open("config.txt", 'wb')
             g.write(bufferr.encode('utf-8'))
@@ -367,7 +398,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 QtWidgets.QMessageBox.about(self, "Error", "Esto no debería salir")
         else:
             self.abreArchivoAccion()
-        
+
 
     def abreArchivoAccion(self,file2Open=None):
         self.variables = []
@@ -780,6 +811,34 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", str(e))
         self.showVarsTable()
         self.archivoModificado = True
+
+    def actualizarNumeroLinea(self):
+        '''
+        Actualiza cada cierto tiempo la numeración de las lineas
+        de la caja de texto de ecuaciones
+        '''
+        #Quizá no es la mejor manera de hacerlo pero funciona! tómalo!
+        #Se define los cursores de la caja de ecuaciones y el de la
+        #caja de numeración
+        cursor = self.cajaTexto.textCursor()
+        cursor_nume = self.cajaNumeracion.textCursor()
+        #se mueve a la primera linea visible de la caja de numeracion
+        cursor_nume.movePosition(QtGui.QTextCursor.Start,1)
+        self.cajaNumeracion.clear() #Se borra todo
+        # se define el objeto bloque
+        bloque = self.cajaTexto.firstVisibleBlock()
+        numFirstLine = bloque.firstLineNumber() #first line visible
+        numEndLine = self.cajaTexto.blockCount() #numero de la ultima linea
+        #Se lee la fuente del texto
+        fuente = QtGui.QFontMetrics(self.fontUI)
+        width=fuente.width('0') #ancho en pixeles del caracter 0
+        #numero de caracteres por linea
+        nucaporli = 50//width #50 : ancho predefinido de cadaNumeracion
+        #Se barre desde el start(firstline) hasta el total de lineas (endline)
+        for i in range(numFirstLine,numEndLine):
+            # se suma el 1 ya que la numeracion de las lineas start in 0
+            cursor_nume.insertText((str(i +1)).rjust(nucaporli) )
+            cursor_nume.insertBlock()
 
     def actualizaInfo(self):
         '''
