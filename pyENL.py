@@ -5,6 +5,7 @@ Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
 import os
+import ast
 import subprocess
 import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
@@ -427,7 +428,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             dic_str_var = g.read()
             g.close()
             # Diccionario con las variables del archivo guardado
-            dic_var = eval(dic_str_var)
+            dic_var = ast.literal_eval(dic_str_var)
             self.variables = []
             for var in dic_var.keys():
                 lista = dic_var[var]
