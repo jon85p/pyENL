@@ -117,6 +117,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionSalir.setShortcut('Ctrl+Q')
         self.actionGuardar.setShortcut('Ctrl+S')
         self.actionAbrir.setShortcut('Ctrl+O')
+        self.actionTermodinamicas.setShortcut('Ctrl+T')
         self.actionCerrar.setShortcut('Ctrl+W')
         self.home_dir = os.path.expanduser('~')
         # TODO En lugar de salir de una vez, crear función que verifique que

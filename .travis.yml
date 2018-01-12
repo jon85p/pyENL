@@ -21,7 +21,7 @@ before_install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   - pip install -r requirements.txt
-  - pip install coverage pytest pytest-cov codecov
+  - pip install coverage pytest pytest-cov codecov pytest-qt
 
 install:
   - pip install --no-deps .  # Test installation correctness
