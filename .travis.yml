@@ -36,5 +36,5 @@ script:
   - py.test -vv  # Test against installed code
 
 after_success:
-  - coverage run test_core.py
+  - coverage run test_pyENL/*.py
   - codecov
