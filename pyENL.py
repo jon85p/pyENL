@@ -91,7 +91,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
-        self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
@@ -819,7 +818,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def actualizarNumeroLinea(self):
         '''
-        Actualiza cada cierto tiempo la numeración de las lineas
+        Actualiza  la numeración de las lineas
         de la caja de texto de ecuaciones
         '''
         #Quizá no es la mejor manera de hacerlo pero funciona! tómalo!
@@ -853,6 +852,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if self.tabWidget.currentIndex() != 0: #si no esta en la pestaña de la caja de texto
             return #vemos loca
 
+        self.actualizarNumeroLinea()
+        
         # Se modificó ya el archivo
         self.archivoModificado = True
         texto = self.cajaTexto.toPlainText()
