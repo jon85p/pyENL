@@ -60,7 +60,7 @@ class configFile:
             # Guardar con la configuración!
             pass
 
-    
+
 
 
 def ajustes(texto):
@@ -347,6 +347,46 @@ def funcion_e(Diccionario):
             break
 
     return Diccionario_orga
+
+    def onevsone(m):
+        '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)'''
+        size = m.shape[0]
+
+        for a in range(size):
+            sumCol = sum(m,axis = 0) #sumar columnas
+            sumRow = sum(m,axis=1) #sumar filas
+
+            minSumCol = sumCol.min()
+            yminSumCol = sumCol.argmin()
+
+            minSumRow = sumRow.min()
+            xminSumRow = sumRow.argmin()
+
+
+            if minSumRow == 1:
+                # si una equ tiene solo una variable
+                yminSumRow =m[xminSumRow].argmax() # variable que tiene la equ
+                m[:,yminSumRow] = (arange(size) == xminSumRow)*(size+1)
+
+            else:
+                #se mira la variable que se repita el menor numero de veces
+                xminSumCol =m[:,yminSumCol].argmax() # equ que posee la variable
+                m[xminSumCol] = (arange(size) == yminSumCol)*(size+1)
+                m[:,yminSumCol] = (arange(size) == xminSumCol)*(size+1)
+
+
+        m = m//(size+1)
+
+        #Verificacion
+        sumCol = sum(m,axis = 0) #sumar columnas
+        sumRow = sum(m,axis=1) #sumar filas
+        ones = ones_like(sumCol)
+        if not (array_equal(sumCol,ones) and array_equal(sumRow,ones)):
+            return m , 1
+        else:
+            return m, 0
+
+
 
     def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
         '''

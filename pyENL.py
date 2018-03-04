@@ -87,9 +87,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cajaTexto.setFocus()
         self.variables = []
         self.solucion = None
+        self.cursor = self.cajaTexto.textCursor()
+
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
-        self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
@@ -127,6 +128,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionAyuda_CoolProp.triggered.connect(partial(self.open_url,'http://www.coolprop.org/coolprop/HighLevelAPI.html'))
         self.actionAyuda_pyENL.triggered.connect(partial(self.open_url,'https://jon85p.github.io/pyENL/help'))
         self.actionLicencias.triggered.connect(partial(self.open_url,'https://raw.githubusercontent.com/jon85p/pyENL/master/COPYING'))
+        self.actionBuscar_Reemplazar.triggered.connect(self.showFindReplace)
 
         # TODO En Información incluir la máxima desviación
         # print(dir(self))
@@ -247,7 +249,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def agregaComentario(self):
         # QtWidgets.QMessageBox.about(self, "Prueba", "Se ha activado la alarma")
-        posicion = self.cajaTexto.textCursor()
+        posicion = self.cursor
         self.cajaTexto.insertPlainText("<< >>")
         hint = self.traduccion["Acá va el comentario"]
         self.cajaTexto.moveCursor(posicion.Left, posicion.MoveAnchor)
@@ -561,7 +563,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Inserta texto con llamado a función prop()
         # este texto está almacenado en self.texto_termo_a_agregar
         # print("Holaaa")
-        posicion = self.cajaTexto.textCursor()
+        posicion = self.cursor
         self.cajaTexto.insertPlainText(self.texto_termo_a_agregar)
 
     def solve(self):
@@ -769,7 +771,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 # si se cambió el nombre de la variable se debe reemplazar en la ventana de ecuaciones
                 actual_name = self.variables[i].name
                 if actual_name != new_name:
-                    cursor = self.cajaTexto.textCursor() #crea el objeto cursor
                     #texto a buscar en self.cajaTexto
                     toFind = "\\b"+self.variables[i].name + "\\b"   #el "\\b" para que solo busque palabras completas
                     regex = QtCore.QRegExp(toFind) #ni idea el porqué, toca crear el objeto
@@ -779,9 +780,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     index = regex.indexIn(self.cajaTexto.toPlainText(),pos)
                     while(index != -1): #si indexIn  no encuentra nada retorna un -1
 
-                        cursor.setPosition(index)
-                        cursor.movePosition(QtGui.QTextCursor.EndOfWord,1) #selecciona la variable
-                        cursor.insertText(new_name) # sobreescribe lo seleccionado
+                        self.cursor.setPosition(index)
+                        self.cursor.movePosition(QtGui.QTextCursor.EndOfWord,1) #selecciona la variable
+                        self.cursor.insertText(new_name) # sobreescribe lo seleccionado
                         #la siguiente linea será útil para ventana de buscar variables en el texto
                         #pos = index + regex.matchedLength()
                         #Por ahora al ir reemplazando la palabra cada vez que la encuentra no es necesario cambiar la poscion de busqueda
@@ -817,13 +818,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def actualizarNumeroLinea(self):
         '''
-        Actualiza cada cierto tiempo la numeración de las lineas
+        Actualiza  la numeración de las lineas
         de la caja de texto de ecuaciones
         '''
         #Quizá no es la mejor manera de hacerlo pero funciona! tómalo!
-        #Se define los cursores de la caja de ecuaciones y el de la
-        #caja de numeración
-        cursor = self.cajaTexto.textCursor()
+        #Se define el cursor de la caja de numeración
         cursor_nume = self.cajaNumeracion.textCursor()
         #se mueve a la primera linea visible de la caja de numeracion
         cursor_nume.movePosition(QtGui.QTextCursor.Start,1)
@@ -836,7 +835,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         fuente = QtGui.QFontMetrics(self.fontUI)
         width=fuente.width('0') #ancho en pixeles del caracter 0
         #numero de caracteres por linea
-        nucaporli = 50//width #50 : ancho predefinido de cadaNumeracion
+        nucaporli = 35//width #50 : ancho predefinido de cadaNumeracion
         #Se barre desde el start(firstline) hasta el total de lineas (endline)
         for i in range(numFirstLine,numEndLine):
             # se suma el 1 ya que la numeracion de las lineas start in 0
@@ -852,6 +851,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         #solo se actualiza si se está modificando directamente en la caja de texto
         if self.tabWidget.currentIndex() != 0: #si no esta en la pestaña de la caja de texto
             return #vemos loca
+
+        self.actualizarNumeroLinea()
+        
         # Se modificó ya el archivo
         self.archivoModificado = True
         texto = self.cajaTexto.toPlainText()
@@ -904,7 +906,100 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 Dicc_unid[key_unidad] = conversion
             #Una vez terminado el diccionario de conversiones para una dimensión dada se agrega al Diccionario de dimensiones
             self.Dicc_dimen[key_dimension]= Dicc_unid
+    def showFindReplace(self):
+        '''Muestra la ventana para buscar y reemplazar caracteres'''
+        self.frame.show()
+        self.textFind.setFocus()
+        self.pushButton_find.clicked.connect(self.currentFindText)
+        self.pushButton_replace.clicked.connect(self.replaceText)
+        self.pushButton_replaceAll.clicked.connect(self.replaceText)
+        self.pushButton_close.clicked.connect(self.closeFindReplace)
+        self.textFind.textChanged.connect(self.findText)
+        # self.cajaTexto.textChanged.connect(self.findText)
 
+    def closeFindReplace(self):
+        '''Cierra la ventana para buscar y reemplazar caracteres'''
+        self.frame.close()
+
+        #Se limpia todo lo que esté resaltado
+        self.cursor.select(QtGui.QTextCursor.Document)#seleccionar todo
+        fmt = QtGui.QTextCharFormat() # para darle formato al texto
+        fmt.setBackground(QtCore.Qt.white)
+        self.cursor.setCharFormat(fmt)
+
+    def currentFindText(self):
+        '''Se resalta de otro color el resultado actual visualizado'''
+        word= self.textFind.text()
+
+        #Se vuelve a dejar como estaba el anterior
+        currentPosition = self.list_posWord[self.currentPosition - 1]
+        self.cursor.setPosition(currentPosition,QtGui.QTextCursor.MoveAnchor)
+        self.cursor.movePosition(QtGui.QTextCursor.NextCharacter,QtGui.QTextCursor.KeepAnchor,len(word))
+
+        fmt = QtGui.QTextCharFormat() # para darle formato al texto
+        fmt.setBackground(QtCore.Qt.yellow)
+        self.cursor.setCharFormat(fmt)
+
+        # se selecciona el nuevo para cambiarle el color de fondo
+        currentPosition = self.list_posWord[self.currentPosition]
+        self.cursor.setPosition(currentPosition,QtGui.QTextCursor.MoveAnchor)
+        self.cursor.movePosition(QtGui.QTextCursor.NextCharacter,QtGui.QTextCursor.KeepAnchor,len(word))
+
+        fmt.setBackground(QtCore.Qt.cyan)
+        self.cursor.setCharFormat(fmt)
+
+        self.label_result.setText(str(self.currentPosition +1) +' of ' + str(len(self.list_posWord)))
+        #cada vez que se presiona el boton find se pasa al siguiente elemento
+        self.currentPosition +=1
+
+        if self.currentPosition == len(self.list_posWord):
+            self.currentPosition = 0
+
+    def findText(self):
+        '''Resalta todos los resultados encontrados en la busqueda'''
+        cajaTexto = self.cajaTexto.toPlainText()
+        word= self.textFind.text() #texto a buscar en self.cajaTexto
+        #Se limpia todo lo que esté resaltado
+        fmt = QtGui.QTextCharFormat() # para darle formato al texto
+        fmt.setBackground(QtCore.Qt.white)
+        self.cursor.select(QtGui.QTextCursor.Document)#seleccionar todo
+        self.cursor.setCharFormat(fmt)
+
+        if len(word) == 0: #No buscar si no hay texto escrito
+            self.label_find.setText('Find in current buffer')
+            self.label_result.setText('No result')
+            return
+
+        #TODO whole word case , next line
+        #word = "\\b"+word + "\\b"   #el "\\b" para que solo busque palabras completas
+        n_words = cajaTexto.count(word)
+        self.label_result.setText(str(n_words) + ' found')
+        self.label_find.setText(str(n_words) + " results found for: '"  + word+"'")
+
+        self.list_posWord = []
+        self.currentPosition = 0
+
+        # index da la posicion donde está el primer elemento "word" en
+        #self.cajaTexto partiendo desde la posicion pos
+        pos= 0
+        regex = QtCore.QRegExp(word)
+        index = regex.indexIn(cajaTexto,pos)
+        for i in range(n_words):
+            if index == -1:#si indexIn  no encuentra nada retorna un -1
+                break
+            self.list_posWord.append(index) #se almacena la posicion
+
+            self.cursor.setPosition(index)
+            self.cursor.movePosition(QtGui.QTextCursor.NextCharacter,QtGui.QTextCursor.KeepAnchor,len(word)) #selecciona la variable
+
+            fmt.setBackground(QtCore.Qt.yellow)
+            self.cursor.setCharFormat(fmt)
+
+            pos = index + len(word)
+            index = regex.indexIn(cajaTexto,pos)
+
+    def replaceText(self):
+        pass
 
 
 def main():
