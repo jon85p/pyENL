@@ -9,6 +9,7 @@ env:
 branches:
   only:
     - master
+    - tarjan
 
 before_install:
   # http://conda.pydata.org/docs/travis.html
