@@ -64,6 +64,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         Inicialización del objeto ventana principal; contiene lo que se lleva a
         cabo para cargar la ventana principal.
         '''
+        
         QtWidgets.QMainWindow.__init__(self, parent)
         opciones_ = configFile("config.txt")
         self.format = opciones_.format
@@ -80,6 +81,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.fontUI.fromString(opciones_.sFontUI)
             self.sizeFont = int(opciones_.sFontUI.split(",")[1])
         self.setupUi(self)
+        
+        self.traduce()
+        
         # self.solve_button.clicked.connect(self.prueba)
         # Dejar en una sola línea el texto
         self.cajaTexto.setLineWrapMode(0)
@@ -226,6 +230,63 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config.txt'")
             print(str(e))
+
+    def traduce(self):
+        '''
+        Labores post creación del objeto MainWindow para no afectar el archivo generado por el 
+        Qt Designer
+        '''
+
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("GUI/imgs/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.setWindowIcon(icon)
+
+        self.solve_button.setText(self.traduccion["Resolver"])
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.eqnTab), self.traduccion["Ecuaciones"])
+        self.Actualizar_Button.setText(self.traduccion["Actualizar"])
+        self.cleanVarButton.setText(self.traduccion["Limpiar"])
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.varTab), self.traduccion["Variables"])
+        self.info_button.setText(self.traduccion["Información"])
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.solTab), self.traduccion["Soluciones"])
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.resTab), self.traduccion["Residuos"])
+        self.infoLabel.setText(self.traduccion["x Ecuaciones/y Variables"])
+        self.menuArchivo.setTitle(self.traduccion["Archivo"])
+        self.menuExportar_reporte.setTitle(self.traduccion["Exportar reporte"])
+        self.menuImportar.setTitle(self.traduccion["Importar"])
+        self.menuEditar.setTitle(self.traduccion["Editar"])
+        self.menuOpciones.setTitle(self.traduccion["Opciones"])
+        self.menuHerramientas.setTitle(self.traduccion["Herramientas"])
+        self.menuFunciones_Ingenieria.setTitle(self.traduccion["Funciones Ingeniería"])
+        self.menuFunciones_de_usuario.setTitle(self.traduccion["Funciones de usuario"])
+        self.menuAyuda.setTitle(self.traduccion["Ayuda"])
+        self.actionAbrir.setText(self.traduccion["Abrir"])
+        self.actionGuardar.setText(self.traduccion["Guardar"])
+        self.actionGuardar_Como.setText(self.traduccion["Guardar Como..."])
+        self.actionCerrar.setText(self.traduccion["Cerrar"])
+        self.actionSalir.setText(self.traduccion["Salir"])
+        self.actionComentario.setText(self.traduccion["Comentario"])
+        self.actionSeleccionar_todo.setText(self.traduccion["Seleccionar todo"])
+        self.actionDeshacer.setText(self.traduccion["Deshacer"])
+        self.actionRehacer.setText(self.traduccion["Rehacer"])
+        self.actionCopiar.setText(self.traduccion["Copiar"])
+        self.actionPegar.setText(self.traduccion["Cortar"])
+        self.actionPegar_2.setText(self.traduccion["Pegar"])
+        self.actionAyuda_pyENL.setText(self.traduccion["Ayuda pyENL"])
+        self.actionAyuda_NumPy.setText(self.traduccion["Ayuda NumPy"])
+        self.actionAyuda_CoolProp.setText(self.traduccion["Ayuda CoolProp"])
+        self.actionSobre_pyENL.setText(self.traduccion["Sobre pyENL"])
+        self.actionLicencias.setText(self.traduccion["Licencias"])
+        self.actionTermodinamicas.setText(self.traduccion["Termodinámicas"])
+        self.actionPor_agregar.setText(self.traduccion["Por agregar..."])
+        self.actionDisponibles.setText(self.traduccion["Disponibles"])
+        self.actionAgregar.setText(self.traduccion["Agregar..."])
+        self.actionUnidades.setText(self.traduccion["Unidades"])
+        self.actionConfiguracion.setText(self.traduccion["Configuración"])
+        self.actionImprimir.setText(self.traduccion["Imprimir"])
+        self.actionLibreOffice.setText(self.traduccion["Open Document Text"])
+        self.actionTeX.setText(self.traduccion["Archivo LaTeX"])
+        self.actionArchivo_EES.setText(self.traduccion["Archivo EES"])
+
 
     def exportaTex(self):
         try:
