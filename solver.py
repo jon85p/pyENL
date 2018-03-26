@@ -8,6 +8,7 @@ ln = log
 log = log10
 import warnings
 from pint import _DEFAULT_REGISTRY as u
+from utils import variables , bloques
 u.load_definitions("units.txt")
 # from time import time as pyENL_time
 
@@ -129,9 +130,15 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         #temp = cadaEqn.replace("[", "*u.parse_units('")
         #temp = temp.replace("]", "')")
         #lista_eqns.append(temp)
+    
+  
+    print(bloques(pyENL_eqns, pyENL_variables , tol))
+
     try:
         pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
                              args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
+       # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
+         #                    args=(variables_bloque, eqns_bloque), tol=tol, method=method)
         # Métodos:
         # ‘hybr’
         # ‘lm’
