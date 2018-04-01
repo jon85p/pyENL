@@ -829,15 +829,28 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         bloque = self.cajaTexto.firstVisibleBlock()
         numFirstLine = bloque.firstLineNumber() #first line visible
         numEndLine = self.cajaTexto.blockCount() #numero de la ultima linea
+        
         #Se lee la fuente del texto
         fuente = QtGui.QFontMetrics(self.fontUI)
         width=fuente.width('0') #ancho en pixeles del caracter 0
-        #numero de caracteres por linea
-        nucaporli = 50//width #50 : ancho predefinido de cadaNumeracion
-        #Se barre desde el start(firstline) hasta el total de lineas (endline)
-        for i in range(numFirstLine,numEndLine):
+
+        # Se barre desde el start(firstline) hasta el total visible de lineas (endVisible)
+        if numEndLine - numFirstLine>70:
+            # Aplica la engañadora del muergano
+            numEndVisible = numFirstLine + 70
+        else:
+            numEndVisible = numEndLine
+
+        # numero de caracteres por linea
+        # nucaporli = 50//width # 50 : ancho predefinido de cadaNumeracion (ancho fijo)
+        nucaporli = len(str(numEndLine)) 
+        if nucaporli < 2 : nucaporli = 2 # mín de caracteres por linea
+        width_caja = width*nucaporli 
+        self.cajaNumeracion.setMaximumSize(QtCore.QSize(width_caja, 16777215))
+
+        for i in range(numFirstLine,numEndVisible):
             # se suma el 1 ya que la numeracion de las lineas start in 0
-            cursor_nume.insertText((str(i +1)).rjust(nucaporli) )
+            cursor_nume.insertText((str(i +1)).rjust(nucaporli) ) 
             cursor_nume.insertBlock()
 
     def actualizaInfo(self):
