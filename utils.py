@@ -470,6 +470,7 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
         diccTarjan[int(argwhere(Rel11[:,x]==1))] = contenido
 
     bloques = tarjan(diccTarjan)
+    bloques.reverse()
     
     return bloques
     
