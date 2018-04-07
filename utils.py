@@ -13,6 +13,8 @@ prop = log  # Solo importa el nombre de la función para comprobación...
 haprop = log
 
 
+from tarjan import tarjan
+
 class configFile:
     '''
     Clase que facilita datos de configuración, su lectura y escritura
@@ -60,7 +62,7 @@ class configFile:
             # Guardar con la configuración!
             pass
 
-    
+
 
 
 def ajustes(texto):
@@ -348,21 +350,127 @@ def funcion_e(Diccionario):
 
     return Diccionario_orga
 
-    def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
-        '''
-        Recibe las ecuaciones y variables para resolver usando bloques mediante
-        algoritmo de Tarjan para separación de sistemas de ecuaciones
-        independientes entre sí.
+def onevsone(matriz):
+    '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)''' 
+    m =matriz.copy()
+    size = m.shape[0]
 
-        pyENL_eqns contiene ecuaciones, pyENL_variables las variables que hay,
-        tol se refiere a la tolerancia del método, method es el método a usar y
-        minEqns es la opción para que a partir de esa cantidad de ecuaciones se
-        usen bloques (un valor muy bajo podría ser contraproducente ya que se
-        tardaría más tiempo agrupando que solucionando el sistema de un solo
-        llamado a la función root() )
+    for a in range(size):
+        
+        sumCol = sum(m,axis = 0) #sumar columnas
+        sumRow = sum(m,axis=1) #sumar filas
+        
+        
+        minSumCol = sumCol.min()
+        yminSumCol = sumCol.argmin()
 
-        Devuelve resultado pyENL
-        '''
-        # TODO: Optimizar el asunto de valores ya calculados para no repetición
-        # de cálculos de estas variables.
-        pass
+        minSumRow = sumRow.min()
+        xminSumRow = sumRow.argmin()
+        
+        # Revisión de un sistema de ecuaciones valido
+        checkCol=argwhere(sumCol== 1) 
+        checkRow = argwhere(sumRow==1)
+        VcheckCol = zeros(size)
+        VcheckRow = zeros(size)
+        for b in checkCol:
+            VcheckCol  = VcheckCol + m[:,b]
+        
+        for c in checkRow:
+            VcheckRow =VcheckRow + m[c,:]
+        if True in (VcheckCol>1) or True in (VcheckCol>1):
+            return m ,-1 
+        
+        if minSumRow == 1: 
+            # si una equ tiene solo una variable
+            yminSumRow =m[xminSumRow].argmax() # variable que tiene la equ
+            m[:,yminSumRow] = (arange(size) == xminSumRow)*(size+1)
+        
+        else:
+            #se mira la variable que se repita el menor numero de veces
+            xminSumCol =m[:,yminSumCol].argmax() # equ que posee la variable
+            m[xminSumCol] = (arange(size) == yminSumCol)*(size+1)
+            m[:,yminSumCol] = (arange(size) == xminSumCol)*(size+1)
+
+            
+            
+    m = m//(size+1)
+
+    #Verificacion
+    sumCol = sum(m,axis = 0) #sumar columnas
+    sumRow = sum(m,axis=1) #sumar filas
+    ones = ones_like(sumCol)
+    if array_equal(sumCol,ones) and array_equal(sumRow,ones):
+        return m , 1
+    else:
+        return m, 0
+               
+
+
+def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
+#def bloques(sistema_eqns, tol=None, method='hybr', minEqns=3):
+    '''
+    Recibe las ecuaciones y variables para resolver usando bloques mediante
+    algoritmo de Tarjan para separación de sistemas de ecuaciones
+    independientes entre sí.
+
+    pyENL_eqns contiene ecuaciones, pyENL_variables las variables que hay,
+    tol se refiere a la tolerancia del método, method es el método a usar y
+    minEqns es la opción para que a partir de esa cantidad de ecuaciones se
+    usen bloques (un valor muy bajo podría ser contraproducente ya que se
+    tardaría más tiempo agrupando que solucionando el sistema de un solo
+    llamado a la función root() )
+
+    Devuelve resultado pyENL
+    '''
+    # TODO: Optimizar el asunto de valores ya calculados para no repetición
+    # de cálculos de estas variables.
+
+
+
+    #1.SE CREA LA MATRIZ DEL SISTEMA DE ECUACIONES################
+    lista_eqn= pyENL_eqns
+    lista_variables=[x.name for x in pyENL_variables]
+
+    Num_eqn = len(lista_eqn)
+    matriz_sistema = zeros((Num_eqn,Num_eqn) , dtype = int)
+
+    for i , eqn in enumerate(lista_eqn):
+
+        varINeqn=variables(eqn) #variables funcion de utils
+
+        #Crea la fila de la matriz
+        fila = []
+        for variable in lista_variables:
+                        
+            if variable in varINeqn:
+                fila.append(1)  
+            else:
+                fila.append(0)  
+
+        matriz_sistema[i,:] = array(fila)
+
+   
+
+    #2.CREAR MATRIZ DE RELACION 1VS1###################
+
+
+    Rel11, flag = onevsone(matriz_sistema)
+
+
+    #3.CREAR GRAFO ###################################
+
+    matrizTarjan = (matriz_sistema - Rel11).T 
+
+    diccTarjan = {}
+
+    for x ,fila in enumerate(matrizTarjan):
+        posFila= (argwhere(fila == 1))
+        contenido = list(posFila.reshape(posFila.size))
+
+        diccTarjan[int(argwhere(Rel11[:,x]==1))] = contenido
+
+    bloques = tarjan(diccTarjan)
+    bloques.reverse()
+    
+    return bloques
+    

@@ -37,6 +37,7 @@ class pyENL_variable:
         self.lowerlim = -1e5
         self.comment = 'Variable'
         self.units = sindim  # Unidad de la variable.
+        self.solved = False
         self.dim = self.units.dimensionality #Dimensión de la variable
 
     def __repr__(self):
@@ -159,7 +160,6 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
     except Exception as e:
-        # print(str(e))
         # exit(0)
         # Intento aleatorio
         # Si el error es de sintaxis hay que detectarlo sin que intente
