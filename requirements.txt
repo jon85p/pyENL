@@ -6,3 +6,4 @@ pylatex>=1.0.0
 fluids>=0.1.59
 pint>=0.8
 pyqt5
+tarjan
