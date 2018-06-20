@@ -1042,6 +1042,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             regex = QtCore.QRegExp(r'\b' +word + r'\b')
         else:
             regex = QtCore.QRegExp(word)
+            # desactivar wildcard character (ejm:  . ^ {} [] $ ? )
+            regex.setPatternSyntax(QtCore.QRegExp.FixedString) 
         #self.cajaTexto partiendo desde la posicion pos
         pos= 0
         # index da la posicion donde está el primer elemento "word" en
