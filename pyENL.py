@@ -866,10 +866,16 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         width_caja = width*nucaporli 
         self.cajaNumeracion.setMaximumSize(QtCore.QSize(width_caja, 16777215))
 
-        for i in range(numFirstLine,numEndVisible):
-            # se suma el 1 ya que la numeracion de las lineas start in 0
-            cursor_nume.insertText((str(i +1)).rjust(nucaporli) ) 
-            cursor_nume.insertBlock()
+        list_numer =str(list(range(numFirstLine+1,numEndVisible+1)))
+        list_numer =list_numer.replace(',', '\n').replace(' ', '').replace('[','').replace(']','')
+        self.cajaNumeracion.setAlignment(QtCore.Qt.AlignRight)
+        cursor_nume.insertText(list_numer)
+
+        # Manera antigua de insertar numeración
+        # for i in range(numFirstLine,numEndVisible):
+        #     # se suma el 1 ya que la numeracion de las lineas start in 0
+        #     cursor_nume.insertText((str(i +1)).rjust(nucaporli) ) 
+        #     cursor_nume.insertBlock()
 
     def actualizaInfo(self):
         '''
