@@ -91,6 +91,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
         self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
+        self.cajaTexto.cursorPositionChanged.connect(self.originCursor)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
@@ -1050,14 +1051,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         index = regex.indexIn(cajaTexto,pos)
         conteoReal =0
         n_words = cajaTexto.count(word)
+        curDiff = 0
         
         for i in range(n_words):
             if index == -1:#si indexIn  no encuentra nada retorna un -1
                 break
             conteoReal += 1
             #Si el texto a buscar se habia seleccionado, empezar desde esa posición
-            if self.posSelText == index:
-                self.currentPosition = i
+            # if self.posSelText == index:
+            #     self.currentPosition = i
 
             self.cursor.setPosition(index)
             self.cursor.movePosition(QtGui.QTextCursor.NextCharacter,QtGui.QTextCursor.KeepAnchor,len(word)) #selecciona la variable
@@ -1068,6 +1070,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 pos = index + len(newWord)
                 cajaTexto = self.cajaTexto.toPlainText()
             else: # Highlight it
+
+                diff = abs(index -self.posOriCursor)
+                if diff < curDiff or i == 0:
+                    curDiff = diff
+                    self.currentPosition = i
 
                 fmt.setBackground(QtCore.Qt.yellow)
                 self.cursor.setCharFormat(fmt)
@@ -1084,6 +1091,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         else:
             self.label_result.setText(str(conteoReal) + ' found')
             self.label_find.setText(str(conteoReal) + " results found for: '"  + word+"'")
+            # Se resalta la mas cercana al cursor
+            self.currentFindText(0)
+
         self.cajaTexto.blockSignals(False) 
 
     def replaceText(self):
@@ -1113,6 +1123,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if len(word)== 0:
             return
         self.findText(replace=True,newWord =newWord)
+
+    def originCursor(self):
+        '''Función para ejecutar acciones cuando se de click en la cajaTexto'''
+
+        # se busca la posicion del cursor dada por el usuario
+        self.posOriCursor = self.cajaTexto.textCursor().position()
             
 
 
