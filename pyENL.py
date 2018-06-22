@@ -163,6 +163,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         self.textFind.textChanged.connect(self.findText)
         self.pushButton_find.clicked.connect(lambda: self.currentFindText(1))
+        self.textFind.returnPressed.connect(self.pushButton_find.click)
         self.pushButton_close.clicked.connect(self.closeFindReplace)
         self.pushButton_replace.clicked.connect(self.replaceText)
         self.pushButton_replaceAll.clicked.connect(self.replaceAll)
