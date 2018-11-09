@@ -1,12 +1,15 @@
 language: python
 
 python:
-  - "3.4"
   - "3.5"
+  
+env:
+  - USE_PYQT=pyqt5
 
 branches:
   only:
     - master
+    - tarjan
 
 before_install:
   # http://conda.pydata.org/docs/travis.html
@@ -21,15 +24,18 @@ before_install:
   - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
   - source activate test-environment
   - pip install -r requirements.txt
-  - pip install coverage pytest pytest-cov codecov
+  - pip install coverage pytest pytest-cov codecov pytest-qt
 
 install:
   - pip install --no-deps .  # Test installation correctness
-
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - sudo apt-get install -y libqt4-dev
+  - sudo apt-get install -y mesa-common-dev libgl1-mesa-dev libglu1-mesa-dev
 script:
-  - python3 entrada.py -f test/input4.txt
+  # - python3 entrada.py -f test/input4.txt
   - py.test -vv  # Test against installed code
 
 after_success:
-  - coverage run test_core.py
+  - coverage run test_pyENL/*.py
   - codecov

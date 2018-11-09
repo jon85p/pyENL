@@ -7,6 +7,7 @@
 
 [![Build Status](https://travis-ci.org/jon85p/pyENL.svg?branch=master)](https://travis-ci.org/jon85p/pyENL)
 [![codecov](https://codecov.io/gh/jon85p/pyENL/branch/master/graph/badge.svg)](https://codecov.io/gh/jon85p/pyENL)
+[![Code Health](https://landscape.io/github/jon85p/pyENL/master/landscape.svg?style=flat)](https://landscape.io/github/jon85p/pyENL/master)
 [![license](https://img.shields.io/github/license/jon85p/pyENL.svg)]()
 
 
@@ -16,10 +17,12 @@
 
 Engineering nonlinear equations systems solver
 ### Features
-- Solve numerically systems equations from MINPACK method of SciPy.
-- More solvers available from: [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
-- Engineering functions inside (Issue 4, in development 💪)
-- Users functions (Python).
+- [x] Solve numerically systems equations from MINPACK method of SciPy.
+- [x] More solvers available from: [scipy.optimize.root](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.root.html#scipy.optimize.root)
+- [x] Physical units support
+- [x] CoolProp thermodynamical functions support
+- [ ] Engineering functions inside
+- [ ] Users functions (Python).
 - On development stage!
 
 ### Use:

@@ -8,6 +8,7 @@ ln = log
 log = log10
 import warnings
 from pint import _DEFAULT_REGISTRY as u
+from utils import variables , bloques
 u.load_definitions("units.txt")
 # from time import time as pyENL_time
 
@@ -24,9 +25,27 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     '''
     cantidad_eqns = len(pyENL_variables)
     # Asignación de variables
+    pyENL_eqns = list(pyENL_eqns)
+
     for cont, var in enumerate(pyENL_variables):
+        print("----------------------")
+        print(pyENL)
+        print(var.name, '=', var.guess, var.solved)
+        if var.solved and (len(pyENL_variables) != len(pyENL_eqns)):
+            # exec(var.name + "=" + str(var.guess))
+            # pyENL_eqns.append(var.name + "[" +str(var.units) + "]-(" +\
+            #     str(var.guess) + "[" +str(var.units) + "])")
+            pyENL_eqns.append(var.name + "-(" + str(var.guess) + ")")
+            # "var.name[var.unit] - var.guess[var.unit]"?
         exec(var.name + '= pyENL[' + str(cont) + ']')
+    print(pyENL_eqns)
     salidapyENL = empty((cantidad_eqns))
+    # pyENL_eqns = list(pyENL_eqns)
+    # for i in range(len(pyENL_variables) - len(pyENL_eqns)):
+        # Funciones virtuales que sirven para aplicar la
+        # engañadora del muérgano, reconocida mundialmente
+        # en las Américas y en Francia
+        # pyENL_eqns.append("0[u.m")
     # Funciones para hallar raíces
     for cont, eqn in enumerate(pyENL_eqns):
         try:
@@ -42,11 +61,12 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             eqn2 = agregaUnidades(eqn, pyENL_variables)
             eqn2 = eqn2.replace("[", "*u.parse_units('")
             eqn2 = eqn2.replace("]", "')")
+            print("Ecuación a evaluar",eqn2)
             tempoo = eval(eqn2)
             salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
-            # print(er)
+            print("-------" + er)
             clase = str(e.__class__)
             if clase == "<class 'TypeError'>":
                 raise Exception("Error de tipeo en ecuación " + str(cont + 1))
@@ -129,9 +149,46 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         #temp = cadaEqn.replace("[", "*u.parse_units('")
         #temp = temp.replace("]", "')")
         #lista_eqns.append(temp)
+    
+  
+    lista_bloques = bloques(pyENL_eqns, pyENL_variables , tol)
+    #
+    pyENL_eqnsA = array(pyENL_eqns) # Pasar la lista pyENL_eqns a array numpy
+    pyENL_guessesA = array(pyENL_guesses)
+    lista_guesses = []
+    lista_variables = []
+    lista_eqns = []
     try:
-        pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
-                             args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
+        # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
+        #                      args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
+
+        for j, bloque in enumerate(lista_bloques):
+            lista_eqns.append(pyENL_eqnsA[bloque])
+            eqnsBloque = lista_eqns[-1]
+            recVars = '+'.join(eqnsBloque).replace("=","+") + "=0"
+            # Une todas las ecuaciones del bloque para encontrar las variables
+            # del mismo
+            varsBloque = variables(recVars)
+            varsBloque = [x for x in pyENL_variables if x.name in varsBloque]
+            guessBloque = [x.guess for x in varsBloque]
+            # print("Bloque número:",j)
+            # print(varsBloque, guessBloque,eqnsBloque)
+            solBloque = opt.root(pyENL_sistema, guessBloque,
+                             args=(varsBloque, eqnsBloque), tol=tol, method=method)
+            asegura_convergencia = True
+            # print(solBloque['success'])
+            if solBloque['success'] == False:
+                asegura_convergencia = False
+                raise Exception("Gordillo y los chulos")
+            # Actualizar el atributo solved
+            for i, varBloque in enumerate(varsBloque):
+                if not varBloque.solved:
+                    varBloque.guess = solBloque['x'][i]
+                    varBloque.solved = True
+                
+
+       # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
+         #                    args=(variables_bloque, eqns_bloque), tol=tol, method=method)
         # Métodos:
         # ‘hybr’
         # ‘lm’
@@ -170,7 +227,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     #   approximation.
 
     except Exception as e:
-        # print('ERROR:',str(pyENL_e))
+        print('ERROR:',str(e))
         # exit(0)
         # No está tomando el error porque primero aparece el de opt.root y antes
         # de ese si está el que se supone se quiere.
@@ -195,16 +252,18 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
             raise Exception(er)
         if 'debe tener unidades' in er:
             raise Exception(er)
-    asegura_convergencia = True
-    try:
-        if pyENL_sol['success'] == False:
-            asegura_convergencia = False
-    except:
-        pass
+    # asegura_convergencia = True
+    # try:
+    #     if pyENL_sol['success'] == False:
+    #         asegura_convergencia = False
+    # except:
+    #     pass
 
-    for cont in range(0, len(pyENL_variables)):
-        pyENL_variables[cont].guess = pyENL_sol['x'][cont]
-    pyENL_residuos = pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns)
+    # for cont in range(0, len(pyENL_variables)):
+    #     pyENL_variables[cont].guess = pyENL_sol['x'][cont]
+    # pyENL_residuos = pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns)
+    sol_sistema = [x.guess for x in pyENL_variables]
+    pyENL_residuos = pyENL_sistema(sol_sistema, pyENL_variables, pyENL_eqns)
     return pyENL_variables, pyENL_residuos, asegura_convergencia
   
 def agregaUnidades(eqn_, pyENL_variables):

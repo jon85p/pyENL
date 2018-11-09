@@ -18,7 +18,7 @@ from distutils.core import Extension
 #         requires.append(str(item.req))
 
 setup(name='pyENL',
-      version='0.1b',
+      version='0.1a',
       license='MIT',
       description='Engineering nonlinear system equations solver',
       author='Jhon Valencia',
