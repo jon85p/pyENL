@@ -74,6 +74,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.timeout = opciones_.timeout
         self.cuDir = opciones_.cuDir
         self.theme = theme
+        self.nuevo = True # Indica que el archivo es nuevo
         self.sizeFont = 12
         self.fontUI = QtGui.QFont()
         if opciones_.sFontUI:
@@ -831,7 +832,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         bloque = self.cajaTexto.firstVisibleBlock()
         numFirstLine = bloque.firstLineNumber() #first line visible
         numEndLine = self.cajaTexto.blockCount() #numero de la ultima linea
-        
+
         #Se lee la fuente del texto
         fuente = QtGui.QFontMetrics(self.fontUI)
         width=fuente.width('0') #ancho en pixeles del caracter 0
@@ -845,15 +846,15 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # numero de caracteres por linea
         # nucaporli = 50//width # 50 : ancho predefinido de cadaNumeracion (ancho fijo)
-        nucaporli = len(str(numEndLine)) 
+        nucaporli = len(str(numEndLine))
         if nucaporli < 2 : nucaporli = 2 # mín de caracteres por linea
-        width_caja = width*nucaporli 
+        width_caja = width*nucaporli
         self.cajaNumeracion.setMaximumSize(QtCore.QSize(width_caja, 16777215))
 
 
         for i in range(numFirstLine,numEndLine):
             # se suma el 1 ya que la numeracion de las lineas start in 0
-            cursor_nume.insertText((str(i +1)).rjust(nucaporli) ) 
+            cursor_nume.insertText((str(i +1)).rjust(nucaporli) )
             cursor_nume.insertBlock()
 
     def actualizaInfo(self):
@@ -867,9 +868,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             return #vemos loca
 
         self.actualizarNumeroLinea()
-        
+
         # Se modificó ya el archivo
-        self.archivoModificado = True
+        if not self.nuevo:
+            self.archivoModificado = True
+        self.nuevo = False
         texto = self.cajaTexto.toPlainText()
         texto = texto.splitlines()
         # self.infoLabel.setText((len(texto)))
