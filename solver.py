@@ -28,9 +28,9 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     pyENL_eqns = list(pyENL_eqns)
 
     for cont, var in enumerate(pyENL_variables):
-        print("----------------------")
-        print(pyENL)
-        print(var.name, '=', var.guess, var.solved)
+        # print("----------------------")
+        # print(pyENL)
+        # print(var.name, '=', var.guess, var.solved)
         if var.solved and (len(pyENL_variables) != len(pyENL_eqns)):
             # exec(var.name + "=" + str(var.guess))
             # pyENL_eqns.append(var.name + "[" +str(var.units) + "]-(" +\
@@ -38,7 +38,7 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             pyENL_eqns.append(var.name + "-(" + str(var.guess) + ")")
             # "var.name[var.unit] - var.guess[var.unit]"?
         exec(var.name + '= pyENL[' + str(cont) + ']')
-    print(pyENL_eqns)
+    # print(pyENL_eqns)
     salidapyENL = empty((cantidad_eqns))
     # pyENL_eqns = list(pyENL_eqns)
     # for i in range(len(pyENL_variables) - len(pyENL_eqns)):
@@ -61,12 +61,12 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             eqn2 = agregaUnidades(eqn, pyENL_variables)
             eqn2 = eqn2.replace("[", "*u.parse_units('")
             eqn2 = eqn2.replace("]", "')")
-            print("Ecuación a evaluar",eqn2)
+            # print("Ecuación a evaluar",eqn2)
             tempoo = eval(eqn2)
             salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
-            print("-------" + er)
+            # print("-------" + er)
             clase = str(e.__class__)
             if clase == "<class 'TypeError'>":
                 raise Exception("Error de tipeo en ecuación " + str(cont + 1))
@@ -149,8 +149,8 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         #temp = cadaEqn.replace("[", "*u.parse_units('")
         #temp = temp.replace("]", "')")
         #lista_eqns.append(temp)
-    
-  
+
+
     lista_bloques = bloques(pyENL_eqns, pyENL_variables , tol)
     #
     pyENL_eqnsA = array(pyENL_eqns) # Pasar la lista pyENL_eqns a array numpy
@@ -182,10 +182,11 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
                 raise Exception("Gordillo y los chulos")
             # Actualizar el atributo solved
             for i, varBloque in enumerate(varsBloque):
+                print(varBloque.guess)
                 if not varBloque.solved:
                     varBloque.guess = solBloque['x'][i]
                     varBloque.solved = True
-                
+
 
        # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
          #                    args=(variables_bloque, eqns_bloque), tol=tol, method=method)
@@ -227,7 +228,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     #   approximation.
 
     except Exception as e:
-        print('ERROR:',str(e))
+        # print('ERROR:',str(e))
         # exit(0)
         # No está tomando el error porque primero aparece el de opt.root y antes
         # de ese si está el que se supone se quiere.
@@ -265,7 +266,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     sol_sistema = [x.guess for x in pyENL_variables]
     pyENL_residuos = pyENL_sistema(sol_sistema, pyENL_variables, pyENL_eqns)
     return pyENL_variables, pyENL_residuos, asegura_convergencia
-  
+
 def agregaUnidades(eqn_, pyENL_variables):
   from utils import variables, esalfanum
   vars_ = variables(eqn_)
@@ -275,7 +276,7 @@ def agregaUnidades(eqn_, pyENL_variables):
   # a = b + 5[m]
   # poder reconocer esos 5 como metros reemplazando con:
   # a = b + 5*u.parse_units("m")
-  
+
   # print(vars_)
   eqn__ = eqn_
   for var_ in vars_:
