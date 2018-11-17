@@ -5,6 +5,7 @@ Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
 import os
+pyENL_path = os.path.realpath(__file__)[0:-8]
 import ast
 import subprocess
 import threading
@@ -20,7 +21,7 @@ from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as u
-u.load_definitions("units.txt")
+u.load_definitions(pyENL_path + "units.txt")
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -65,7 +66,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         cabo para cargar la ventana principal.
         '''
         QtWidgets.QMainWindow.__init__(self, parent)
-        opciones_ = configFile("config.txt")
+        opciones_ = configFile(pyENL_path + "config.txt")
         self.format = opciones_.format
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
@@ -223,7 +224,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             bufferr = bufferr + 'timeout=' + str(self.timeout) + '\n'
             bufferr = bufferr + 'font=' + fontString + '\n'
             bufferr = bufferr + 'cuDir=' + str(self.cuDir) + '\n'
-            g = open("config.txt", 'wb')
+            g = open(pyENL_path + "config.txt", 'wb')
             g.write(bufferr.encode('utf-8'))
             g.close()
         except Exception as e:
@@ -905,7 +906,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         archivo unidades.txt '''
         self.Dicc_dimen = {}
         self.dimension_list = []
-        archivo = open("units.txt")
+        archivo = open(pyENL_path + "units.txt")
         texto= archivo.read()
         dimensiones= texto.split('%') #separamos el txt en una lista donde cada elemento sea la dimension
         del dimensiones[0] # el primer elemento es un espacio en blanco asi que se debe borrar
@@ -1031,7 +1032,7 @@ def main():
               'BreezeLight':'BreezeLight.qss','GrayDark':'GrayDark.qss'}
     # Leer archivo de configuración para encontrar el tema
     try:
-        with open('config.txt', 'rb') as f:
+        with open(pyENL_path + 'config.txt', 'rb') as f:
             lineas = f.read().decode('utf-8').splitlines()
 
         for linea in lineas:
@@ -1042,7 +1043,7 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     theme_file = themes[theme]
     if theme_file:
-        f = open("themes/" + theme_file, "rb")
+        f = open(pyENL_path + "themes/" + theme_file, "rb")
         qss = f.read().decode("utf-8")
         f.close()
         app.setStyleSheet(qss)

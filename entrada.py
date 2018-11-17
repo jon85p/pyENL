@@ -11,8 +11,9 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 import os
+pyENL_path = os.path.realpath(__file__)[0:-10]
 from pint import _DEFAULT_REGISTRY as u
-u.load_definitions("units.txt")
+u.load_definitions(pyENL_path + "units.txt")
 sindim = ((1*u.m)/(1*u.m)).units
 try:
     from expimp import sols2odt, sols2tex
@@ -42,7 +43,7 @@ class pyENL_variable:
 
     def __repr__(self):
       return "pyENL variable <" + self.name + ">"
-    
+
     def convert(self):
         '''
         Regresa la cadena de texto con la que debería reemplazarse el nombre de

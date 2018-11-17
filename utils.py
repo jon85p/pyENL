@@ -2,6 +2,7 @@
 import random
 import copy
 import os
+pyENL_path = os.path.realpath(__file__)[0:-8]
 '''
 Utilidades generales para uso de pyENL
 '''
@@ -268,7 +269,7 @@ def cantidadEqnVar(texto_caja):
 def actualizar_directorio(cuDir):
     '''Guarda en config.txt la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
     # se guarda la ultima carpeta usada para cuando se vuelva a abrir el programa
-    f = open('config.txt','r+')
+    f = open(pyENL_path + 'config.txt','r+')
     data =f.read().splitlines() #se crea una lista con cada linea del txt
     if 'cuDir' in f.read(): # si existe cuDir en el txt solo se reemplaza en la posicion "i" donde se encuentre
         for i,fila in enumerate(data):
@@ -351,48 +352,48 @@ def funcion_e(Diccionario):
     return Diccionario_orga
 
 def onevsone(matriz):
-    '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)''' 
+    '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)'''
     m =matriz.copy()
     size = m.shape[0]
 
     for a in range(size):
-        
+
         sumCol = sum(m,axis = 0) #sumar columnas
         sumRow = sum(m,axis=1) #sumar filas
-        
-        
+
+
         minSumCol = sumCol.min()
         yminSumCol = sumCol.argmin()
 
         minSumRow = sumRow.min()
         xminSumRow = sumRow.argmin()
-        
+
         # Revisión de un sistema de ecuaciones valido
-        checkCol=argwhere(sumCol== 1) 
+        checkCol=argwhere(sumCol== 1)
         checkRow = argwhere(sumRow==1)
         VcheckCol = zeros(size)
         VcheckRow = zeros(size)
         for b in checkCol:
             VcheckCol  = VcheckCol + m[:,b]
-        
+
         for c in checkRow:
             VcheckRow =VcheckRow + m[c,:]
         if True in (VcheckCol>1) or True in (VcheckCol>1):
-            return m ,-1 
-        
-        if minSumRow == 1: 
+            return m ,-1
+
+        if minSumRow == 1:
             # si una equ tiene solo una variable
             yminSumRow =m[xminSumRow].argmax() # variable que tiene la equ
             m[:,yminSumRow] = (arange(size) == xminSumRow)*(size+1)
-        
+
         else:
             #se mira la variable que se repita el menor numero de veces
             xminSumCol =m[:,yminSumCol].argmax() # equ que posee la variable
             m[xminSumCol] = (arange(size) == yminSumCol)*(size+1)
             m[:,yminSumCol] = (arange(size) == xminSumCol)*(size+1)
 
-            
-            
+
+
     m = m//(size+1)
 
     #Verificacion
@@ -403,7 +404,7 @@ def onevsone(matriz):
         return m , 1
     else:
         return m, 0
-               
+
 
 
 def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
@@ -441,15 +442,15 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
         #Crea la fila de la matriz
         fila = []
         for variable in lista_variables:
-                        
+
             if variable in varINeqn:
-                fila.append(1)  
+                fila.append(1)
             else:
-                fila.append(0)  
+                fila.append(0)
 
         matriz_sistema[i,:] = array(fila)
 
-   
+
 
     #2.CREAR MATRIZ DE RELACION 1VS1###################
 
@@ -459,7 +460,7 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
 
     #3.CREAR GRAFO ###################################
 
-    matrizTarjan = (matriz_sistema - Rel11).T 
+    matrizTarjan = (matriz_sistema - Rel11).T
 
     diccTarjan = {}
 
@@ -471,6 +472,5 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
 
     bloques = tarjan(diccTarjan)
     bloques.reverse()
-    
+
     return bloques
-    

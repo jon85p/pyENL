@@ -2,6 +2,8 @@
 '''Núcleo del solucionador de ecuaciones de pyENL'''
 
 import scipy.optimize as opt
+from os.path import realpath
+pyENL_path = realpath(__file__)[0:-9]
 from numpy import *
 from pyENL_fcns import *
 ln = log
@@ -9,7 +11,7 @@ log = log10
 import warnings
 from pint import _DEFAULT_REGISTRY as u
 from utils import variables , bloques
-u.load_definitions("units.txt")
+u.load_definitions(pyENL_path + "units.txt")
 # from time import time as pyENL_time
 
 # Definición de la función a resolver
@@ -149,8 +151,8 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
         #temp = cadaEqn.replace("[", "*u.parse_units('")
         #temp = temp.replace("]", "')")
         #lista_eqns.append(temp)
-    
-  
+
+
     lista_bloques = bloques(pyENL_eqns, pyENL_variables , tol)
     #
     pyENL_eqnsA = array(pyENL_eqns) # Pasar la lista pyENL_eqns a array numpy
@@ -185,7 +187,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
                 if not varBloque.solved:
                     varBloque.guess = solBloque['x'][i]
                     varBloque.solved = True
-                
+
 
        # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
          #                    args=(variables_bloque, eqns_bloque), tol=tol, method=method)
@@ -265,7 +267,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     sol_sistema = [x.guess for x in pyENL_variables]
     pyENL_residuos = pyENL_sistema(sol_sistema, pyENL_variables, pyENL_eqns)
     return pyENL_variables, pyENL_residuos, asegura_convergencia
-  
+
 def agregaUnidades(eqn_, pyENL_variables):
   from utils import variables, esalfanum
   vars_ = variables(eqn_)
@@ -275,7 +277,7 @@ def agregaUnidades(eqn_, pyENL_variables):
   # a = b + 5[m]
   # poder reconocer esos 5 como metros reemplazando con:
   # a = b + 5*u.parse_units("m")
-  
+
   # print(vars_)
   eqn__ = eqn_
   for var_ in vars_:
