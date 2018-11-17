@@ -5,12 +5,12 @@ import scipy.optimize as opt
 from os.path import realpath
 pyENL_path = realpath(__file__)[0:-9]
 from numpy import *
-from pyENL_fcns import *
+from .pyENL_fcns import *
 ln = log
 log = log10
 import warnings
 from pint import _DEFAULT_REGISTRY as u
-from utils import variables , bloques
+from .utils import variables , bloques
 u.load_definitions(pyENL_path + "units.txt")
 # from time import time as pyENL_time
 

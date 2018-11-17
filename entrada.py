@@ -3,8 +3,8 @@
 Intérprete de texto
 '''
 import sys
-from solver import solver
-from utils import variables, random_lim, variables_string
+from .solver import solver
+from .utils import variables, random_lim, variables_string
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
 from CoolProp.CoolProp import HAPropsSI as haprop
@@ -16,7 +16,7 @@ from pint import _DEFAULT_REGISTRY as u
 u.load_definitions(pyENL_path + "units.txt")
 sindim = ((1*u.m)/(1*u.m)).units
 try:
-    from expimp import sols2odt, sols2tex
+    from .expimp import sols2odt, sols2tex
 except:
     pass
 

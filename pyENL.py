@@ -12,18 +12,18 @@ import threading
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 # import qdarkstyle
 # import qdarkgraystyle
-from utils import *
-from entrada import pyENL_variable, entradaTexto
-from translations import translations
+from .utils import *
+from .entrada import pyENL_variable, entradaTexto
+from .translations import translations
 from copy import deepcopy
 from functools import partial
 from zipfile import ZipFile
 import tempfile
-from expimp import sols2odt, sols2tex
+from .expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as u
 u.load_definitions(pyENL_path + "units.txt")
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
-from pyENL_fcns.functions import dicc_coolprop
+from .pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
 # Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.png")
@@ -35,9 +35,9 @@ from pyENL_fcns.functions import dicc_coolprop
 # Cuando salga error de no convergencia, no mostrar ventana de tiempo de solución
 
 # form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
-from GUI.MainWindow5 import Ui_MainWindow as form_class
-from GUI.props import Ui_Dialog as prop_class
-from GUI.settings import Ui_Dialog as settings_class
+from .GUI.MainWindow5 import Ui_MainWindow as form_class
+from .GUI.props import Ui_Dialog as prop_class
+from .GUI.settings import Ui_Dialog as settings_class
 
 
 def quitaComentarios(eqns):
