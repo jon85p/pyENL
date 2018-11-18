@@ -212,6 +212,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
                 break
             except Exception as e:
                 er = str(e)
+                raise Exception(e)
                 if 'de tipeo' in er:
                     raise Exception(er)
                 if 'Cannot convert' in er or 'is not defined in the unit registry' in er:

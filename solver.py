@@ -269,7 +269,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     return pyENL_variables, pyENL_residuos, asegura_convergencia
 
 def agregaUnidades(eqn_, pyENL_variables):
-  from utils import variables, esalfanum
+  from .utils import variables, esalfanum
   vars_ = variables(eqn_)
   # TODO
   # Primero ajustar valores numéricos que vienen con unidades:
