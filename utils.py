@@ -2,12 +2,14 @@
 import random
 import copy
 import os
+import sys
 pyENL_path = os.path.realpath(__file__)[0:-8]
+sys.path.append(pyENL_path)
 '''
 Utilidades generales para uso de pyENL
 '''
 from numpy import *
-from .pyENL_fcns import *
+from pyENL_fcns import *
 import re
 ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...

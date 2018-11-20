@@ -3,15 +3,16 @@
 Intérprete de texto
 '''
 import sys
-from .solver import solver
-from .utils import variables, random_lim, variables_string
+import os
+pyENL_path = os.path.realpath(__file__)[0:-10]
+sys.path.append(pyENL_path)
+from solver import solver
+from utils import variables, random_lim, variables_string
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
 from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
-import os
-pyENL_path = os.path.realpath(__file__)[0:-10]
 from pint import _DEFAULT_REGISTRY as u
 u.load_definitions(pyENL_path + "units.txt")
 sindim = ((1*u.m)/(1*u.m)).units
