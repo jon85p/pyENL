@@ -155,7 +155,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
         except:
             pass
         # Se van añadiendo los objetos de salida de las variables:
-        print(objeto.guess)
+        # print(objeto.guess)
         variables_salida.append(objeto)
     pyENL_inicio = time()  # Tiempo de inicio de llamada al solver
     # Llamada al solver
@@ -203,8 +203,10 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             # Encontrar nuevos valores de guesses:
             for cont, objetoVar in enumerate(variables_salida):
                 obtemp = objetoVar  # Objeto variable temporal
-                obtemp.guess = random_lim(objeto.lowerlim, objeto.upperlim)
-                variables_salida[cont] = obtemp
+                # TODO: Solo buscar random si es variable no resuelta
+                if not objetoVar.solved:
+                    obtemp.guess = random_lim(objeto.lowerlim, objeto.upperlim) * objetoVar.units
+                    variables_salida[cont] = obtemp
             # Termina de actualizar, ahora:
             try:
                 pyENL_solucion = solver(lista, variables_salida,

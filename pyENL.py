@@ -609,7 +609,11 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
             # Restaurar acá las variables copiadas
-            self.variables = backup_var
+            # TODO Restaurar solo las variables que no se pudieron resolver (bloques)
+            [print(varr.solved, varr.name) for varr in self.variables]
+            for i, var_ in enumerate(backup_var):
+                if not self.variables[i].solved:
+                    self.variables[i] = var_
         #self.solve_button.setEnabled()
 
     def imprimeSol(self, formateo):

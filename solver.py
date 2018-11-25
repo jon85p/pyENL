@@ -32,9 +32,9 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
     pyENL_eqns = list(pyENL_eqns)
 
     for cont, var in enumerate(pyENL_variables):
-        print("----------------------")
-        print(pyENL)
-        print(var.name, '=', var.guess, var.solved)
+        # print("----------------------")
+        # print(pyENL)
+        # print(var.name, '=', var.guess, var.solved)
         if var.solved and (len(pyENL_variables) != len(pyENL_eqns)):
             # exec(var.name + "=" + str(var.guess))
             # pyENL_eqns.append(var.name + "[" +str(var.units) + "]-(" +\
@@ -42,7 +42,7 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             pyENL_eqns.append(var.name + "-(" + str(var.guess) + ")")
             # "var.name[var.unit] - var.guess[var.unit]"?
         exec(var.name + '= pyENL[' + str(cont) + ']')
-    print(pyENL_eqns)
+    # print(pyENL_eqns)
     salidapyENL = empty((cantidad_eqns))
     # pyENL_eqns = list(pyENL_eqns)
     # for i in range(len(pyENL_variables) - len(pyENL_eqns)):
@@ -65,12 +65,12 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             eqn2 = agregaUnidades(eqn, pyENL_variables)
             eqn2 = eqn2.replace("[", "*u.parse_units('")
             eqn2 = eqn2.replace("]", "')")
-            print("Ecuación a evaluar",eqn2)
+            # print("Ecuación a evaluar",eqn2)
             tempoo = eval(eqn2)
             salidapyENL[cont] = tempoo.magnitude
         except Exception as e:
             er = str(e)
-            print("-------" + er)
+            # print("-------" + er)
             clase = str(e.__class__)
             if clase == "<class 'TypeError'>":
                 raise Exception("Error de tipeo en ecuación " + str(cont + 1))
@@ -186,6 +186,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
                 raise Exception("Gordillo y los chulos")
             # Actualizar el atributo solved
             for i, varBloque in enumerate(varsBloque):
+                print(varBloque.guess)
                 if not varBloque.solved:
                     varBloque.guess = solBloque['x'][i]
                     varBloque.solved = True
@@ -231,7 +232,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     #   approximation.
 
     except Exception as e:
-        print('ERROR:',str(e))
+        # print('ERROR:',str(e))
         # exit(0)
         # No está tomando el error porque primero aparece el de opt.root y antes
         # de ese si está el que se supone se quiere.
