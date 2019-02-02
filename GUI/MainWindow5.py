@@ -131,6 +131,22 @@ class Ui_MainWindow(object):
         self.resTable.setRowCount(0)
         self.gridLayout_4.addWidget(self.resTable, 0, 0, 1, 1)
         self.tabWidget.addTab(self.resTab, "")
+        #####
+        self.tabTab = QtWidgets.QWidget()
+        self.tabTab.setObjectName("tabTab")
+        self.verticalLayout_4 = QtWidgets.QVBoxLayout(self.tabTab)
+        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_4.setObjectName("verticalLayout_4")
+        self.tabTable = QtWidgets.QTableWidget(self.tabTab)
+        self.tabTable.setObjectName("tabTable")
+        self.tabTable.setColumnCount(0)
+        self.tabTable.setRowCount(0)
+        self.verticalLayout_4.addWidget(self.tabTable)
+        self.solveTableButton = QtWidgets.QPushButton(self.tabTab)
+        self.solveTableButton.setObjectName("solveTableButton")
+        self.verticalLayout_4.addWidget(self.solveTableButton)
+        self.tabWidget.addTab(self.tabTab, "")
+        #####
         self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.line = QtWidgets.QFrame(self.centralwidget)
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
@@ -294,6 +310,10 @@ class Ui_MainWindow(object):
         self.info_button.setText(_translate("MainWindow", "Información"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.solTab), _translate("MainWindow", "Soluciones"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.resTab), _translate("MainWindow", "Residuos"))
+        ###
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabTab), _translate("MainWindow", "Tablas Parámetricas"))
+        self.solveTableButton.setText(_translate("MainWindow", "Resolver Tabla"))
+        ###
         self.infoLabel.setText(_translate("MainWindow", "x Ecuaciones/y Variables"))
         self.menuArchivo.setTitle(_translate("MainWindow", "Archivo"))
         self.menuExportar_reporte.setTitle(_translate("MainWindow", "Exportar reporte"))
