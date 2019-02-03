@@ -10,3 +10,4 @@ dist
 pyENL.egg-info
 .kdev4
 pyENL.kdev4
+.vscode

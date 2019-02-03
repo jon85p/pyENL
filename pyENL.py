@@ -407,7 +407,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if self.archivoModificado:
             msgBox = QtWidgets.QMessageBox()
             msgBox.setText(self.traduccion["El documento se ha modificado"])
-            msgBox.setInformativeText(self.traduccion["¿Desea guardar los cambios?"]);
+            msgBox.setInformativeText(self.traduccion["¿Desea guardar los cambios?"])
             msgBox.setStandardButtons(QtWidgets.QMessageBox.Save | QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel)
             msgBox.setDefaultButton(QtWidgets.QMessageBox.Save)
             ret = msgBox.exec_()
@@ -707,38 +707,47 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def showParaTable(self):
         self.nameVars = [x.name for x in self.variables]
-        self.tabTable.setColumnCount(len(nameVars))
-        self.tabTable.setRowCount(10)
-        self.tabTable.setHorizontalHeaderLabels(nameVars)
-        for var in nameVars:
+        self.tabTable.setColumnCount(len(self.nameVars))
+        self.tabTable.setRowCount(5)
+        self.tabTable.setHorizontalHeaderLabels(self.nameVars)
+        for var in self.nameVars:
             pass
 
     def calculateTable(self):
         # Primero armar la lista de listas
         self.listaTablas.append([])
         copiaVars = deepcopy(self.variables)
-        for row in self.tabTable.rowCount():
+        ecuaciones = self.cajaTexto.toPlainText().splitlines()
+        # Para poder soportar variables tipo texto
+        ecuaciones = variables_string(ecuaciones)
+        # Quitar los comentarios de las ecuaciones:
+        self.ecuaciones_s = quitaComentarios(ecuaciones)
+        for row in range(self.tabTable.rowCount()):
+            copiaVars = deepcopy(copiaVars)
             eqns = deepcopy(self.ecuaciones_s)
             varsUnk = []
-            for col in self.tabTable.columnCount():
+            for col in range(self.tabTable.columnCount()):
                 for var in copiaVars:
-                    celdaText = self.tabTable.item(row,col).text()
-                    if (var.name == self.nameVars[col]) and (celdaText != ''):
-                        var.value = float(celdaText)
-                        eqnVirtual = var.name + '=' + celdaText
-                        eqns.append(eqnVirtual)
-                    elif celdaText == '':
-                        varsUnk.append(col) # guarda el indice de las columnas con celdas vacias
+                    var.solved = False
+                    try:
+                        celdaText = self.tabTable.item(row,col).text()
+                        if (var.name == self.nameVars[col]) and (celdaText != ''):
+                            var.guess = float(celdaText)
+                            eqnVirtual = var.name + '=' + celdaText
+                            eqns.append(eqnVirtual)
+                    except Exception as e:
+                        print("Excepción: ", str(e))
+                        if col not in varsUnk:
+                            varsUnk.append(col) # guarda el indice de las columnas con celdas vacias
             solucion = entradaTexto(eqns, self.timeout, varsObj=copiaVars, tol = self.opt_tol, method=self.opt_method)
             copiaVars = solucion[0][0]
 
 
             for colUnk in varsUnk:
-
-                newitem = QtWidgets.QTableWidgetItem(str(copiaVars[colUnk]))
+                newitem = QtWidgets.QTableWidgetItem(str(copiaVars[colUnk].guess))
                 # Nada se puede editar
                 newitem.setFlags(QtCore.Qt.ItemIsEditable)
-                self.solsTable.setItem(i, 0, newitem)
+                self.tabTable.setItem(row, colUnk, newitem)
 
 
             self.listaTablas[0].append([[eqns],[copiaVars]])
