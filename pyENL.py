@@ -522,7 +522,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Lista de propiedades
         #props_l =
 
-        lista2 = dicc_coolprop.keys()
+        lista2 = sorted(dicc_coolprop.keys(), key=lambda x:get_parameter_information(get_parameter_index(x), 'long'))
         dialog.ui.lista_fluidos = lista1
         # Items no repetidos
         items_no_rep = []
@@ -549,9 +549,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     # dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
         # Orden alfabético
         # Hay que ordenar, unit_items, descriptions, items_no_rep
-        unit_items = sorted(unit_items, key= lambda x: descriptions[unit_items.index(x)])
-        items_no_rep = sorted(items_no_rep, key =  lambda x: descriptions[items_no_rep.index(x)])
-        descriptions = sorted(descriptions, key= lambda x:x)
 
         for i, item in enumerate(items_no_rep):
             description = descriptions[i]
