@@ -1,0 +1,2 @@
+dog_year = 52 * day = dogy = dy
+illo = 50 *kg
