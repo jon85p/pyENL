@@ -1,8 +1,0 @@
-lang=en
-theme=Default
-method=hybr
-format={:.5}
-tol=1e-09
-timeout=10.0
-font=8514oem,12,-1,5,25,0,0,0,0,0
-cuDir=C:\Users\Miguel
