@@ -171,6 +171,7 @@ app.layout = html.Div(children=[
 @app.callback(
     [
         dash.dependencies.Output('table-sol','data'),
+        dash.dependencies.Output('table-res','data'),
         dash.dependencies.Output('confirm','message'),
         dash.dependencies.Output('confirm', 'displayed')
     ],
@@ -216,21 +217,23 @@ def solve(n_clicks,cajaTexto):
         # # Ahora a imprimir la respuesta en la tabla si solved es True
         if solved:
             resultMenssage = "Solucionado en" + tiempo + ' segundos.\nMayor desviación de ' + str(max(residuos))
-            dataSol = imprimeSol(variables) 
+            dataSol, dataRes = imprimeSol(variables,residuos,ecuaciones_s) 
         else:
             resultMenssage ="Problema, No hubo convergencia a solución..."
             dataSol = []
+            dataRes = []
     except Exception as e:
         resultMenssage = "Error: " + str(e)
     #     # Restaurar acá las variables copiadas
     #     # TODO Restaurar solo las variables que no se pudieron resolver (bloques)
         dataSol = []
+        dataRes = []
     #     # [print(varr.solved, varr.name) for varr in variables]
         for i, var_ in enumerate(backup_var):
             if not variables[i].solved:
                 variables[i] = var_
 #self.solve_button.setEnabled()
-    return dataSol, resultMenssage, True
+    return dataSol,dataRes, resultMenssage, True
 
 
 
@@ -295,19 +298,27 @@ def actualizaInfo(cajaTexto):
 
 ############# Creo que todas las funciones de aquí pa bajo deberian estar en utils, no?
 
-def imprimeSol(variables):
+def imprimeSol(variables,residuos,ecuaciones_s):
     '''
-    Imprime en la pestaña de soluciones, las respuestas al sistema de
-    ecuaciones ingresado por el usuario en la caja de texto que se usa para
-    tal fin.
+    Crea la tabla de datos para la tabla de soluciones y de residuos
+    el formato de la tabla es una lista de diccionarios donde cada dict es una fila
+    [{col1:val1,col2:val2,col3:val3},...]
     '''
-    dataSol=[{
-                solTitles[0]:var.name,
-                solTitles[1]:formateo.format(var.guess),
-                solTitles[2]:str(var.units),
-                solTitles[3]:var.comment
-                } for var in variables]
-    return dataSol
+    dataSol = []
+    dataRes = []
+    for i, var in enumerate(variables):
+
+        dataSol.append({solTitles[0]:var.name,
+                        solTitles[1]:formateo.format(var.guess),
+                        solTitles[2]:str(var.units),
+                        solTitles[3]:var.comment
+                        })
+
+        dataRes.append({resTitles[0]:ecuaciones_s[i],
+                        resTitles[1]:residuos[i]
+                        })
+            
+    return dataSol,dataRes
 
 def quitaComentarios(eqns):
     '''
