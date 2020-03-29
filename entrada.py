@@ -13,9 +13,9 @@ from CoolProp.CoolProp import PropsSI as prop
 from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
-from pint import _DEFAULT_REGISTRY as u
-u.load_definitions(pyENL_path + "units.txt")
-sindim = ((1*u.m)/(1*u.m)).units
+from pint import _DEFAULT_REGISTRY as pyENLu
+pyENLu.load_definitions(pyENL_path + "units.txt")
+sindim = ((1*pyENLu.m)/(1*pyENLu.m)).units
 try:
     from .expimp import sols2odt, sols2tex
 except:
@@ -131,7 +131,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
         for cadaEqn in lista:
             varAux = cadaEqn
 
-            varAux = varAux.replace("[", "*u.parse_units('")
+            varAux = varAux.replace("[", "*pyENLu.parse_units('")
             varAux = varAux.replace("]", "')")
             # print(objeto.name + "-")
             varAux = varAux.replace(objeto.name + "-", "")

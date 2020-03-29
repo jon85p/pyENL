@@ -21,8 +21,8 @@ from functools import partial
 from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
-from pint import _DEFAULT_REGISTRY as u
-u.load_definitions(pyENL_path + "units.txt")
+from pint import _DEFAULT_REGISTRY as pyENLu
+pyENLu.load_definitions(pyENL_path + "units.txt")
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -458,7 +458,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 var_a_lista.lowerlim = float(lista[1])
                 var_a_lista.upperlim = float(lista[2])
                 var_a_lista.comment = lista[3]
-                var_a_lista.units = u.parse_units(lista[4])
+                var_a_lista.units = pyENLu.parse_units(lista[4])
                 var_a_lista.dim = var_a_lista.units.dimensionality
                 self.variables.append(var_a_lista)
             # Borrado de carpeta temporal
@@ -862,7 +862,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 self.variables[i].guess = guess
                 self.variables[i].lowerlim = lowerlim
                 self.variables[i].upperlim = upperlim
-                temp_unit = eval('u.parse_units("' + units + '")')
+                temp_unit = eval('pyENLu.parse_units("' + units + '")')
                 self.variables[i].dim = temp_unit.dimensionality
                 self.variables[i].units = temp_unit
                 # print(self.variables[i].units)

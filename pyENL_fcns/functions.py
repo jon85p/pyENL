@@ -7,13 +7,13 @@ from fluids import compressible as comp
 from fluids import control_valve as cv
 from CoolProp.CoolProp import PropsSI as proppyENL
 from CoolProp.CoolProp import HAPropsSI as haproppyENP
-from pint import _DEFAULT_REGISTRY as u
+from pint import _DEFAULT_REGISTRY as pyENLu
 try:
-    u.load_definitions("units.txt")
+    pyENLu.load_definitions("units.txt")
 except:
     pass
-parse = u.parse_units
-unit_pyENL = u.m
+parse = pyENLu.parse_units
+unit_pyENL = pyENLu.m
 
 # TODO
 # Funciones de CoolProp pasarlas por un wrapper de unidades!
@@ -59,11 +59,11 @@ dicc_coolprop = {'DMOLAR':parse('mole/m^3'), 'Dmolar':parse('mole/m^3'),
                  'RHOMOLAR_CRITICAL':parse('mol/m^3'), 'rhomolar_critical':parse('mol/m^3'),
                  'RHOMOLAR_REDUCING':parse('mol/m^3'), 'rhomolar_reducing':parse('mol/m^3'),
                  'SMOLAR_RESIDUAL': parse('J/mol/K'), 'Smolar_residual': parse('J/mol/K'),
-                 'TCRIT': u.K, 'T_CRITICAL': u.K, 'T_critical': u.K, 'Tcrit': u.K,
-                 'TMAX': u.K, 'T_MAX': u.K, 'T_max': u.K, 'Tmax': u.K,
-                 'TMIN': u.K, 'T_MIN': u.K, 'T_min': u.K, 'Tmin': u.K,
-                 'TTRIPLE': u.K, 'T_TRIPLE': u.K, 'T_triple': u.K, 'Ttriple': u.K,
-                 'T_FREEZE': u.K, 'T_freeze': u.K, 'T_REDUCING': u.K, 'T_reducing': u.K,
+                 'TCRIT': pyENLu.K, 'T_CRITICAL': pyENLu.K, 'T_critical': pyENLu.K, 'Tcrit': pyENLu.K,
+                 'TMAX': pyENLu.K, 'T_MAX': pyENLu.K, 'T_max': pyENLu.K, 'Tmax': pyENLu.K,
+                 'TMIN': pyENLu.K, 'T_MIN': pyENLu.K, 'T_min': pyENLu.K, 'Tmin': pyENLu.K,
+                 'TTRIPLE': pyENLu.K, 'T_TRIPLE': pyENLu.K, 'T_triple': pyENLu.K, 'Ttriple': pyENLu.K,
+                 'T_FREEZE': pyENLu.K, 'T_freeze': pyENLu.K, 'T_REDUCING': pyENLu.K, 'T_reducing': pyENLu.K,
                  'V': parse('Pa*s'), 'VISCOSITY': parse('Pa*s'), 'viscosity': parse('Pa*s')}
 # TODO: Agregar las adimensionales!
 
@@ -82,7 +82,7 @@ def prop(des, *args):
            except:
              # Si no tiene unidades, asignar auto dimensionless
              # raise Exception("Argumento de prop() debe tener unidades")
-             nuevoarg = arg * u.m/u.m
+             nuevoarg = arg * pyENLu.m/pyENLu.m
            query = query + str(nuevoarg.magnitude) + ','
         elif i == len(args) - 1:
             query += '"' + arg + '")'
@@ -132,9 +132,9 @@ def fluids_atmosphere_1976(str1, Z, dt=0):
     Za = Za.magnitude
     obj = atm.ATMOSPHERE_1976(Za, dt)
     salida = ['T', 'P', 'rho', 'v_sonic', 'mu', 'k', 'g']
-    out = [obj.T*u.K, obj.P*u.Pa, obj.rho*u.kg/(u.m)**3,\
-      obj.v_sonic*u.m/u.s, obj.mu*u.Pa*u.s, obj.k*u.W/(u.m*u.K),\
-        obj.g*u.m/(u.s)**2]
+    out = [obj.T*pyENLu.K, obj.P*pyENLu.Pa, obj.rho*pyENLu.kg/(pyENLu.m)**3,\
+      obj.v_sonic*pyENLu.m/pyENLu.s, obj.mu*pyENLu.Pa*pyENLu.s, obj.k*pyENLu.W/(pyENLu.m*pyENLu.K),\
+        obj.g*pyENLu.m/(pyENLu.s)**2]
     if str1 in salida:
         salida_fun =  out[salida.index(str1)]
         # Ajustando el registro de unidades para concordancia
@@ -160,13 +160,13 @@ def fluids_atmosphere_nrlmsise00(str1, Z, latitude=0, longitude=0, day=0, second
     NA = 6.022140857 * 1e23  # Avogadro number
     Za = Z.to("m")
     Za = Za.magnitude
-    mol3 = u.mol/((u.m)**3)
+    mol3 = pyENLu.mol/((pyENLu.m)**3)
     obj = atm.ATMOSPHERE_NRLMSISE00(Za, latitude, longitude, day, seconds,
                                     f107, f107_avg,
                                     geomagnetic_disturbance_indices)
     salida = ["rho", "T", "P", "He_density", "O_density", "N2_density", "O2_density",
               "Ar_density", "H_density", "N_density", "O_anomalous_density"]
-    out = [obj.rho*u.kg/(u.m)**3, obj.T*u.K, obj.P*u.Pa, (obj.He_density / NA)*mol3,\
+    out = [obj.rho*pyENLu.kg/(pyENLu.m)**3, obj.T*pyENLu.K, obj.P*pyENLu.Pa, (obj.He_density / NA)*mol3,\
         (obj.O_density / NA)*mol3, (obj.N2_density / NA)*mol3, (obj.O2_density / NA)*mol3,\
             (obj.Ar_density / NA)*mol3, (obj.H_density / NA)*mol3,\
                 (obj.N_density / NA)*mol3, (obj.O_anomalous_density / NA)*mol3]
@@ -291,7 +291,7 @@ def fluids_Panhandle_A(SG, Tavg, L=None, D=None, P1=None, P2=None,
         raise Exception
     # Reconocer cuál fue la salida
     unidad = unidades[check.index(None)]
-    output = output*u.parse_units(unidad)
+    output = output*pyENLu.parse_units(unidad)
     output._REGISTRY = registro
     return output
 
