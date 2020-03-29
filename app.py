@@ -10,6 +10,7 @@ from entrada import pyENL_variable, entradaTexto
 
 varsTitles = ['Variable','Initial Guess','Lower','Upper','Units','Comment']
 solTitles = ['Variable','Solution','Units','Comment']
+resTitles = ['Ecuación','Residual']
 timeout = 10 # TODO self.timeout Se debe traer de la configuración
 
 opciones_ = configFile(pyENL_path + "config.txt")
@@ -61,7 +62,7 @@ app.layout = html.Div(children=[
                                     html.Div(
                                         dcc.Textarea(
                                             id ='cajaSol',
-                                            placeholder='Start write your ecuations!',
+                                            placeholder='Here will go the formatted equations',
                                             style = {
                                                         'width' :'100%',
                                                         'padding-right':'0px',
@@ -90,29 +91,64 @@ app.layout = html.Div(children=[
                                         style_cell= {'font_family':'Helvetica',
                                                     'font_size':'14px',
                                                     'textAlign':'center'
-                                        }
+                                        },
+                                        style_table={'maxHeight': '40vh',
+                                                    'height':'40vh', # para ajustar el tamaño al del div
+                                                    #'overflowY': 'auto',
+                                                    }
                                     )
                             ],style={ 'height':'40vh','width':'100%'}),
                     #por defecto el row tiene -15px entonces queda sobremontado
-                    style={'margin-left':'0px','margin-right':'0px'},
+                    # style={'margin-left':'0px','margin-right':'0px'},
                     ),
                     dbc.Row(html.Div(children=
                             [
-                                    dash_table.DataTable(
-                                        id='table-sol',
-                                        columns=[{"name": i, "id": str(i)} for i in solTitles],
-                                        style_header={'backgroundColor':'white',
-                                                        #'width':'10%'
-                                        },
-                                        # fixed_rows={'headers':True,'data':0},
-                                        style_cell= {'font_family':'Helvetica',
-                                                    'font_size':'14px',
-                                                    'textAlign':'center',                
-                                        },
-                                    )
+                                dcc.Tabs(
+                                    [   
+                                        dcc.Tab(label='Soluciones', children=
+                                            [
+                                                dash_table.DataTable(
+                                                    id='table-sol',
+                                                    columns=[{"name": i, "id": str(i)} for i in solTitles],
+                                                    style_header={'backgroundColor':'white',
+                                                                    #'width':'10%'
+                                                    },
+                                                    # fixed_rows={'headers':True,'data':0},
+                                                    style_cell= {'font_family':'Helvetica',
+                                                                'font_size':'14px',
+                                                                'textAlign':'center',                
+                                                    },
+                                                    style_table={'maxHeight': '40vh',
+                                                                'height':'40vh', # para ajustar el tamaño al del div
+                                                    },    
+                                                )
+                                            ],style={'padding':'1px'},selected_style={'padding':'2px','fontWeight':'bold'}
+                                            ),
+                                        dcc.Tab(label='Residuos', children=
+                                            [
+                                                dash_table.DataTable(
+                                                    id='table-res',
+                                                    columns=[{"name": i, "id": str(i)} for i in resTitles],
+                                                    style_header={'backgroundColor':'white',
+                                                                    #'width':'10%'
+                                                    },
+                                                    # fixed_rows={'headers':True,'data':0},
+                                                    style_cell= {'font_family':'Helvetica',
+                                                                'font_size':'14px',
+                                                                'textAlign':'center', 
+                                                    },
+                                                    style_table={'maxHeight': '40vh',
+                                                                'height':'40vh', # para ajustar el tamaño al del div
+                                                                # 'overflowY': 'auto',
+                                                    },               
+                                                    
+                                                )
+                                            ],style={'padding':'1px'},selected_style={'padding':'2px','fontWeight':'bold'}
+                                            ),
+                                    ])
                             ],style={ 'height':'40vh','width':'100%'}),
                     #por defecto el row tiene -15px entonces queda sobremontado
-                    style={'margin-left':'0px','margin-right':'0px'},
+                    # style={'margin-left':'0px','margin-right':'0px'},
                    )
                 ], style={'padding-left':'0px','padding-right':'0px',}
             ),

@@ -1,0 +1,27 @@
+/* Table of contents¨
+
+*/
+
+
+/* Modificar estilo de filas*/
+
+.dash-table-container .row {
+/* 
+Para evitar que el margin -15px de bootstrap corte la primera columna de la tabla
+*/
+  margin-left: 0px;
+  margin-right: 0px; 
+
+}
+
+/* sirve de las dos maneras como el de arriba o este:; 
+.row .row-1{
+  margin-left: 0px;
+  margin-right: 0px; 
+}
+*/
+
+/*estilo del scroll de la tabla */
+.dash-spreadsheet-container{
+	overflow-y: scroll;
+}
