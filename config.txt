@@ -2,4 +2,4 @@ lang=en
 method=hybr
 format={:.5}
 tol=1e-09
-timeout=10.0
+cuDir=/home/devgtc
