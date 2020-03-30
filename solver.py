@@ -12,7 +12,7 @@ ln = log
 log = log10
 import warnings
 from pint import _DEFAULT_REGISTRY as pyENLu
-from utils import variables , bloques
+from utils import variables , bloques, variables_string
 pyENLu.load_definitions(pyENL_path + "units.txt")
 # from time import time as pyENL_time
 
@@ -129,6 +129,8 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
 
     # Valores iniciales iguales a cero
     pyENL_variables.sort(key=lambda x: x.name.lower())
+    for v in pyENL_variables:
+        v.solved = False
     # TODO
     # Lograr dividir las ecuaciones en bloques!!!
     # Reto---------------------------------------------------------------------------
@@ -165,7 +167,6 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     try:
         # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
         #                      args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
-
         for j, bloque in enumerate(lista_bloques):
             lista_eqns.append(pyENL_eqnsA[bloque])
             eqnsBloque = lista_eqns[-1]
