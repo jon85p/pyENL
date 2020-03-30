@@ -10,6 +10,7 @@ from entrada import pyENL_variable, entradaTexto
 
 varsTitles = ['Variable','Initial Guess','Lower','Upper','Units','Comment']
 solTitles = ['Variable','Solution','Units','Comment']
+resTitles = ['Ecuación','Residual']
 timeout = 10 # TODO self.timeout Se debe traer de la configuración
 
 opciones_ = configFile(pyENL_path + "config.txt")
@@ -61,7 +62,7 @@ app.layout = html.Div(children=[
                                     html.Div(
                                         dcc.Textarea(
                                             id ='cajaSol',
-                                            placeholder='Start write your ecuations!',
+                                            placeholder='Here will go the formatted equations',
                                             style = {
                                                         'width' :'100%',
                                                         'padding-right':'0px',
@@ -90,29 +91,64 @@ app.layout = html.Div(children=[
                                         style_cell= {'font_family':'Helvetica',
                                                     'font_size':'14px',
                                                     'textAlign':'center'
-                                        }
+                                        },
+                                        style_table={'maxHeight': '40vh',
+                                                    'height':'40vh', # para ajustar el tamaño al del div
+                                                    #'overflowY': 'auto',
+                                                    }
                                     )
                             ],style={ 'height':'40vh','width':'100%'}),
                     #por defecto el row tiene -15px entonces queda sobremontado
-                    style={'margin-left':'0px','margin-right':'0px'},
+                    # style={'margin-left':'0px','margin-right':'0px'},
                     ),
                     dbc.Row(html.Div(children=
                             [
-                                    dash_table.DataTable(
-                                        id='table-sol',
-                                        columns=[{"name": i, "id": str(i)} for i in solTitles],
-                                        style_header={'backgroundColor':'white',
-                                                        #'width':'10%'
-                                        },
-                                        # fixed_rows={'headers':True,'data':0},
-                                        style_cell= {'font_family':'Helvetica',
-                                                    'font_size':'14px',
-                                                    'textAlign':'center',                
-                                        },
-                                    )
+                                dcc.Tabs(
+                                    [   
+                                        dcc.Tab(label='Soluciones', children=
+                                            [
+                                                dash_table.DataTable(
+                                                    id='table-sol',
+                                                    columns=[{"name": i, "id": str(i)} for i in solTitles],
+                                                    style_header={'backgroundColor':'white',
+                                                                    #'width':'10%'
+                                                    },
+                                                    # fixed_rows={'headers':True,'data':0},
+                                                    style_cell= {'font_family':'Helvetica',
+                                                                'font_size':'14px',
+                                                                'textAlign':'center',                
+                                                    },
+                                                    style_table={'maxHeight': '40vh',
+                                                                'height':'40vh', # para ajustar el tamaño al del div
+                                                    },    
+                                                )
+                                            ],style={'padding':'1px'},selected_style={'padding':'2px','fontWeight':'bold'}
+                                            ),
+                                        dcc.Tab(label='Residuos', children=
+                                            [
+                                                dash_table.DataTable(
+                                                    id='table-res',
+                                                    columns=[{"name": i, "id": str(i)} for i in resTitles],
+                                                    style_header={'backgroundColor':'white',
+                                                                    #'width':'10%'
+                                                    },
+                                                    # fixed_rows={'headers':True,'data':0},
+                                                    style_cell= {'font_family':'Helvetica',
+                                                                'font_size':'14px',
+                                                                'textAlign':'center', 
+                                                    },
+                                                    style_table={'maxHeight': '40vh',
+                                                                'height':'40vh', # para ajustar el tamaño al del div
+                                                                # 'overflowY': 'auto',
+                                                    },               
+                                                    
+                                                )
+                                            ],style={'padding':'1px'},selected_style={'padding':'2px','fontWeight':'bold'}
+                                            ),
+                                    ])
                             ],style={ 'height':'40vh','width':'100%'}),
                     #por defecto el row tiene -15px entonces queda sobremontado
-                    style={'margin-left':'0px','margin-right':'0px'},
+                    # style={'margin-left':'0px','margin-right':'0px'},
                    )
                 ], style={'padding-left':'0px','padding-right':'0px',}
             ),
@@ -135,6 +171,7 @@ app.layout = html.Div(children=[
 @app.callback(
     [
         dash.dependencies.Output('table-sol','data'),
+        dash.dependencies.Output('table-res','data'),
         dash.dependencies.Output('confirm','message'),
         dash.dependencies.Output('confirm', 'displayed')
     ],
@@ -180,21 +217,23 @@ def solve(n_clicks,cajaTexto):
         # # Ahora a imprimir la respuesta en la tabla si solved es True
         if solved:
             resultMenssage = "Solucionado en" + tiempo + ' segundos.\nMayor desviación de ' + str(max(residuos))
-            dataSol = imprimeSol(variables) 
+            dataSol, dataRes = imprimeSol(variables,residuos,ecuaciones_s) 
         else:
             resultMenssage ="Problema, No hubo convergencia a solución..."
             dataSol = []
+            dataRes = []
     except Exception as e:
         resultMenssage = "Error: " + str(e)
     #     # Restaurar acá las variables copiadas
     #     # TODO Restaurar solo las variables que no se pudieron resolver (bloques)
         dataSol = []
+        dataRes = []
     #     # [print(varr.solved, varr.name) for varr in variables]
         for i, var_ in enumerate(backup_var):
             if not variables[i].solved:
                 variables[i] = var_
 #self.solve_button.setEnabled()
-    return dataSol, resultMenssage, True
+    return dataSol,dataRes, resultMenssage, True
 
 
 
@@ -259,19 +298,27 @@ def actualizaInfo(cajaTexto):
 
 ############# Creo que todas las funciones de aquí pa bajo deberian estar en utils, no?
 
-def imprimeSol(variables):
+def imprimeSol(variables,residuos,ecuaciones_s):
     '''
-    Imprime en la pestaña de soluciones, las respuestas al sistema de
-    ecuaciones ingresado por el usuario en la caja de texto que se usa para
-    tal fin.
+    Crea la tabla de datos para la tabla de soluciones y de residuos
+    el formato de la tabla es una lista de diccionarios donde cada dict es una fila
+    [{col1:val1,col2:val2,col3:val3},...]
     '''
-    dataSol=[{
-                solTitles[0]:var.name,
-                solTitles[1]:formateo.format(var.guess),
-                solTitles[2]:str(var.units),
-                solTitles[3]:var.comment
-                } for var in variables]
-    return dataSol
+    dataSol = []
+    dataRes = []
+    for i, var in enumerate(variables):
+
+        dataSol.append({solTitles[0]:var.name,
+                        solTitles[1]:formateo.format(var.guess),
+                        solTitles[2]:str(var.units),
+                        solTitles[3]:var.comment
+                        })
+
+        dataRes.append({resTitles[0]:ecuaciones_s[i],
+                        resTitles[1]:residuos[i]
+                        })
+            
+    return dataSol,dataRes
 
 def quitaComentarios(eqns):
     '''
