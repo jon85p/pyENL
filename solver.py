@@ -11,9 +11,9 @@ from pyENL_fcns import *
 ln = log
 log = log10
 import warnings
-from pint import _DEFAULT_REGISTRY as u
-from utils import variables , bloques
-u.load_definitions(pyENL_path + "units.txt")
+from pint import _DEFAULT_REGISTRY as pyENLu
+from utils import variables , bloques, variables_string
+pyENLu.load_definitions(pyENL_path + "units.txt")
 # from time import time as pyENL_time
 
 # Definición de la función a resolver
@@ -49,7 +49,7 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
         # Funciones virtuales que sirven para aplicar la
         # engañadora del muérgano, reconocida mundialmente
         # en las Américas y en Francia
-        # pyENL_eqns.append("0[u.m")
+        # pyENL_eqns.append("0[pyENLu.m")
     # Funciones para hallar raíces
     for cont, eqn in enumerate(pyENL_eqns):
         try:
@@ -63,7 +63,7 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
           # Reemplazar los strings de variables SI al lado no
           # hay valores alfanuméricos
             eqn2 = agregaUnidades(eqn, pyENL_variables)
-            eqn2 = eqn2.replace("[", "*u.parse_units('")
+            eqn2 = eqn2.replace("[", "*pyENLu.parse_units('")
             eqn2 = eqn2.replace("]", "')")
             # print("Ecuación a evaluar",eqn2)
             tempoo = eval(eqn2)
@@ -129,6 +129,8 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
 
     # Valores iniciales iguales a cero
     pyENL_variables.sort(key=lambda x: x.name.lower())
+    for v in pyENL_variables:
+        v.solved = False
     # TODO
     # Lograr dividir las ecuaciones en bloques!!!
     # Reto---------------------------------------------------------------------------
@@ -150,7 +152,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     # desde las ecuaciones de usuario tipo: 5[m]
     #lista_eqns = []
     #for cadaEqn in pyENL_eqns:
-        #temp = cadaEqn.replace("[", "*u.parse_units('")
+        #temp = cadaEqn.replace("[", "*pyENLu.parse_units('")
         #temp = temp.replace("]", "')")
         #lista_eqns.append(temp)
 
@@ -165,7 +167,6 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     try:
         # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
         #                      args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
-
         for j, bloque in enumerate(lista_bloques):
             lista_eqns.append(pyENL_eqnsA[bloque])
             eqnsBloque = lista_eqns[-1]
@@ -279,7 +280,7 @@ def agregaUnidades(eqn_, pyENL_variables):
   # Ejemplo, si "a" y "b" están en metros y...
   # a = b + 5[m]
   # poder reconocer esos 5 como metros reemplazando con:
-  # a = b + 5*u.parse_units("m")
+  # a = b + 5*pyENLu.parse_units("m")
 
   # print(vars_)
   eqn__ = eqn_
@@ -314,7 +315,7 @@ def agregaUnidades(eqn_, pyENL_variables):
       if (cond1 and cond2) and cond3:
         # Reemplazar
         eqn__ = eqn__[0:enc] + "(" + eqn__[enc:enc+l_var] + \
-          "*u.parse_units('" + unidad + "'))" + eqn__[enc+l_var:]
+          "*pyENLu.parse_units('" + unidad + "'))" + eqn__[enc+l_var:]
         enc = enc + 1
   # print(eqn__)
   return eqn__

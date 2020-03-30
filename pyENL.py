@@ -21,8 +21,8 @@ from functools import partial
 from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
-from pint import _DEFAULT_REGISTRY as u
-u.load_definitions(pyENL_path + "units.txt")
+from pint import _DEFAULT_REGISTRY as pyENLu
+pyENLu.load_definitions(pyENL_path + "units.txt")
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -91,6 +91,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.variables = []
         self.solucion = None
         self.cursor = self.cajaTexto.textCursor()
+        # Esta lista contiene listas que representan cada tabla y a su vez,
+        # listas que contienen
+        self.listaTablas = []
         self.tabWidget.currentChanged.connect(self.actualizaVars)
         self.cajaTexto.textChanged.connect(self.actualizaInfo)
         self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
@@ -98,6 +101,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.solve_button.clicked.connect(self.solve)
+        self.solveTableButton.clicked.connect(self.calculateTable)
         self.actionTermodinamicas.triggered.connect(self.propWindow)
         self.actionConfiguracion.triggered.connect(self.settingsWindow)
         self.actionComentario.triggered.connect(self.agregaComentario)
@@ -454,7 +458,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 var_a_lista.lowerlim = float(lista[1])
                 var_a_lista.upperlim = float(lista[2])
                 var_a_lista.comment = lista[3]
-                var_a_lista.units = u.parse_units(lista[4])
+                var_a_lista.units = pyENLu.parse_units(lista[4])
                 var_a_lista.dim = var_a_lista.units.dimensionality
                 self.variables.append(var_a_lista)
             # Borrado de carpeta temporal
@@ -518,7 +522,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Lista de propiedades
         #props_l =
 
-        lista2 = dicc_coolprop.keys()
+        lista2 = sorted(dicc_coolprop.keys(), key=lambda x:get_parameter_information(get_parameter_index(x), 'long'))
         dialog.ui.lista_fluidos = lista1
         # Items no repetidos
         items_no_rep = []
@@ -545,9 +549,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     # dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
         # Orden alfabético
         # Hay que ordenar, unit_items, descriptions, items_no_rep
-        unit_items = sorted(unit_items, key= lambda x: descriptions[unit_items.index(x)])
-        items_no_rep = sorted(items_no_rep, key =  lambda x: descriptions[items_no_rep.index(x)])
-        descriptions = sorted(descriptions, key= lambda x:x)
 
         for i, item in enumerate(items_no_rep):
             description = descriptions[i]
@@ -697,6 +698,53 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.actualizaInfo()
         if self.tabWidget.currentIndex() == 1:
             self.showVarsTable()
+        if self.tabWidget.currentIndex() == 4:
+            self.showParaTable()
+
+    def showParaTable(self):
+        self.nameVars = [x.name for x in self.variables]
+        self.tabTable.setColumnCount(len(nameVars))
+        self.tabTable.setRowCount(10)
+        self.tabTable.setHorizontalHeaderLabels(nameVars)
+        for var in nameVars:
+            pass
+
+    def calculateTable(self):
+        # Primero armar la lista de listas
+        self.listaTablas.append([])
+        copiaVars = deepcopy(self.variables)
+        for row in self.tabTable.rowCount():
+            eqns = deepcopy(self.ecuaciones_s)
+            varsUnk = []
+            for col in self.tabTable.columnCount():
+                for var in copiaVars:
+                    celdaText = self.tabTable.item(row,col).text()
+                    if (var.name == self.nameVars[col]) and (celdaText != ''):
+                        var.value = float(celdaText)
+                        eqnVirtual = var.name + '=' + celdaText
+                        eqns.append(eqnVirtual)
+                    elif celdaText == '':
+                        varsUnk.append(col) # guarda el indice de las columnas con celdas vacias
+            solucion = entradaTexto(eqns, self.timeout, varsObj=copiaVars, tol = self.opt_tol, method=self.opt_method)
+            copiaVars = solucion[0][0]
+
+
+            for colUnk in varsUnk:
+
+                newitem = QtWidgets.QTableWidgetItem(str(copiaVars[colUnk]))
+                # Nada se puede editar
+                newitem.setFlags(QtCore.Qt.ItemIsEditable)
+                self.solsTable.setItem(i, 0, newitem)
+
+
+            self.listaTablas[0].append([[eqns],[copiaVars]])
+    # self.solucion = entradaTexto(
+    #     ecuaciones, pyENL_timeout, varsObj=self.variables, tol = self.opt_tol, method=self.opt_method)
+    # tiempo = self.solucion[1]
+    # tiempo = '{:,.4}'.format(tiempo)
+    # self.variables = self.solucion[0][0]
+    # self.residuos = self.solucion[0][1]
+    # solved = self.solucion[0][2]
 
     def showVarsTable(self):
         '''
@@ -814,7 +862,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 self.variables[i].guess = guess
                 self.variables[i].lowerlim = lowerlim
                 self.variables[i].upperlim = upperlim
-                temp_unit = eval('u.parse_units("' + units + '")')
+                temp_unit = eval('pyENLu.parse_units("' + units + '")')
                 self.variables[i].dim = temp_unit.dimensionality
                 self.variables[i].units = temp_unit
                 # print(self.variables[i].units)
@@ -845,7 +893,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
         # if self.frame.isVisible():
         #     print('qwer')
-        #     self.findText() 
+        #     self.findText()
         cursor = self.cajaTexto.textCursor()
         cursor_nume = self.cajaNumeracion.textCursor()
         #se mueve a la primera linea visible de la caja de numeracion
@@ -883,7 +931,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Manera antigua de insertar numeración
         # for i in range(numFirstLine,numEndVisible):
         #     # se suma el 1 ya que la numeracion de las lineas start in 0
-        #     cursor_nume.insertText((str(i +1)).rjust(nucaporli) ) 
+        #     cursor_nume.insertText((str(i +1)).rjust(nucaporli) )
         #     cursor_nume.insertBlock()
 
 
@@ -894,7 +942,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         ingresando
         '''
         if self.frame.isVisible():
-            self.findText() 
+            self.findText()
         #solo se actualiza si se está modificando directamente en la caja de texto
         if self.tabWidget.currentIndex() != 0: #si no esta en la pestaña de la caja de texto
             return #vemos loca
@@ -959,10 +1007,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         cursor = self.cajaTexto.textCursor()
         selectedText= cursor.selection().toPlainText()
-        self.posSelText = cursor.selectionStart() 
+        self.posSelText = cursor.selectionStart()
         self.frame.setVisible(True)
         self.textFind.setFocus()
-        self.textFind.setText(selectedText)        
+        self.textFind.setText(selectedText)
 
     def closeFindReplace(self):
         '''
@@ -982,7 +1030,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def currentFindText(self,mover= 1):
         '''
-        Se resalta de otro color el resultado actual visualizado, mover será 1 o -1 
+        Se resalta de otro color el resultado actual visualizado, mover será 1 o -1
         dependiendo si va a avanzar o a retroceder
         '''
         word= self.textFind.text()
@@ -991,7 +1039,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         backBrush = QtGui.QBrush(QtCore.Qt.yellow,QtCore.Qt.BrushStyle(QtCore.Qt.Dense3Pattern))
         currentBackBrush = QtGui.QBrush(QtCore.Qt.cyan,QtCore.Qt.BrushStyle(QtCore.Qt.Dense3Pattern))
 
-        
+
         if len(word) == 0 or len(self.list_posWord)== 0: #  no buscar si no hay texto escrito
             self.label_find.setText('Find in current buffer')
             self.label_result.setText('No result')
@@ -1027,8 +1075,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.cajaTexto.setCenterOnScroll(True)
             currentSelection.cursor.clearSelection() # se deselecciona para que se vea el color
             self.cajaTexto.setTextCursor(currentSelection.cursor)
-            self.cajaTexto.setCenterOnScroll(False) 
-        
+            self.cajaTexto.setCenterOnScroll(False)
+
         self.label_result.setText(str(self.currentPosition + 1) +' of ' + str(len(self.list_posWord)))
 
     def findText(self,whole=False,replace=False):
@@ -1037,7 +1085,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         print(whole)
         word= self.textFind.text() #texto a buscar en self.cajaTexto
- 
+
         cajaTexto = self.cajaTexto.toPlainText()
         # Se limpia todo lo que esté resaltado
         selection = QtWidgets.QTextEdit().ExtraSelection()
@@ -1062,7 +1110,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         else:
             regex = QtCore.QRegExp(word)
             # desactivar wildcard character (ejm:  . ^ {} [] $ ? )
-            regex.setPatternSyntax(QtCore.QRegExp.FixedString) 
+            regex.setPatternSyntax(QtCore.QRegExp.FixedString)
 
         # self.cajaTexto partiendo desde la posicion pos
         pos= 0
@@ -1072,20 +1120,20 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         n_words = cajaTexto.count(word)
         curDiff = 0
         self.extraSelections = []
-        
+
         for i in range(n_words):
             if index == -1:#si indexIn  no encuentra nada retorna un -1
                 break
             conteoReal += 1
 
-            
+
             # if replaceAll == True: #replace it
             #     self.cursor.setPosition(index)
             #     self.cursor.movePosition(QtGui.QTextCursor.NextCharacter,QtGui.QTextCursor.KeepAnchor,len(word)) #selecciona la variable
             #     self.cursor.insertText(newWord)
             #     pos = index + len(newWord)
             #     cajaTexto = self.cajaTexto.toPlainText()
-            # else: 
+            # else:
 
             # Highlight it
             selection = QtWidgets.QTextEdit().ExtraSelection()
@@ -1127,7 +1175,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         Reemplaza el texto actual seleccionado por la busqueda
         '''
-        word= self.textFind.text() 
+        word= self.textFind.text()
         newWord = self.textReplace.text()
 
         if len(word)== 0 or len(self.list_posWord)== 0:
@@ -1178,7 +1226,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         # se busca la posicion del cursor dada por el usuario
         self.posOriCursor = self.cajaTexto.textCursor().position()
-            
+
 
 
 def main():
