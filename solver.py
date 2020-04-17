@@ -20,7 +20,7 @@ pyENLu.load_definitions(pyENL_path + "units.txt")
 # pyENL designa acá el vector de posibles soluciones que se está probando
 
 
-def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
+def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns, indices = None):
     '''
     Evalúa el sistema de ecuaciones que ingresa el usuario donde:
     pyENL: Valores numéricos para evaluar
@@ -74,40 +74,40 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             # print("-------" + er)
             clase = str(e.__class__)
             if clase == "<class 'TypeError'>":
-                raise Exception("Error de tipeo en ecuación " + str(cont + 1))
+                raise Exception("Error de tipeo en ecuación " + str(indices[cont] + 1))
             if 'Cannot convert' in er or 'is not defined in the unit registry' in er:
-                raise Exception('Error de unidades en la ecuación ' + str(cont + 1) + ': ' +er)
+                raise Exception('Error de unidades en la ecuación ' + str(indices[cont] + 1) + ': ' +er)
             if 'invalid syntax' in er:
                 raise Exception(
-                    'Error de sintaxis en la ecuación ' + str(cont + 1))
+                    'Error de sintaxis en la ecuación ' + str(indices[cont] + 1))
             elif 'is not defined' in er:
                 # Acá no se ha definido una función.
                 raise Exception('No se ha definido a ' + er
-                                [6:-16] + " en la ecuación " + str(cont + 1))
+                                [6:-16] + " en la ecuación " + str(indices[cont] + 1))
             elif 'unsupported operand type(s)' in er:
                 # En este caso se intenta usar un nombre de función como
                 # variable
                 raise Exception('Nombre de función como variable en ecuación '
-                                + str(cont + 1))
+                                + str(indices[cont] + 1))
             elif ('required positional arguments' in er) or ('invalid number of arguments' in er):
                 # Acá no se han suministrado suficientes argumentos a la
                 # función
                 raise Exception('Faltan argumentos en función de la ecuación '
-                                + str(cont + 1))
+                                + str(indices[cont] + 1))
             elif 'Not implemented for this type' in er:
                 # Se ingresan variables no numéricas a la función
                 raise Exception('Tipo de variable inadecuado en función de ecuación '
-                                + str(cont + 1))
+                                + str(indices[cont] + 1))
             elif 'return arrays must be of ArrayType' in er:
                 # Acá no se ingresaron bien valores a una función NumPy:
                 raise Exception('Mala entrada a función en la ecuación ' +
-                                str(cont + 1))
+                                str(indices[cont] + 1))
             elif 'No se tienen los valores' in er:
                 # La funció pyENL lanza la excepción por no tener suficientes
                 # variables para operar
-                raise Exception(er + ' en la ecuación ' + str(cont + 1))
+                raise Exception(er + ' en la ecuación ' + str(indices[cont] + 1))
             elif 'debe tener unidades' in er:
-                raise Exception(er + ' en la ecuación ' + str(cont + 1))
+                raise Exception(er + ' en la ecuación ' + str(indices[cont] + 1))
             else:
                 raise Exception
     return salidapyENL
@@ -178,7 +178,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
             # print("Bloque número:",j)
             # print(varsBloque, guessBloque,eqnsBloque)
             solBloque = opt.root(pyENL_sistema, guessBloque,
-                             args=(varsBloque, eqnsBloque), tol=tol, method=method)
+                             args=(varsBloque, eqnsBloque, bloque), tol=tol, method=method)
             asegura_convergencia = True
             # print(solBloque['success'])
             if solBloque['success'] == False:
@@ -266,7 +266,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     # for cont in range(0, len(pyENL_variables)):
     #     pyENL_variables[cont].guess = pyENL_sol['x'][cont]
     sol_sistema = [x.guess for x in pyENL_variables]
-    pyENL_residuos = pyENL_sistema(sol_sistema, pyENL_variables, pyENL_eqns)
+    pyENL_residuos = pyENL_sistema(sol_sistema, pyENL_variables, pyENL_eqns, None)
     return pyENL_variables, pyENL_residuos, asegura_convergencia
 
 def agregaUnidades(eqn_, pyENL_variables):
