@@ -39,7 +39,8 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             # exec(var.name + "=" + str(var.guess))
             # pyENL_eqns.append(var.name + "[" +str(var.units) + "]-(" +\
             #     str(var.guess) + "[" +str(var.units) + "])")
-            pyENL_eqns.append(var.name + "-(" + str(var.guess) + ")")
+            # pyENL_eqns.append(var.name + "-(" + str(var.guess) + ' [' + str(var.units) + "])")
+            pyENL_eqns.append(var.name + "-(" + str(var.guess) + ")"+"[" +str(var.units) + "]")
             # "var.name[var.unit] - var.guess[var.unit]"?
         exec(var.name + '= pyENL[' + str(cont) + ']')
     # print(pyENL_eqns)
@@ -165,8 +166,6 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
     lista_variables = []
     lista_eqns = []
     try:
-        # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
-        #                      args=(pyENL_variables, pyENL_eqns), tol=tol, method=method)
         for j, bloque in enumerate(lista_bloques):
             lista_eqns.append(pyENL_eqnsA[bloque])
             eqnsBloque = lista_eqns[-1]
@@ -193,8 +192,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
                     varBloque.solved = True
 
 
-       # pyENL_sol = opt.root(pyENL_sistema, pyENL_guesses,
-         #                    args=(variables_bloque, eqns_bloque), tol=tol, method=method)
+       
         # Métodos:
         # ‘hybr’
         # ‘lm’
@@ -267,7 +265,6 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
 
     # for cont in range(0, len(pyENL_variables)):
     #     pyENL_variables[cont].guess = pyENL_sol['x'][cont]
-    # pyENL_residuos = pyENL_sistema(pyENL_sol['x'], pyENL_variables, pyENL_eqns)
     sol_sistema = [x.guess for x in pyENL_variables]
     pyENL_residuos = pyENL_sistema(sol_sistema, pyENL_variables, pyENL_eqns)
     return pyENL_variables, pyENL_residuos, asegura_convergencia
