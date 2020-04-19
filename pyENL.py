@@ -1083,7 +1083,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         Resalta todos los resultados encontrados en la busqueda
         '''
-        print(whole)
+        # print(whole)
         word= self.textFind.text() #texto a buscar en self.cajaTexto
 
         cajaTexto = self.cajaTexto.toPlainText()
