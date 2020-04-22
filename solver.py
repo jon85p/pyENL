@@ -109,7 +109,9 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
                 raise Exception(er + ' en la ecuación ' + str(cont + 1))
             elif 'debe tener unidades' in er:
                 raise Exception(er + ' en la ecuación ' + str(cont + 1))
-            elif 'invalid value encountered in sqrt' or 'invalid value encountered in log10' in er:
+            elif ('invalid value encountered in sqrt' in er  
+                 or 'invalid value encountered in log10' in er
+                 or 'invalid value encountered in double_scalars' in er) :
                 pass
             elif 'missing unary operator "*"' in er:
                 raise Exception(er + 'en la ecuación' + eqn)
