@@ -12,7 +12,8 @@ ln = log
 log = log10
 import warnings
 from pint import _DEFAULT_REGISTRY as pyENLu
-from utils import variables , bloques, variables_string
+from utils import variables , bloques, variables_string,random_lim
+from time import time
 pyENLu.load_definitions(pyENL_path + "units.txt")
 # from time import time as pyENL_time
 
@@ -107,13 +108,19 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns, indices = None):
                 # variables para operar
                 raise Exception(er + ' en la ecuación ' + str(indices[cont] + 1))
             elif 'debe tener unidades' in er:
-                raise Exception(er + ' en la ecuación ' + str(indices[cont] + 1))
+                raise Exception(er + ' en la ecuación ' + str(cont + 1))
+            elif ('invalid value encountered in sqrt' in er  
+                 or 'invalid value encountered in log10' in er
+                 or 'invalid value encountered in double_scalars' in er) :
+                pass
+            elif 'missing unary operator "*"' in er:
+                raise Exception(er + 'en la ecuación' + eqn)
             else:
-                raise Exception
+                raise Exception(er)
     return salidapyENL
 
 
-def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
+def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr',pyENL_timeout=10):
     '''
     Acá llegan como parámetros la lista de funciones a hallar raíces como string
     La segunda entrada consiste en los objetos pyENL_variables en lista.
@@ -175,18 +182,35 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr'):
             varsBloque = variables(recVars)
             varsBloque = [x for x in pyENL_variables if x.name in varsBloque]
             guessBloque = [x.guess for x in varsBloque]
-            # print("Bloque número:",j)
-            # print(varsBloque, guessBloque,eqnsBloque)
-            solBloque = opt.root(pyENL_sistema, guessBloque,
-                             args=(varsBloque, eqnsBloque, bloque), tol=tol, method=method)
-            asegura_convergencia = True
-            # print(solBloque['success'])
-            if solBloque['success'] == False:
-                asegura_convergencia = False
-                raise Exception("Gordillo y los chulos")
+            tiempo_bloque = 0
+            tiempo_inicio = time()
+            while tiempo_bloque < pyENL_timeout:
+                # print("Bloque número:",j)
+                # print(varsBloque, guessBloque,eqnsBloque)
+                solBloque = opt.root(pyENL_sistema, guessBloque,
+                                args=(varsBloque, eqnsBloque), tol=tol, method=method)
+                asegura_convergencia = True
+                # print(solBloque['success'])
+                if solBloque['success'] == False:
+                    asegura_convergencia = False
+
+                    # Si no fue capaz de solucionar el bloque le cambia los guess
+                    # a las variables que no estan solucionadas en ese bloque
+                    for jj, varBloque in enumerate(varsBloque):
+                        obtemp = varBloque
+                        if not varBloque.solved:
+                            obtemp.guess = random_lim(varBloque.lowerlim, varBloque.upperlim) # * objetoVar.units
+                            varsBloque[jj] = obtemp
+                    tiempo_fin = time()
+                    tiempo_bloque = tiempo_fin - tiempo_inicio
+                else:
+                    print('Bloque ', j, 'Resuelto!')
+                    # return [],[],asegura_convergencia
+                    # raise Exception("Gordillo y los chulos")
+                    break
             # Actualizar el atributo solved
             for i, varBloque in enumerate(varsBloque):
-                print(varBloque.guess)
+                # print(varBloque.guess)
                 if not varBloque.solved:
                     varBloque.guess = solBloque['x'][i]
                     varBloque.solved = True
