@@ -112,6 +112,8 @@ def pyENL_sistema(pyENL, pyENL_variables, pyENL_eqns):
             elif ('invalid value encountered in sqrt' in er  
                  or 'invalid value encountered in log10' in er
                  or 'invalid value encountered in double_scalars' in er) :
+                 # TODO conteo de error para notificar a usuario si es muy repetitivo (puede que el usuario
+                 # se haya equivocado al escribir la ecuación)
                 pass
             elif 'missing unary operator "*"' in er:
                 raise Exception(er + 'en la ecuación' + eqn)

@@ -100,6 +100,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cajaTexto.cursorPositionChanged.connect(self.originCursor)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
         self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
+        self.varsTable.cellChanged.connect(self.verificarNewUnitVarsTable)
         self.solve_button.clicked.connect(self.solve)
         self.solveTableButton.clicked.connect(self.calculateTable)
         self.actionTermodinamicas.triggered.connect(self.propWindow)
@@ -333,6 +334,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.variables = []
         self.solucion = []
         self.imprimeSol(self.format)
+        self.actualizaVars()
 
     def guardaArchivoComo(self):
         try:
@@ -750,6 +752,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         '''
         Imprime en tabla las variables del programa.
         '''
+        # Se bloquean las señales de la tabla para no llamar funciones
+        # como verificarNewUnitVarsTable
+        self.varsTable.blockSignals(True)
         self.varsTable.resizeColumnsToContents()
         self.varsTable.resizeRowsToContents()
         # La cantidad de filas es pues igual a la cantidad de variables.
@@ -797,6 +802,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             #     newitem = QtWidgets.QTableWidgetItem(item)
             #     self.varsTable.setItem(m, n, newitem)
         self.varsTable.setHorizontalHeaderLabels(horHeaders)
+        self.varsTable.blockSignals(False)
         # print(dir(newitem))
         # self.varsTable.show()
         # self.infoLabel.setText('Pollo')
@@ -807,6 +813,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         los parámetros de las variables de programa.
         '''
         try:
+            # Se bloquean las señales de la tabla para no llamar funciones
+            # como verificarNewUnitVarsTable
+            self.varsTable.blockSignals(True)
             #Inicialmente se revisa que no la hayan embarrado repitiendo Variables
             #Ojalá se encuentre una mejor manera de hacer esto , y no con un for repetido xD
             list_names = []
@@ -879,8 +888,60 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 self.variables[i].comment = comment
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
+        self.varsTable.blockSignals(False)
         self.showVarsTable()
         self.archivoModificado = True
+
+    def keyPressEvent(self, e):
+        '''Función heredada, es llamada cuando una tecla se presiona'''
+
+        # Detecta cuando se use la tecla enter
+        # para usarla para ir bajando en las filas de la tabla de variables
+        # y poder editarla
+        if e.key() in [QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return]:
+
+            item = self.varsTable.currentItem()
+            row, col = item.row() , item.column()
+
+            if row +1 <  self.varsTable.rowCount():
+                self.varsTable.setCurrentCell(row+1,col)
+                self.varsTable.edit(self.varsTable.currentIndex())
+    def verificarNewUnitVarsTable(self,row,col):
+        '''
+        En el momento que el usuario cambia la unidad de una variable especifica
+        se verifica si es válida
+        '''
+        # Check que la modificación sea en la columna de unidades
+        
+        if col!=4:
+            return
+        units = self.varsTable.item(row, col).text() # Nueva unidad tentativa
+
+        # Como es posible que se modifiquen celdas, se debe bloquear los signals
+        # para evitar falsos positivos en esta función
+        self.varsTable.blockSignals(True)
+        try:
+            # Si eval sin error entonces breves pase a la siguiente linea
+            temp_unit = eval('pyENLu.parse_units("' + units + '")')
+
+            #Escribir la unidad en todas las selecciones válidas hechas
+            list_selected = self.varsTable.selectedItems()
+            if len(list_selected)>1:
+                for item in list_selected:
+                    # Se valida que el item pertenezca a la columna de unidades
+                    if item.column() == col:
+                        item.setText(units)
+
+            if row +1 <  self.varsTable.rowCount():
+                self.varsTable.setCurrentCell(row+1,col)
+                self.varsTable.edit(self.varsTable.currentIndex())
+            # self.varsTable.set
+            self.varsTable.blockSignals(False)
+        except Exception as e:
+            QtWidgets.QMessageBox.about(self, "Error", str(e))
+            # vuelve a dejar la unidad como estaba (realmente vuelve a imprimir la tabla, pero shhh)
+            self.showVarsTable()
+            self.varsTable.blockSignals(False)
 
     def actualizarNumeroLinea(self):
         '''
