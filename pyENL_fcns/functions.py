@@ -10,6 +10,8 @@ from fluids import control_valve as cv
 from CoolProp.CoolProp import PropsSI as proppyENL
 from CoolProp.CoolProp import HAPropsSI as haproppyENP
 from pint import _DEFAULT_REGISTRY as pyENLu
+import numpy as np
+
 try:
     pyENLu.load_definitions("units.txt")
 except:
@@ -200,7 +202,7 @@ def fluids_atmosphere_nrlmsise00(str1, Z, latitude=0, longitude=0, day=0, second
 # Solar radiation and position
 # https://fluids.readthedocs.io/fluids.atmosphere.html#solar-radiation-and-position
 
-def fluids_atmosphere_solar_position(str1, timestampUTC, lat, lon,
+def fluids_atmosphere_solar_position(str1, timestamp, zone, lat, lon,
             Z = 0*pyENLu.m, T = 298.15*pyENLu.K, P = 101325*pyENLu.Pa, refrac = 0.5667):
     '''
     Calculate the position of the sun in the sky.
@@ -209,8 +211,9 @@ def fluids_atmosphere_solar_position(str1, timestampUTC, lat, lon,
     the zenith tells how high in the sky it is. The solar elevation angle
     is returned for convinience; it is the complimentary angle of the zenith.
     '''
-    timeL = datetime.fromtimestamp(timestampUTC)
-    timeL = pytz.timezone('UTC').localize(timeL)
+    zone = zone.replace('|', '/')
+    timeL = datetime.fromtimestamp(timestamp)
+    timeL = pytz.timezone(zone).localize(timeL)
     Z = Z.to("m").magnitude
     T = T.to("K").magnitude
     P = P.to("Pa").magnitude
@@ -223,7 +226,10 @@ def fluids_atmosphere_solar_position(str1, timestampUTC, lat, lon,
     if str1 not in ps.keys():
         raise Exception('Propiedad no listada')
     else:
-        return sP[ps[str1]]
+        out = sP[ps[str1]]
+        if str1 != 'equation_of_time':
+            out = out * np.pi / 180
+        return out
     pass
 
 def fluids_Panhandle_A(SG, Tavg, L=None, D=None, P1=None, P2=None,
