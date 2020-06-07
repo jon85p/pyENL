@@ -66,7 +66,8 @@ dicc_coolprop = {'DMOLAR':parse('mole/m^3'), 'Dmolar':parse('mole/m^3'),
                  'TMIN': pyENLu.K, 'T_MIN': pyENLu.K, 'T_min': pyENLu.K, 'Tmin': pyENLu.K,
                  'TTRIPLE': pyENLu.K, 'T_TRIPLE': pyENLu.K, 'T_triple': pyENLu.K, 'Ttriple': pyENLu.K,
                  'T_FREEZE': pyENLu.K, 'T_freeze': pyENLu.K, 'T_REDUCING': pyENLu.K, 'T_reducing': pyENLu.K,
-                 'V': parse('Pa*s'), 'VISCOSITY': parse('Pa*s'), 'viscosity': parse('Pa*s')}
+                 'V': parse('Pa*s'), 'VISCOSITY': parse('Pa*s'), 'viscosity': parse('Pa*s'),'PRANDTL':parse('dimensionless'),
+                 'Prandtl':parse('dimensionless')}
 # TODO: Agregar las adimensionales!
 
 def prop(des, *args):
