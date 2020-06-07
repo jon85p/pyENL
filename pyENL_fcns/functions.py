@@ -2,6 +2,8 @@
 Funciones propias de pyENL
 '''
 
+import pytz
+from datetime import datetime
 from fluids import atmosphere as atm
 from fluids import compressible as comp
 from fluids import control_valve as cv
@@ -14,7 +16,7 @@ except:
     pass
 parse = pyENLu.parse_units
 unit_pyENL = pyENLu.m
-
+unidad = 1 * pyENLu.dimensionless
 # TODO
 # Funciones de CoolProp pasarlas por un wrapper de unidades!
 # Diccionario Coolprop
@@ -96,6 +98,9 @@ def prop(des, *args):
 def quadsum(x, y):
     return x**2 + y ** 2
 
+def timestamp(year, month, day, hours=0, minutes=0, seconds=0):
+    timeT = datetime(year, month, day, hours, minutes, seconds)
+    return timeT.timestamp()
 
 def corriente(str1, a, str2, b):
     '''
@@ -191,6 +196,34 @@ def fluids_atmosphere_nrlmsise00(str1, Z, latitude=0, longitude=0, day=0, second
 #
 #     salida =
 
+# Solar radiation and position
+# https://fluids.readthedocs.io/fluids.atmosphere.html#solar-radiation-and-position
+
+def fluids_atmosphere_solar_position(str1, timestampUTC, lat, lon,
+            Z = 0*pyENLu.m, T = 298.15*pyENLu.K, P = 101325*pyENLu.Pa, refrac = 0.5667):
+    '''
+    Calculate the position of the sun in the sky.
+    It is defined in terms of two angles - the zenith and the azimith.
+    The azimuth tells where a sundial would see the sun as coming from;
+    the zenith tells how high in the sky it is. The solar elevation angle
+    is returned for convinience; it is the complimentary angle of the zenith.
+    '''
+    timeL = datetime.fromtimestamp(timestampUTC)
+    timeL = pytz.timezone('UTC').localize(timeL)
+    Z = Z.to("m").magnitude
+    T = T.to("K").magnitude
+    P = P.to("Pa").magnitude
+    lat, lon = (lat * unidad).to('dimensionless').magnitude, (lon * unidad).to('dimensionless').magnitude
+    refrac = (refrac * unidad).to('dimensionless').magnitude
+    sP = atm.solar_position(timeL, lat, lon, Z, T, P, refrac)
+    ps = {'apparent_zenith': 0, 'zenith': 1,
+        'apparent_altitude':2, 'altitude':3,
+        'azimuth': 4, 'equation_of_time': 5}
+    if str1 not in ps.keys():
+        raise Exception('Propiedad no listada')
+    else:
+        return sP[ps[str1]]
+    pass
 
 def fluids_Panhandle_A(SG, Tavg, L=None, D=None, P1=None, P2=None,
                        Q=None, Ts=288.7, Ps=101325.0, Zavg=1, E=0.92):
