@@ -705,10 +705,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def showParaTable(self):
         self.nameVars = [x.name for x in self.variables]
-        self.tabTable.setColumnCount(len(nameVars))
+        self.tabTable.setColumnCount(len(self.nameVars))
         self.tabTable.setRowCount(10)
-        self.tabTable.setHorizontalHeaderLabels(nameVars)
-        for var in nameVars:
+        self.tabTable.setHorizontalHeaderLabels(self.nameVars)
+        for var in self.nameVars:
             pass
 
     def calculateTable(self):
