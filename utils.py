@@ -3,6 +3,7 @@ import random
 import copy
 import os
 import sys
+import configparser
 pyENL_path = os.path.realpath(__file__)[0:-8]
 sys.path.append(pyENL_path)
 '''
@@ -23,14 +24,16 @@ class configFile:
     Clase que facilita datos de configuración, su lectura y escritura
     '''
 
-    def __init__(self, filename):
+    def __init__(self, pathC):
         '''
         Inicializada con el nombre de archivo que contiene la configuración
         del programa
         '''
+        config = configparser.ConfigParser()
+        config.read(pathC)
+        nuevo = len(config.sections()) == 0
         # Primero verifica que exista el archivo, si no; carga configuración por
         # defecto.
-        # TODO : Mejorar aspectos cuando está dañado o no existe config.txt
         # items a configurar
         self.items = ["lang", "method"]
         self.lang = 'en'
@@ -40,32 +43,29 @@ class configFile:
         self.timeout = 10
         self.sFontUI = 'Monospace,12,-1,5,25,0,0,0,0,0'
         self.cuDir = os.path.expanduser('~')
-        try:
-            f = open(filename, 'rb')
-            texto_config = f.read().decode("utf-8").splitlines()
-            f.close()
-            for i, elm in enumerate(texto_config):
-                valor = elm.split("=")[1]#.replace(" ", "")
-                if 'lang' in elm:
-                    self.lang = valor
-                if 'method' in elm:
-                    self.method = valor
-                if 'format' in elm:
-                    self.format = valor
-                if 'tol' in elm:
-                    self.tol = float(valor)
-                if 'timeout' in elm:
-                    self.timeout = float(valor)
-                if 'font' in elm:
-                    self.sFontUI = valor
-                if 'cuDir' in elm:
-                    if os.path.exists(valor): #se confirma que la ruta si existe, si no se deja la de usuario
-                        self.cuDir = valor
-        except:
-            # Guardar con la configuración!
-            pass
-
-
+        if nuevo:
+            config["GENERAL"] = {
+                    "lang": self.lang,
+                    "method": self.method,
+                    "format": self.format,
+                    "tol": self.tol,
+                    "theme": "Default",
+                    "timeout": self.timeout,
+                    "font": self.sFontUI,
+                    "cuDir": self.cuDir
+                    }
+            with open(pathC, "w") as configfile:
+                config.write(configfile)
+        else:
+            # El archivo sí existe, así que vamos a leer
+            gen = config["GENERAL"]
+            self.lang = gen["lang"]
+            self.method = gen["method"]
+            self.format = gen["format"]
+            self.tol = float(gen["tol"])
+            self.timeout = float(gen["timeout"])
+            self.sFontUI = gen["font"]
+            self.cuDir = gen["cuDir"]
 
 
 def ajustes(texto):
@@ -269,22 +269,14 @@ def cantidadEqnVar(texto_caja):
     return ecuaciones, lista_vars
 
 def actualizar_directorio(cuDir):
-    '''Guarda en config.txt la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
+    '''Guarda en config la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
     # se guarda la ultima carpeta usada para cuando se vuelva a abrir el programa
-    f = open(pyENL_path + 'config.txt','r+')
-    data =f.read().splitlines() #se crea una lista con cada linea del txt
-    if 'cuDir' in f.read(): # si existe cuDir en el txt solo se reemplaza en la posicion "i" donde se encuentre
-        for i,fila in enumerate(data):
-            if 'cuDir' in fila:
-                data[i] = 'cuDir=' + str(cuDir) + '\n'
-    else: # de lo contrario lo crea en la ultima linea (la ultima linea está vacía)
-        data[-1] = 'cuDir=' + str(cuDir) + '\n'
-
-    f.seek(0) # Posiciona el cursor en el inicio
-    f.truncate() #Borra todo el txt para sobreescribirlo sin problemas
-    f.write('\n'.join(data))
-    f.close()
-
+    config = configparser.ConfigParser()
+    config.read(pyENL_path + 'config')
+    config['GENERAL']["cuDir"] = cuDir
+    with open("config", "w") as configfile:
+                config.write(configfile)
+    
 def funcion_a(Diccionario):
     '''Asociación de ecuaciones con variables (opción aleatoria)'''
     while True:

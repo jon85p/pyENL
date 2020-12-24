@@ -67,7 +67,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         cabo para cargar la ventana principal.
         '''
         QtWidgets.QMainWindow.__init__(self, parent)
-        opciones_ = configFile(pyENL_path + "config.txt")
+        opciones_ = configFile(pyENL_path + "config")
         self.format = opciones_.format
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
@@ -232,19 +232,24 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.settingsWindow()
         "Actualizar fichero"
         try:
-            bufferr = 'lang=' + self.lang + '\n'
-            bufferr = bufferr + 'theme=' + self.theme + '\n'
-            bufferr = bufferr + 'method=' + self.opt_method + '\n'
-            bufferr = bufferr + 'format=' + self.format + '\n'
-            bufferr = bufferr + 'tol=' + str(self.opt_tol) + '\n'
-            bufferr = bufferr + 'timeout=' + str(self.timeout) + '\n'
-            bufferr = bufferr + 'font=' + fontString + '\n'
-            bufferr = bufferr + 'cuDir=' + str(self.cuDir) + '\n'
-            g = open(pyENL_path + "config.txt", 'wb')
-            g.write(bufferr.encode('utf-8'))
-            g.close()
+            import configparser
+            config = configparser.ConfigParser()
+            config.read(pyENL_path + 'config')
+            config["GENERAL"] = {
+                    "lang": self.lang,
+                    "method": self.opt_method,
+                    "format": self.format,
+                    "tol": str(self.opt_tol),
+                    "timeout": str(self.timeout),
+                    "font": fontString,
+                    "theme": self.theme,
+                    "cuDir": self.cuDir
+                    }
+            with open(pyENL_path + "config", "w") as configfile:
+                config.write(configfile)
+            
         except Exception as e:
-            QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config.txt'")
+            QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config'")
             print(str(e))
 
     def exportaTex(self):
@@ -1241,12 +1246,10 @@ def main():
               'BreezeLight':'BreezeLight.qss','GrayDark':'GrayDark.qss'}
     # Leer archivo de configuración para encontrar el tema
     try:
-        with open(pyENL_path + 'config.txt', 'rb') as f:
-            lineas = f.read().decode('utf-8').splitlines()
-
-        for linea in lineas:
-            if 'theme' in linea:
-                theme = linea.split('=')[1]
+        config = configparser.ConfigParser()
+        config.read(pyENL_path + 'config')
+        if config["GENERAL"].get("theme"):
+            theme = config["GENERAL"].get("theme")
     except:
         pass
     app = QtWidgets.QApplication(sys.argv)
