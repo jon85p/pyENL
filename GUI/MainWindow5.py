@@ -145,7 +145,7 @@ class Ui_MainWindow(object):
         self.solveTableButton = QtWidgets.QPushButton(self.tabTab)
         self.solveTableButton.setObjectName("solveTableButton")
         self.verticalLayout_4.addWidget(self.solveTableButton)
-        self.tabWidget.addTab(self.tabTab, "")
+        # self.tabWidget.addTab(self.tabTab, "")
         #####
         self.gridLayout_2.addWidget(self.tabWidget, 0, 0, 1, 1)
         self.line = QtWidgets.QFrame(self.centralwidget)
