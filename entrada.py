@@ -165,9 +165,9 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
     pyENL_solved = False
     try:
         pyENL_solucion = solver(lista, variables_salida, tol=tol, method=method)
-        pyENL_solved = True
-        pyENL_final = time()
-        pyENL_transcurrido = pyENL_final - pyENL_inicio
+        pyENL_solved = pyENL_solucion[2]
+        if pyENL_solved == False:
+            raise Exception("Gordillo y los chulos")
     except Exception as e:
         # exit(0)
         # Intento aleatorio
@@ -197,21 +197,33 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             raise Exception(er)
         if 'debe tener unidades' in er:
             raise Exception(er)
+        if "Gordillo y los chulos" in er:
+            # Significa que la cagó pero aún lo puede volver a intentar ;)!
+            pass
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
+        # Creería que el siguiente while ya no sería necesario por lo que ahora se itera
+        # el bloque especifico que falla
         while pyENL_transcurrido < pyENL_timeout:
             # Encontrar nuevos valores de guesses:
             for cont, objetoVar in enumerate(variables_salida):
                 obtemp = objetoVar  # Objeto variable temporal
                 # TODO: Solo buscar random si es variable no resuelta
                 if not objetoVar.solved:
-                    obtemp.guess = random_lim(objeto.lowerlim, objeto.upperlim) * objetoVar.units
+                    obtemp.guess = random_lim(objeto.lowerlim, objeto.upperlim) # * objetoVar.units
                     variables_salida[cont] = obtemp
             # Termina de actualizar, ahora:
             try:
                 pyENL_solucion = solver(lista, variables_salida,
-                                        tol=1.49012e-08)
-                pyENL_solved = True
+                                        tol=1.49012e-08,pyENL_timeout = pyENL_timeout)
+                pyENL_solved = pyENL_solucion[2]
+                # Por ahora si en el primer intento del solver no encuentra solución
+                # Se continua el bucle while y se cambian los guesses para re intentar
+                # hasta que se agote el tiempo limite del bucle
+                if pyENL_solved==False:
+                    pyENL_final = time()
+                    pyENL_transcurrido = pyENL_final - pyENL_inicio
+                    continue
                 break
             except Exception as e:
                 er = str(e)
@@ -242,8 +254,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
                 if 'Error de unidades' in er:
                     raise Exception(er)
             # Actualiza el tiempo que ha transcurido:
-            pyENL_final = time()
-            pyENL_transcurrido = pyENL_final - pyENL_inicio
+    pyENL_final = time()
+    pyENL_transcurrido = pyENL_final - pyENL_inicio
     if pyENL_solved == False:
         raise Exception(
             'El tiempo de espera ha sido superado, verifique las ecuaciones')

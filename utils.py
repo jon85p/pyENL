@@ -346,25 +346,39 @@ def funcion_e(Diccionario):
     return Diccionario_orga
 
 def onevsone(matriz):
-    '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)'''
-    m =matriz.copy()
-    size = m.shape[0]
+    '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)
+    La matriz de entra está formada por un array de listas donde cada lista 
+    representan una ecuación y contiene n booleanos , donde n es el número total
+    de variables de todo el sistema de ecuaciones
 
+    Return: 
+    '''
+    m =matriz.copy()
+    size = m.shape[0] # Representa el numero de eqn
+
+    # A cada 
     for a in range(size):
 
+        # Lista de número de veces que se repite cada variable 
         sumCol = sum(m,axis = 0) #sumar columnas
+        # Lista de cantidad de variables que tiene cada ecuación
         sumRow = sum(m,axis=1) #sumar filas
 
-
-        minSumCol = sumCol.min()
+        # Se busca la variable que se repite la menor cantidad de veces
+        # y almacena el num de repeticiones y la posición en la lista
+        minSumCol = sumCol.min() # Si hay varias tomará la primera que encuentre
         yminSumCol = sumCol.argmin()
 
+        # Se identifica la ecuación con menor num de variables
         minSumRow = sumRow.min()
         xminSumRow = sumRow.argmin()
 
-        # Revisión de un sistema de ecuaciones valido
+        # Se identifica si hay variables unicas o eqn con solo una variable
+        # Variables que se encuentran una sola vez en todo el sistema
         checkCol=argwhere(sumCol== 1)
+        # Eqn que solo continene una variable
         checkRow = argwhere(sumRow==1)
+
         VcheckCol = zeros(size)
         VcheckRow = zeros(size)
         for b in checkCol:
@@ -372,7 +386,10 @@ def onevsone(matriz):
 
         for c in checkRow:
             VcheckRow =VcheckRow + m[c,:]
-        if True in (VcheckCol>1) or True in (VcheckCol>1):
+        if True in (VcheckCol>1): #or True in (VcheckCol>1):
+            # Significa que el sistema de eqns es inconsistente
+            # TODO de acá podemso detectar fallos en el sistema de eqns y notificar a usuario
+            # para que los arregle como doble declaración de variables
             return m ,-1
 
         if minSumRow == 1:
