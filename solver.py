@@ -190,7 +190,7 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr',pyENL_timeout=10
                 # print("Bloque número:",j)
                 # print(varsBloque, guessBloque,eqnsBloque)
                 solBloque = opt.root(pyENL_sistema, guessBloque,
-                                args=(varsBloque, eqnsBloque), tol=tol, method=method)
+                                args=(varsBloque, eqnsBloque,bloque), tol=tol, method=method)
                 asegura_convergencia = True
                 # print(solBloque['success'])
                 if solBloque['success'] == False:
