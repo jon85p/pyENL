@@ -10,6 +10,7 @@ sys.path.append(pyENL_path)
 import ast
 import subprocess
 import threading
+import time
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 # import qdarkstyle
 # import qdarkgraystyle
@@ -48,7 +49,8 @@ def quitaComentarios(eqns):
     '''
     b = []
     for eqn in eqns:
-        if ('<<' not in eqn) and not (eqn.replace(' ','').replace('\t', '') == ''):
+        eqn = eqn.split('<<')[0]
+        if  not (eqn.replace(' ','').replace('\t', '') == ''):
             b.append(eqn)
     return b
 
@@ -599,7 +601,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         backup_var = deepcopy(self.variables)
         try:
             pyENL_timeout = self.timeout
-            ecuaciones = self.cajaTexto.toPlainText().splitlines()
+            texto = self.cajaTexto.toPlainText()
+            # Remover comentarios de multiples lineas
+            texto = removeBigComments(texto)
+            ecuaciones = texto.splitlines()
             # Para poder soportar variables tipo texto
             ecuaciones = variables_string(ecuaciones)
             # Quitar los comentarios de las ecuaciones:
@@ -1018,6 +1023,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.archivoModificado = True
         self.nuevo = False
         texto = self.cajaTexto.toPlainText()
+        # Remover comentarios de multiples lineas
+        texto = removeBigComments(texto)
         texto = texto.splitlines()
         # self.infoLabel.setText((len(texto)))
         # Ahora definir la cantidad de ecuaciones y de variables en la caja

@@ -211,34 +211,34 @@ def variables_string(texto):
     to_del = []
     for i, eqn in enumerate(texto):
         # Asegurarse de que no elimine contenido de comentarios:
-        if '<<' not in eqn:
-            try:
-                lista = eqn.split('=')
-                if len(lista) == 2 and ('#' == lista[0].replace(' ', '')[0]):
-                    nombre_var = lista[0]
-                    nombre_var = nombre_var.replace(' ', '')
-                    dicc[nombre_var] = lista[1].replace(' ', '')
-                    to_del.append(i)
-            except:
-                pass
+        eqn = eqn.split('<<')[0]
+        try:
+            lista = eqn.split('=')
+            if len(lista) == 2 and ('#' == lista[0].replace(' ', '')[0]):
+                nombre_var = lista[0]
+                nombre_var = nombre_var.replace(' ', '')
+                dicc[nombre_var] = lista[1].replace(' ', '')
+                to_del.append(i)
+        except:
+            pass
     for i, num in enumerate(to_del):
         texto.pop(num-i)
     # Segunda iteración para reemplazos
     pattern = re.compile('|'.join(dicc.keys()))
     for i, eqn in enumerate(texto):
-        if '<<' not in eqn:
-            try:
-                result = pattern.sub(lambda x: dicc[x.group()], eqn)
-                # print(eqn)
-                # El reemplazo:
-                texto[i] = result
-            except:
-                pass
+        eqn = eqn.split('<<')[0]
+        try:
+            result = pattern.sub(lambda x: dicc[x.group()], eqn)
+            # print(eqn)
+            # El reemplazo:
+            texto[i] = result
+        except:
+            pass
     # Ahora la comprobación de que no han quedado $ en las ecuaciones:
     for i, eqn in enumerate(texto):
-        if '<<' not in eqn:
-            if '#' in eqn:
-                raise Exception('No se usa bien variable string en ', str(i))
+        eqn = eqn.split('<<')[0]
+        if '#' in eqn:
+            raise Exception('No se usa bien variable string en ', str(i))
     return texto
 
 
@@ -251,7 +251,8 @@ def cantidadEqnVar(texto_caja):
     ecuaciones = 0
     lista = []
     for eqn in texto_fcn:
-        if ((eqn.replace(' ','').replace('\t', '') != '') and ('{' not in eqn)) and ('<<' not in eqn):
+        eqn = eqn.split('<<')[0]
+        if ((eqn.replace(' ','').replace('\t', '') != '') and ('{' not in eqn)):
             ecuaciones += 1
             expresion = eqn.replace(" ", "")
             expresion = expresion.replace("\t", "")
@@ -485,3 +486,18 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
     bloques.reverse()
 
     return bloques
+
+def removeBigComments(texto):
+    '''
+        Remueve el contenido entre el inicio de comentario "<<" y el fin ">>"
+        Mantiene los comentarios de una sola linea (los que solo tienen el inicio "<<")
+    '''
+    list_texto = texto.split('<<')
+    list_sin_comentarios = []
+    for seccion in list_texto:
+        # se agrega de nuevo el << para los comentarios de una linea
+        lista_seccion =  (seccion + '<<').split('>>')
+        list_sin_comentarios += [lista_seccion[-1]]
+    texto_sin_comentarios = ''.join(list_sin_comentarios)
+
+    return texto_sin_comentarios
