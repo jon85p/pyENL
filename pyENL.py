@@ -1047,6 +1047,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             for i, varSelf in enumerate(self.variables):
                 if varSelf.name not in var_reco:
                     self.variables.pop(i)
+            self.variables.sort(key=lambda x: x.name.lower())
         except Exception as e:
             self.infoLabel.setText(
                 self.traduccion['Error encontrando cantidad de variables y de ecuaciones'])

@@ -138,7 +138,6 @@ def solver(pyENL_eqns, pyENL_variables, tol=None, method='hybr',pyENL_timeout=10
         return 'Error ecuaciones/variables'
 
     # Valores iniciales iguales a cero
-    pyENL_variables.sort(key=lambda x: x.name.lower())
     for v in pyENL_variables:
         v.solved = False
     # TODO
