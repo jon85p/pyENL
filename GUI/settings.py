@@ -110,6 +110,7 @@ class Ui_Dialog(object):
         self.verticalLayout_3.addWidget(self.label_4)
         self.timeout_spin = QtWidgets.QDoubleSpinBox(self.layoutWidget)
         self.timeout_spin.setObjectName("timeout_spin")
+        self.timeout_spin.setRange(0, 10e10)
         self.verticalLayout_3.addWidget(self.timeout_spin)
         self.tabWidget.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
