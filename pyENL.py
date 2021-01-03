@@ -89,6 +89,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # Dejar en una sola línea el texto
         self.cajaTexto.setLineWrapMode(0)
         # Variables en el programa:
+        self.textoAnterior = ''
         self.cajaTexto.setFocus()
         self.variables = []
         self.solucion = None
@@ -97,7 +98,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # listas que contienen
         self.listaTablas = []
         self.tabWidget.currentChanged.connect(self.actualizaVars)
-        self.cajaTexto.textChanged.connect(self.actualizaInfo)
+        self.cajaTexto.textChanged.connect(self.textChange)
         self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
         self.cajaTexto.cursorPositionChanged.connect(self.originCursor)
         self.cleanVarButton.clicked.connect(self.showVarsTable)
@@ -177,6 +178,10 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.pushButton_close.clicked.connect(self.closeFindReplace)
         self.pushButton_replace.clicked.connect(self.replaceText)
         self.pushButton_replaceAll.clicked.connect(self.replaceAll)
+
+    def textChange(self):
+        if self.cajaTexto.toPlainText() != self.textoAnterior:
+            self.actualizaInfo()
 
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
