@@ -182,6 +182,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
     def textChange(self):
         if self.cajaTexto.toPlainText() != self.textoAnterior:
             self.actualizaInfo()
+        self.textoAnterior = self.cajaTexto.toPlainText()
 
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
