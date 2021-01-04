@@ -2,10 +2,14 @@
 import random
 import copy
 import os
+import appdirs
 import sys
 import configparser
-pyENL_path = os.path.realpath(__file__)[0:-8]
-sys.path.append(pyENL_path)
+
+currentFile_path = os.path.realpath(__file__)
+pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+sys.path.append(pyENL_dirpath)
+user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
 '''
 Utilidades generales para uso de pyENL
 '''
@@ -44,6 +48,7 @@ class configFile:
         self.sFontUI = 'Monospace,12,-1,5,25,0,0,0,0,0'
         self.cuDir = os.path.expanduser('~')
         if nuevo:
+            os.makedirs(user_config_dir, exist_ok= True)
             config["GENERAL"] = {
                     "lang": self.lang,
                     "method": self.method,
@@ -273,7 +278,7 @@ def actualizar_directorio(cuDir):
     '''Guarda en config la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
     # se guarda la ultima carpeta usada para cuando se vuelva a abrir el programa
     config = configparser.ConfigParser()
-    config.read(pyENL_path + 'config')
+    config.read(user_config_dir + 'config')
     config['GENERAL']["cuDir"] = cuDir
     with open("config", "w") as configfile:
                 config.write(configfile)

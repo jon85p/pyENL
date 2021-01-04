@@ -2,10 +2,12 @@
 '''Núcleo del solucionador de ecuaciones de pyENL'''
 
 import scipy.optimize as opt
-from os.path import realpath
-pyENL_path = realpath(__file__)[0:-9]
+from os.path import realpath, dirname
+from os import sep
+currentFile_path = realpath(__file__)
+pyENL_dirpath = dirname(currentFile_path) + sep
 import sys
-sys.path.append(pyENL_path)
+sys.path.append(pyENL_dirpath)
 from numpy import *
 from pyENL_fcns import *
 ln = log
@@ -14,7 +16,7 @@ import warnings
 from pint import _DEFAULT_REGISTRY as pyENLu
 from utils import variables , bloques, variables_string,random_lim
 from time import time
-pyENLu.load_definitions(pyENL_path + "units.txt")
+pyENLu.load_definitions(pyENL_dirpath + "units.txt")
 # from time import time as pyENL_time
 
 # Definición de la función a resolver

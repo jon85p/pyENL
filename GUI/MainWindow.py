@@ -32,7 +32,7 @@ class Ui_MainWindow(object):
         MainWindow.setMinimumSize(QtCore.QSize(800, 600))
         MainWindow.setWindowTitle(_fromUtf8("pyENL"))
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("GUI/imgs/icon.png")),
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8("GUI/imgs/icon.ico")),
                        QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)

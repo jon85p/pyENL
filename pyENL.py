@@ -5,8 +5,11 @@ Programa principal que abre la interfaz gráfica de pyENL
 '''
 import sys
 import os
-pyENL_path = os.path.realpath(__file__)[0:-8]
-sys.path.append(pyENL_path)
+import appdirs
+currentFile_path = os.path.realpath(__file__)
+pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+sys.path.append(pyENL_dirpath)
+user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
 import ast
 import subprocess
 import threading
@@ -23,12 +26,12 @@ from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as pyENLu
-pyENLu.load_definitions(pyENL_path + "units.txt")
+pyENLu.load_definitions(pyENL_dirpath + "units.txt")
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
-# Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.png")
+# Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.ico")
 # Esto para efectos de traducciones!
 # NOTE
 # Cada vez que se actualice MainWindow.ui se debe actualizar MainWindow.py
@@ -69,7 +72,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         cabo para cargar la ventana principal.
         '''
         QtWidgets.QMainWindow.__init__(self, parent)
-        opciones_ = configFile(pyENL_path + "config")
+        opciones_ = configFile(user_config_dir + "config")
         self.format = opciones_.format
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
@@ -237,7 +240,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         try:
             import configparser
             config = configparser.ConfigParser()
-            config.read(pyENL_path + 'config')
+            config.read(user_config_dir + 'config')
             config["GENERAL"] = {
                     "lang": self.lang,
                     "method": self.opt_method,
@@ -248,7 +251,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     "theme": self.theme,
                     "cuDir": self.cuDir
                     }
-            with open(pyENL_path + "config", "w") as configfile:
+            with open(user_config_dir + "config", "w") as configfile:
                 config.write(configfile)
             
         except Exception as e:
@@ -1057,7 +1060,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         archivo unidades.txt '''
         self.Dicc_dimen = {}
         self.dimension_list = []
-        archivo = open(pyENL_path + "units.txt")
+        archivo = open(pyENL_dirpath + "units.txt")
         texto= archivo.read()
         dimensiones= texto.split('%') #separamos el txt en una lista donde cada elemento sea la dimension
         del dimensiones[0] # el primer elemento es un espacio en blanco asi que se debe borrar
@@ -1316,15 +1319,15 @@ def main():
     # Leer archivo de configuración para encontrar el tema
     try:
         config = configparser.ConfigParser()
-        config.read(pyENL_path + 'config')
+        config.read(user_config_dir + 'config')
         if config["GENERAL"].get("theme"):
             theme = config["GENERAL"].get("theme")
-    except:
-        pass
+    except Exception as e:
+        print("No se puede optener el tema ", e)
     app = QtWidgets.QApplication(sys.argv)
     theme_file = themes[theme]
     if theme_file:
-        f = open(pyENL_path + "themes/" + theme_file, "rb")
+        f = open(pyENL_dirpath + "themes/" + theme_file, "rb")
         qss = f.read().decode("utf-8")
         f.close()
         app.setStyleSheet(qss)

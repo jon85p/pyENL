@@ -4,8 +4,9 @@ Intérprete de texto
 '''
 import sys
 import os
-pyENL_path = os.path.realpath(__file__)[0:-10]
-sys.path.append(pyENL_path)
+currentFile_path = os.path.realpath(__file__)
+pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+sys.path.append(pyENL_dirpath)
 from solver import solver
 from utils import variables, random_lim, variables_string
 from numpy import inf
@@ -14,7 +15,7 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 from pint import _DEFAULT_REGISTRY as pyENLu
-pyENLu.load_definitions(pyENL_path + "units.txt")
+pyENLu.load_definitions(pyENL_dirpath + "units.txt")
 sindim = ((1*pyENLu.m)/(1*pyENLu.m)).units
 try:
     from .expimp import sols2odt, sols2tex
