@@ -4,6 +4,7 @@ import copy
 import os
 import sys
 import configparser
+from translations import translations as pyENL_translations
 pyENL_path = os.path.realpath(__file__)[0:-8]
 sys.path.append(pyENL_path)
 '''
@@ -391,6 +392,8 @@ def onevsone(matriz):
             # Significa que el sistema de eqns es inconsistente
             # TODO de acá podemso detectar fallos en el sistema de eqns y notificar a usuario
             # para que los arregle como doble declaración de variables
+            print(VcheckCol)
+            raise Exception(pyENL_translations()["Mal planteamiento del sistema de ecuaciones"])
             return m ,-1
 
         if minSumRow == 1:
@@ -501,3 +504,4 @@ def removeBigComments(texto):
     texto_sin_comentarios = ''.join(list_sin_comentarios)
 
     return texto_sin_comentarios
+

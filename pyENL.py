@@ -640,7 +640,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             QtWidgets.QMessageBox.about(self, "Error", str(e))
             # Restaurar acá las variables copiadas
             # TODO Restaurar solo las variables que no se pudieron resolver (bloques)
-            [print(varr.solved, varr.name) for varr in self.variables]
+            # [print(varr.solved, varr.name) for varr in self.variables]
             for i, var_ in enumerate(backup_var):
                 if not self.variables[i].solved:
                     self.variables[i] = var_
