@@ -5,11 +5,13 @@ import os
 import appdirs
 import sys
 import configparser
+from translations import translations as pyENL_translations
 
 currentFile_path = os.path.realpath(__file__)
 pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
 sys.path.append(pyENL_dirpath)
 user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
+
 '''
 Utilidades generales para uso de pyENL
 '''
@@ -396,6 +398,8 @@ def onevsone(matriz):
             # Significa que el sistema de eqns es inconsistente
             # TODO de acá podemso detectar fallos en el sistema de eqns y notificar a usuario
             # para que los arregle como doble declaración de variables
+            print(VcheckCol)
+            raise Exception(pyENL_translations()["Mal planteamiento del sistema de ecuaciones"])
             return m ,-1
 
         if minSumRow == 1:
@@ -506,3 +510,4 @@ def removeBigComments(texto):
     texto_sin_comentarios = ''.join(list_sin_comentarios)
 
     return texto_sin_comentarios
+
