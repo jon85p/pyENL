@@ -11,7 +11,8 @@ import os
 import sys
 sys.path.append("..")
 from translations import translations
-GUI_PATH = os.path.realpath(__file__)[0:-14]
+GUI_FILEPATH = os.path.realpath(__file__)
+GUI_DIRPATH = os.path.dirname(GUI_FILEPATH) + os.sep
 
 
 class Ui_MainWindow(object):
@@ -22,7 +23,7 @@ class Ui_MainWindow(object):
         MainWindow.setMinimumSize(QtCore.QSize(800, 600))
         MainWindow.setWindowTitle("pyENL")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(GUI_PATH + "imgs/icon.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(GUI_DIRPATH + "imgs/icon.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
