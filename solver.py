@@ -16,7 +16,10 @@ import warnings
 from pint import _DEFAULT_REGISTRY as pyENLu
 from utils import variables , bloques, variables_string,random_lim
 from time import time
-pyENLu.load_definitions(pyENL_dirpath + "units.txt")
+import appdirs
+user_config_dir = appdirs.user_config_dir() + appdirs.os.sep + "pyENL" + appdirs.os.sep
+pyENL_units_file = user_config_dir +  "units.txt"
+pyENLu.load_definitions(pyENL_units_file)
 # from time import time as pyENL_time
 
 # Definición de la función a resolver

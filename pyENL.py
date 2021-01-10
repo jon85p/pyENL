@@ -10,6 +10,7 @@ currentFile_path = os.path.realpath(__file__)
 pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
 sys.path.append(pyENL_dirpath)
 user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
+os.makedirs(user_config_dir, exist_ok= True)
 import ast
 import subprocess
 import threading
@@ -26,7 +27,12 @@ from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as pyENLu
-pyENLu.load_definitions(pyENL_dirpath + "units.txt")
+# Si no existe el archivo, crearlo:
+pyENL_units_file = user_config_dir +  "units.txt"
+if not os.path.exists(pyENL_units_file):
+    with open(pyENL_units_file, "w") as file_units:
+        file_units.write("dog_year = 52 * day = dogy = dy\n")
+pyENLu.load_definitions(pyENL_units_file)
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -1067,7 +1073,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         archivo unidades.txt '''
         self.Dicc_dimen = {}
         self.dimension_list = []
-        archivo = open(pyENL_dirpath + "units.txt")
+        archivo = open(pyENL_units_file)
         texto= archivo.read()
         dimensiones= texto.split('%') #separamos el txt en una lista donde cada elemento sea la dimension
         del dimensiones[0] # el primer elemento es un espacio en blanco asi que se debe borrar

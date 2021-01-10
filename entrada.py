@@ -15,7 +15,15 @@ from CoolProp.CoolProp import HAPropsSI as haprop
 from time import time
 import optparse
 from pint import _DEFAULT_REGISTRY as pyENLu
-pyENLu.load_definitions(pyENL_dirpath + "units.txt")
+import appdirs
+user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
+os.makedirs(user_config_dir, exist_ok= True)
+# Si no existe el archivo, crearlo:
+pyENL_units_file = user_config_dir +  "units.txt"
+if not os.path.exists(pyENL_units_file):
+    with open(pyENL_units_file, "w") as file_units:
+        file_units.write("dog_year = 52 * day = dogy = dy\n")
+pyENLu.load_definitions(pyENL_units_file)
 sindim = ((1*pyENLu.m)/(1*pyENLu.m)).units
 try:
     from .expimp import sols2odt, sols2tex
