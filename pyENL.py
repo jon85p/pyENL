@@ -104,8 +104,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.cajaTexto.textChanged.connect(self.textChange)
         self.cajaTexto.updateRequest.connect(self.actualizarNumeroLinea)
         self.cajaTexto.cursorPositionChanged.connect(self.originCursor)
-        self.cleanVarButton.clicked.connect(self.showVarsTable)
-        self.Actualizar_Button.clicked.connect(self.actualizaVarsTable)
         self.varsTable.cellChanged.connect(self.verificarNewUnitVarsTable)
         self.solve_button.clicked.connect(self.solve)
         self.solveTableButton.clicked.connect(self.calculateTable)
@@ -955,6 +953,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 self.varsTable.setCurrentCell(row+1,col)
                 self.varsTable.edit(self.varsTable.currentIndex())
             # self.varsTable.set
+            self.actualizaVarsTable()
             self.varsTable.blockSignals(False)
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", str(e))
