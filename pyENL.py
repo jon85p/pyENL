@@ -76,7 +76,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.format = opciones_.format
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
-        self.traduccion = translations(self.lang)
+        self.traduccion = translations(lang = self.lang)
+        print("Se marcó el idioma en ", self.lang)
         self.opt_tol = opciones_.tol
         self.timeout = opciones_.timeout
         self.cuDir = opciones_.cuDir
@@ -87,7 +88,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         if opciones_.sFontUI:
             self.fontUI.fromString(opciones_.sFontUI)
             self.sizeFont = int(opciones_.sFontUI.split(",")[1])
-        self.setupUi(self)
+        self.setupUi(self, self.lang)
         # self.solve_button.clicked.connect(self.prueba)
         # Dejar en una sola línea el texto
         self.cajaTexto.setLineWrapMode(0)
