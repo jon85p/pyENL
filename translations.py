@@ -72,9 +72,9 @@ def translations(lang='en'):
 
     dicc_gen["Mal planteamiento del sistema de ecuaciones"] = {
             "es": "Mal planteamiento del sistema de ecuaciones",
-            "en": "Bad equation aproach",
-            "pt": "Bad equation aproach",
-            "fr": "Bad equation aproach"
+            "en": "Bad equation approach",
+            "pt": "Bad equation approach",
+            "fr": "Bad equation approach"
             }
 
     dicc_gen['Limpiar'] = {'es': 'Limpiar', 'en': 'Clear', 'pt': 'Limpiar',
