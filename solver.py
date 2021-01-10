@@ -19,6 +19,12 @@ from time import time
 import appdirs
 user_config_dir = appdirs.user_config_dir() + appdirs.os.sep + "pyENL" + appdirs.os.sep
 pyENL_units_file = user_config_dir +  "units.txt"
+appdirs.os.makedirs(user_config_dir, exist_ok= True)
+# Si no existe el archivo, crearlo:
+pyENL_units_file = user_config_dir +  "units.txt"
+if not appdirs.os.path.exists(pyENL_units_file):
+    with open(pyENL_units_file, "w") as file_units:
+        file_units.write("dog_year = 52 * day = dogy = dy\n")
 pyENLu.load_definitions(pyENL_units_file)
 # from time import time as pyENL_time
 
