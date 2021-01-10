@@ -25,6 +25,45 @@ def translations(lang='en'):
     dicc_gen['Resolver'] = {'es': 'Resolver', 'en': 'Solve', 'pt': 'Resolver',
                             'fr': 'Resolver'}
 
+    dicc_gen["Replace"] = {"es": "Reemplazar", "en": "Replace", "fr": "Replace",
+            "pt": "Replace"}
+
+    dicc_gen["Replace All"] = {"es": "Reemplazar todo", "en": "Replace all",
+            "pt": "Replace all", "fr": "Replace all"}
+
+    dicc_gen["Find"] = {"es":"Encontrar", "en":"Find",
+            "pt": "Find", "fr": "Find"}
+
+    dicc_gen["Find in current buffer"] = {"es":"Encontrar en buffer actual", "en":"Find in current buffer",
+            "pt": "Find in current buffer", "fr": "Find in current buffer"}
+
+    dicc_gen["No results"] = {"es":"Sin resultados", "en":"No results",
+            "pt": "No results", "fr": "No results"}
+
+    dicc_gen["Funciones de Ingeniería"] = {"es":"Funciones de Ingeniería", "en":"Engineering functions",
+            "pt": "Engineering functions", "fr": "Engineering functions"}
+
+    dicc_gen["Buscar/Reemplazar"] = {"es":"Buscar/Reemplazar", "en":"Search/Replace",
+            "pt": "Search/Replace", "fr": "Search/Replace"}
+    '''
+    dicc_gen[""] = {"es":"", "en":"",
+            "pt": "", "fr": ""}
+
+    dicc_gen[""] = {"es":"", "en":"",
+            "pt": "", "fr": ""}
+
+    dicc_gen[""] = {"es":"", "en":"",
+            "pt": "", "fr": ""}
+
+    dicc_gen[""] = {"es":"", "en":"",
+            "pt": "", "fr": ""}
+
+    dicc_gen[""] = {"es":"", "en":"",
+            "pt": "", "fr": ""}
+
+    dicc_gen[""] = {"es":"", "en":"",
+            "pt": "", "fr": ""}
+    '''
     dicc_gen['Ecuaciones'] = {'es': 'Ecuaciones', 'en': 'Equations',
                               'pt': 'Ecuaciones', 'fr': 'Ecuaciones'}
 
