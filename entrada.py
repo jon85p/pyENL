@@ -4,9 +4,6 @@ Intérprete de texto
 '''
 import sys
 import os
-currentFile_path = os.path.realpath(__file__)
-pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
-sys.path.append(pyENL_dirpath)
 from solver import solver
 from utils import variables, random_lim, variables_string
 from numpy import inf
@@ -16,10 +13,13 @@ from time import time
 import optparse
 from pint import _DEFAULT_REGISTRY as pyENLu
 import appdirs
+currentFile_path = os.path.realpath(__file__)
+pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+sys.path.append(pyENL_dirpath)
 user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
-os.makedirs(user_config_dir, exist_ok= True)
+os.makedirs(user_config_dir, exist_ok=True)
 # Si no existe el archivo, crearlo:
-pyENL_units_file = user_config_dir +  "units.txt"
+pyENL_units_file = user_config_dir + "units.txt"
 if not os.path.exists(pyENL_units_file):
     with open(pyENL_units_file, "w") as file_units:
         file_units.write("dog_year = 52 * day = dogy = dy\n")
@@ -49,10 +49,10 @@ class pyENL_variable:
         self.comment = 'Variable'
         self.units = sindim  # Unidad de la variable.
         self.solved = False
-        self.dim = self.units.dimensionality #Dimensión de la variable
+        self.dim = self.units.dimensionality  # Dimensión de la variable
 
     def __repr__(self):
-      return "pyENL variable <" + self.name + ">"
+        return "pyENL variable <" + self.name + ">"
 
     def convert(self):
         '''
@@ -92,7 +92,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
         raise Exception('El método de resolución no está listado, ver ayuda.')
     for ie, eqn in enumerate(ecuaciones):
         eqn = eqn.split('<<')[0]
-        if ((eqn.replace(' ','').replace('\t', '') != '') and ('{' not in eqn)):
+        if ((eqn.replace(' ', '').replace('\t', '') != '') and ('{' not in eqn)):
             expresion = eqn.replace(" ", "")
             expresion = expresion.replace('\t','')
             # Capacidad de interpretar pow
@@ -101,12 +101,12 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             operandos = ["+", "-", "*", "/", "("]
             # Revisar que no haya operadores incompletos
             if (izq_der[0][-1] in operandos) or (izq_der[1][-1] in operandos):
-              raise Exception('Ecuación mal escrita: ' + str(ie+1))
+                raise Exception('Ecuación mal escrita: ' + str(ie+1))
             # Revisar que no hayan paréntesis sin cerrar
             par_err1 = izq_der[0].count("(") != izq_der[0].count(")")
             par_err2 = izq_der[1].count("(") != izq_der[1].count(")")
             if par_err1 or par_err2:
-              raise Exception("No cierran los paréntesis en " + str(ie+1))
+                raise Exception("No cierran los paréntesis en " + str(ie+1))
             paraRaiz = izq_der[0] + \
                 '-(' + izq_der[1] + ')'  # Igualación de cero
             lista.append(paraRaiz)
@@ -176,7 +176,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
     try:
         pyENL_solucion = solver(lista, variables_salida, tol=tol, method=method)
         pyENL_solved = pyENL_solucion[2]
-        if pyENL_solved == False:
+        if not pyENL_solved:
             raise Exception("Gordillo y los chulos")
     except Exception as e:
         # exit(0)
@@ -212,8 +212,8 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             pass
         pyENL_final = time()
         pyENL_transcurrido = pyENL_final - pyENL_inicio
-        # Creería que el siguiente while ya no sería necesario por lo que ahora se itera
-        # el bloque especifico que falla
+        # Creería que el siguiente while ya no sería necesario por lo que
+        # ahora se itera el bloque especifico que falla
         while pyENL_transcurrido < pyENL_timeout:
             # Encontrar nuevos valores de guesses:
             for cont, objetoVar in enumerate(variables_salida):
@@ -225,12 +225,13 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             # Termina de actualizar, ahora:
             try:
                 pyENL_solucion = solver(lista, variables_salida,
-                                        tol=1.49012e-08,pyENL_timeout = pyENL_timeout)
+                                        tol=1.49012e-08,
+                                        pyENL_timeout=pyENL_timeout)
                 pyENL_solved = pyENL_solucion[2]
                 # Por ahora si en el primer intento del solver no encuentra solución
                 # Se continua el bucle while y se cambian los guesses para re intentar
                 # hasta que se agote el tiempo limite del bucle
-                if pyENL_solved==False:
+                if not pyENL_solved:
                     pyENL_final = time()
                     pyENL_transcurrido = pyENL_final - pyENL_inicio
                     continue
@@ -266,7 +267,7 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             # Actualiza el tiempo que ha transcurido:
     pyENL_final = time()
     pyENL_transcurrido = pyENL_final - pyENL_inicio
-    if pyENL_solved == False:
+    if not pyENL_solved:
         raise Exception(
             'El tiempo de espera ha sido superado, verifique las ecuaciones')
     if pyENL_solucion == 'Error ecuaciones/variables':
@@ -303,7 +304,7 @@ def main():
     if not os.access(fichero, os.R_OK):
         print('[!] No se cuentan con los permisos apropiados para acceder al archivo')
         exit(0)
-    if options.toption == None:
+    if options.toption is None:
         pyENL_timeout = 10
     else:
         pyENL_timeout = options.toption

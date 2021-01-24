@@ -6,11 +6,7 @@ Programa principal que abre la interfaz gráfica de pyENL
 import sys
 import os
 import appdirs
-currentFile_path = os.path.realpath(__file__)
-pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
-sys.path.append(pyENL_dirpath)
-user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
-os.makedirs(user_config_dir, exist_ok= True)
+
 import ast
 import subprocess
 import threading
@@ -27,12 +23,7 @@ from zipfile import ZipFile
 import tempfile
 from expimp import sols2odt, sols2tex
 from pint import _DEFAULT_REGISTRY as pyENLu
-# Si no existe el archivo, crearlo:
-pyENL_units_file = user_config_dir +  "units.txt"
-if not os.path.exists(pyENL_units_file):
-    with open(pyENL_units_file, "w") as file_units:
-        file_units.write("dog_year = 52 * day = dogy = dy\n")
-pyENLu.load_definitions(pyENL_units_file)
+
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
@@ -42,13 +33,24 @@ from pyENL_fcns.functions import dicc_coolprop
 # NOTE
 # Cada vez que se actualice MainWindow.ui se debe actualizar MainWindow.py
 
-#TODO
+# TODO
 # Cuando salga error de no convergencia, no mostrar ventana de tiempo de solución
 
 # form_class = uic.loadUiType("GUI/MainWindow.ui")[0]
 from GUI.MainWindow5 import Ui_MainWindow as form_class
 from GUI.props import Ui_Dialog as prop_class
 from GUI.settings import Ui_Dialog as settings_class
+currentFile_path = os.path.realpath(__file__)
+pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+sys.path.append(pyENL_dirpath)
+user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
+os.makedirs(user_config_dir, exist_ok=True)
+# Si no existe el archivo, crearlo:
+pyENL_units_file = user_config_dir + "units.txt"
+if not os.path.exists(pyENL_units_file):
+    with open(pyENL_units_file, "w") as file_units:
+        file_units.write("dog_year = 52 * day = dogy = dy\n")
+pyENLu.load_definitions(pyENL_units_file)
 
 
 def quitaComentarios(eqns):
@@ -59,7 +61,7 @@ def quitaComentarios(eqns):
     b = []
     for eqn in eqns:
         eqn = eqn.split('<<')[0]
-        if  not (eqn.replace(' ','').replace('\t', '') == ''):
+        if not (eqn.replace(' ', '').replace('\t', '') == ''):
             b.append(eqn)
     return b
 
@@ -82,13 +84,13 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.format = opciones_.format
         self.opt_method = opciones_.method
         self.lang = opciones_.lang
-        self.traduccion = translations(lang = self.lang)
+        self.traduccion = translations(lang=self.lang)
         print("Se marcó el idioma en ", self.lang)
         self.opt_tol = opciones_.tol
         self.timeout = opciones_.timeout
         self.cuDir = opciones_.cuDir
         self.theme = theme
-        self.nuevo = True # Indica que el archivo es nuevo
+        self.nuevo = True  # Indica que el archivo es nuevo
         self.sizeFont = 12
         self.fontUI = QtGui.QFont()
         if opciones_.sFontUI:
@@ -145,10 +147,14 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # TODO En lugar de salir de una vez, crear función que verifique que
         # se han guardado los cambios y así
         self.actionSalir.triggered.connect(self.cerrarPyENL)
-        self.actionAyuda_NumPy.triggered.connect(partial(self.open_url,'https://docs.scipy.org/doc/numpy/reference/'))
-        self.actionAyuda_CoolProp.triggered.connect(partial(self.open_url,'http://www.coolprop.org/coolprop/HighLevelAPI.html'))
-        self.actionAyuda_pyENL.triggered.connect(partial(self.open_url,'https://jon85p.github.io/pyENL/help'))
-        self.actionLicencias.triggered.connect(partial(self.open_url,'https://raw.githubusercontent.com/jon85p/pyENL/master/COPYING'))
+        self.actionAyuda_NumPy.triggered.connect(partial(self.open_url,
+            'https://docs.scipy.org/doc/numpy/reference/'))
+        self.actionAyuda_CoolProp.triggered.connect(partial(self.open_url,
+            'http://www.coolprop.org/coolprop/HighLevelAPI.html'))
+        self.actionAyuda_pyENL.triggered.connect(partial(self.open_url,
+            'https://jon85p.github.io/pyENL/help'))
+        self.actionLicencias.triggered.connect(partial(self.open_url,
+            'https://raw.githubusercontent.com/jon85p/pyENL/master/COPYING'))
         self.actionBuscar_Reemplazar.triggered.connect(self.showFindReplace)
 
         # TODO En Información incluir la máxima desviación
@@ -170,7 +176,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         doc2 = self.cajaTexto.document()
         doc2.setDocumentMargin(0)
 
-
         # ACA van las cosas que luego se activarán
         self.actionUnidades.setEnabled(False)
         self.actionPor_agregar.setEnabled(False)
@@ -178,7 +183,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         self.actionImprimir.setEnabled(False)
         self.actionArchivo_EES.setEnabled(False)
 
-        #Se activaran cuando esté visible la ventanda de buscar/reemplazar
+        # Se activaran cuando esté visible la ventanda de buscar/reemplazar
 
         self.textFind.textChanged.connect(self.findText)
         self.pushButton_find.clicked.connect(lambda: self.currentFindText(1))
@@ -194,15 +199,17 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
 
     def settingsWindow(self):
         langs = {"es": 0, "en": 1, "fr": 2, "pt": 3}
-        methods = {'hybr':0, 'lm':1, 'broyden1':2, 'broyden2':3, 'anderson':4,
-                   'linearmixing':5, 'diagbroyden':6, 'excitingmixing':7, 'krylov':8, 'df-sane':9}
-        temas = {"Default":0, "DarkBlack":1,"Dracula":2,"Blue":3,"BreezeDark":4, "BreezeLight":5,
-                 "Gray":6,"GrayDark":7}
+        methods = {'hybr': 0, 'lm': 1, 'broyden1': 2, 'broyden2': 3,
+                    'anderson': 4, 'linearmixing': 5, 'diagbroyden': 6,
+                    'excitingmixing': 7, 'krylov': 8, 'df-sane': 9}
+        temas = {"Default": 0, "DarkBlack": 1, "Dracula": 2, "Blue": 3, "BreezeDark": 4,
+                "BreezeLight": 5, "Gray": 6, "GrayDark": 7}
         dialog = QtWidgets.QDialog()
         dialog.ui = settings_class()
         dialog.ui.setupUi(dialog, self.traduccion)
         # Hay que conectar ANTES de que se cierre la ventana de diálogo
-        dialog.ui.buttonBox.accepted.connect(partial(self.saveSettings, dialog.ui))
+        dialog.ui.buttonBox.accepted.connect(partial(self.saveSettings,
+                                                     dialog.ui))
         dialog.ui.comboBox.setCurrentIndex(langs[self.lang])
         dialog.ui.temas.setCurrentIndex(temas[self.theme])
         dialog.ui.format_line.setText(self.format)
@@ -242,7 +249,6 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             format_str = str(ui.format_line.text())
             if '{' not in format_str or '}' not in format_str:
                 raise Exception("Error")
-            pi_test = format_str.format(3.141592)
             self.format = format_str
         except:
             QtWidgets.QMessageBox.about(self, "Error", "No se entiende el formato de presentación de números")
@@ -264,9 +270,9 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     }
             with open(user_config_dir + "config", "w") as configfile:
                 config.write(configfile)
-            
         except Exception as e:
-            QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config'")
+            QtWidgets.QMessageBox.about(self, "Error",
+                                        "No se pudo almacenar la configuración en archivo 'config'")
             print(str(e))
 
     def exportaTex(self):
@@ -378,7 +384,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Pasar texto a fichero para comprimirlo, al igual que vars1.dat
             # Creación de carpeta temporal
             tmp_dir = tempfile.TemporaryDirectory(prefix="pyENL")
-            tmp_route = str(tmp_dir).split("'")[1] + os.sep # Cuidado con el "/", comprobar en Windows
+            tmp_route = str(tmp_dir).split("'")[1] + os.sep  # Cuidado con el "/", comprobar en Windows
             # Crea carpetas a usar:
             folders = ['src', 'vars', 'imgs', 'tables', 'graphs']
             for folder in folders:
@@ -423,7 +429,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.archivoModificado = False
             # Listo, ahora a borrar la carpeta temporal
             tmp_dir.cleanup()
-            self.setWindowTitle("pyENL: " +  self.output_save.split('/')[-1])
+            self.setWindowTitle("pyENL: " + self.output_save.split('/')[-1])
 
     def abreArchivo(self):
         if self.archivoModificado:
@@ -490,7 +496,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.output_save = self.open_file
             self.setWindowTitle('pyENL: ' + self.output_save.split('/')[-1])
             self.archivoModificado = False
-            #El archivo que se abrió esta OK then se alamacena la nueva direccion de la carpeta
+            # El archivo que se abrió esta OK then se alamacena la nueva direccion de la carpeta
             self.cuDir = '/'.join(self.output_save.split('/')[0:-1]) # se elimina el "nombreArchivo.enl" de la ruta a guardar
         except IOError: # si no se abre ningun archivo que no muestre ningun mensaje
             pass
@@ -524,7 +530,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         unit1 = get_parameter_information(args_no_rep[id_arg1], "units")
         arg_2 = get_parameter_information(args_no_rep[id_arg2], "short")
         unit2 = get_parameter_information(args_no_rep[id_arg2], "units")
-        cadena = 'prop("' + prop_busc + '","'+ arg_1+ '",0['+ unit1 +'],"'+ arg_2+'",0['+ unit2 +'],"' + fluido + '")'
+        cadena = 'prop("' + prop_busc + '","' + arg_1 + '",0[' + unit1
+        cadena += '],"' + arg_2+'",0[' + unit2 + '],"' + fluido + '")'
         if is_trivial_parameter(items_no_rep[id_prop_busc]):
             cadena = 'prop("' + prop_busc + '","' + fluido + '")'
         cadena = prop_busc + "_1 = " + cadena
@@ -582,15 +589,14 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 args_no_rep.append(item)
                 dialog.ui.listWidget_3.addItem(description + ' [' + unidad_item + ']')
                 dialog.ui.listWidget_4.addItem(description + ' [' + unidad_item + ']')
-
-        dialog.ui.listWidget.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
-                                                                dialog.ui,items_no_rep,args_no_rep))
+        dialog.ui.listWidget.currentItemChanged.connect(partial(self.actualizaFuncionTermo, dialog.ui,
+                                                                items_no_rep, args_no_rep))
         dialog.ui.listWidget_2.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
-                                                                dialog.ui,items_no_rep,args_no_rep))
+                                                                  dialog.ui, items_no_rep, args_no_rep))
         dialog.ui.listWidget_3.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
-                                                                dialog.ui,items_no_rep,args_no_rep))
+                                                                  dialog.ui, items_no_rep, args_no_rep))
         dialog.ui.listWidget_4.currentItemChanged.connect(partial(self.actualizaFuncionTermo,
-                                                                dialog.ui,items_no_rep,args_no_rep))
+                                                                dialog.ui, items_no_rep, args_no_rep))
         dialog.exec_()
         dialog.show()
         # window = PropWindow(self)

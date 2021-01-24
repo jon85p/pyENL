@@ -6,24 +6,21 @@ import appdirs
 import sys
 import configparser
 from translations import translations as pyENL_translations
-
-currentFile_path = os.path.realpath(__file__)
-pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
-sys.path.append(pyENL_dirpath)
-user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
-
+from tarjan import tarjan
 '''
 Utilidades generales para uso de pyENL
 '''
 from numpy import *
 from pyENL_fcns import *
 import re
+currentFile_path = os.path.realpath(__file__)
+pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+sys.path.append(pyENL_dirpath)
+user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
 ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...
 haprop = log
 
-
-from tarjan import tarjan
 
 class configFile:
     '''
@@ -50,7 +47,7 @@ class configFile:
         self.sFontUI = 'Monospace,12,-1,5,25,0,0,0,0,0'
         self.cuDir = os.path.expanduser('~')
         if nuevo:
-            os.makedirs(user_config_dir, exist_ok= True)
+            os.makedirs(user_config_dir, exist_ok=True)
             config["GENERAL"] = {
                     "lang": self.lang,
                     "method": self.method,
@@ -163,10 +160,12 @@ def variables(texto_eqn):
             if esalfanum(texto_eqn[pos_check]):
                 # Se comprueba que es una función
                 EsParada = False  # ¿Finalizó el nombre de la función?
-                while EsParada == False:
+                while not EsParada:
                     # Mientras no sea el comienzo del nombre de la función:
                     pos_check -= 1
                     if pos_check == 0:
+                        # URGENTE: Revisar esto, es del commit inicial y
+                        # se supone que no debería servir así, lol
                         EsParada == True
                         start_check = 0
                     else:
@@ -187,7 +186,7 @@ def variables(texto_eqn):
     salida = []
     for variable in posibles:
         if variable != '':
-            if probar(variable) == True:
+            if probar(variable):
                 if variable not in salida:
                     salida.append(variable)
 
@@ -259,7 +258,7 @@ def cantidadEqnVar(texto_caja):
     lista = []
     for eqn in texto_fcn:
         eqn = eqn.split('<<')[0]
-        if ((eqn.replace(' ','').replace('\t', '') != '') and ('{' not in eqn)):
+        if ((eqn.replace(' ', '').replace('\t', '') != '') and ('{' not in eqn)):
             ecuaciones += 1
             expresion = eqn.replace(" ", "")
             expresion = expresion.replace("\t", "")
@@ -276,6 +275,7 @@ def cantidadEqnVar(texto_caja):
     # Regresa el número de ecuaciones y de variables.
     return ecuaciones, lista_vars
 
+
 def actualizar_directorio(cuDir):
     '''Guarda en config la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
     # se guarda la ultima carpeta usada para cuando se vuelva a abrir el programa
@@ -283,8 +283,9 @@ def actualizar_directorio(cuDir):
     config.read(user_config_dir + 'config')
     config['GENERAL']["cuDir"] = cuDir
     with open("config", "w") as configfile:
-                config.write(configfile)
+        config.write(configfile)
     
+
 def funcion_a(Diccionario):
     '''Asociación de ecuaciones con variables (opción aleatoria)'''
     while True:
@@ -328,13 +329,16 @@ def funcion_e(Diccionario):
         lista = min(Diccionario.values(), key=len)
         variable = lista[0]
 
-        for key in lista_claves:  # Se barre todas las claves para borrar la variable del resto de Ecuaciones
-
+        for key in lista_claves:
+            # Se barre todas las claves para borrar la variable
+            # del resto de Ecuaciones
             if lista == Diccionario[key] and bandera == 0:
                 # Se almacena en el nuevo diccionario
                 Diccionario_orga[key] = variable
-                key_blue = key  # Se guarda la llave para borrarla luego del diccionario
-                bandera = 1  # para cuando el contenido de una llave es igual al de otra
+                key_blue = key  # Se guarda la llave para
+                # borrarla luego del diccionario
+                bandera = 1  # para cuando el contenido
+                # de una llave es igual al de otra
 
             # Para borrar la variable de las demas ecuaciones
             elif variable in Diccionario[key]:
@@ -353,28 +357,29 @@ def funcion_e(Diccionario):
 
     return Diccionario_orga
 
+
 def onevsone(matriz):
     '''Asociación de ecuaciones con variables 1 a 1 (opción matricial)
-    La matriz de entra está formada por un array de listas donde cada lista 
-    representan una ecuación y contiene n booleanos , donde n es el número total
-    de variables de todo el sistema de ecuaciones
+    La matriz de entra está formada por un array de listas donde cada
+    lista representan una ecuación y contiene n booleanos,
+    donde n es el número total de variables de todo el sistema de ecuaciones
 
-    Return: 
+    Return:
     '''
-    m =matriz.copy()
-    size = m.shape[0] # Representa el numero de eqn
+    m = matriz.copy()
+    size = m.shape[0]  # Representa el numero de eqn
 
-    # A cada 
+    # A cada
     for a in range(size):
 
-        # Lista de número de veces que se repite cada variable 
-        sumCol = sum(m,axis = 0) #sumar columnas
+        # Lista de número de veces que se repite cada variabl
+        sumCol = sum(m, axis=0)  # sumar columnas
         # Lista de cantidad de variables que tiene cada ecuación
-        sumRow = sum(m,axis=1) #sumar filas
+        sumRow = sum(m, axis=1)  # sumar filas
 
         # Se busca la variable que se repite la menor cantidad de veces
         # y almacena el num de repeticiones y la posición en la lista
-        minSumCol = sumCol.min() # Si hay varias tomará la primera que encuentre
+        minSumCol = sumCol.min()  # Si hay varias tomará la primera que encuentre
         yminSumCol = sumCol.argmin()
 
         # Se identifica la ecuación con menor num de variables
@@ -383,53 +388,49 @@ def onevsone(matriz):
 
         # Se identifica si hay variables unicas o eqn con solo una variable
         # Variables que se encuentran una sola vez en todo el sistema
-        checkCol=argwhere(sumCol== 1)
+        checkCol = argwhere(sumCol == 1)
         # Eqn que solo continene una variable
-        checkRow = argwhere(sumRow==1)
+        checkRow = argwhere(sumRow == 1)
 
         VcheckCol = zeros(size)
         VcheckRow = zeros(size)
         for b in checkCol:
-            VcheckCol  = VcheckCol + m[:,b]
+            VcheckCol = VcheckCol + m[:, b]
 
         for c in checkRow:
-            VcheckRow =VcheckRow + m[c,:]
-        if True in (VcheckCol>1): #or True in (VcheckCol>1):
+            VcheckRow = VcheckRow + m[c, :]
+        if True in (VcheckCol > 1):  # or True in (VcheckCol>1):
             # Significa que el sistema de eqns es inconsistente
-            # TODO de acá podemso detectar fallos en el sistema de eqns y notificar a usuario
+            # TODO de acá podemso detectar fallos en el sistema de
+            # eqns y notificar a usuario
             # para que los arregle como doble declaración de variables
             print(VcheckCol)
             raise Exception(pyENL_translations()["Mal planteamiento del sistema de ecuaciones"])
-            return m ,-1
+            return m, -1
 
         if minSumRow == 1:
             # si una equ tiene solo una variable
-            yminSumRow =m[xminSumRow].argmax() # variable que tiene la equ
-            m[:,yminSumRow] = (arange(size) == xminSumRow)*(size+1)
+            yminSumRow = m[xminSumRow].argmax()  # variable que tiene la equ
+            m[:, yminSumRow] = (arange(size) == xminSumRow)*(size+1)
 
         else:
-            #se mira la variable que se repita el menor numero de veces
-            xminSumCol =m[:,yminSumCol].argmax() # equ que posee la variable
+            # se mira la variable que se repita el menor numero de veces
+            xminSumCol = m[:, yminSumCol].argmax()  # equ que posee la variable
             m[xminSumCol] = (arange(size) == yminSumCol)*(size+1)
-            m[:,yminSumCol] = (arange(size) == xminSumCol)*(size+1)
-
-
-
+            m[:, yminSumCol] = (arange(size) == xminSumCol)*(size+1)
     m = m//(size+1)
-
-    #Verificacion
-    sumCol = sum(m,axis = 0) #sumar columnas
-    sumRow = sum(m,axis=1) #sumar filas
+    # Verificacion
+    sumCol = sum(m, axis=0)  # sumar columnas
+    sumRow = sum(m, axis=1)  # sumar filas
     ones = ones_like(sumCol)
-    if array_equal(sumCol,ones) and array_equal(sumRow,ones):
-        return m , 1
+    if array_equal(sumCol, ones) and array_equal(sumRow, ones):
+        return m, 1
     else:
         return m, 0
 
 
-
 def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
-#def bloques(sistema_eqns, tol=None, method='hybr', minEqns=3):
+# def bloques(sistema_eqns, tol=None, method='hybr', minEqns=3):
     '''
     Recibe las ecuaciones y variables para resolver usando bloques mediante
     algoritmo de Tarjan para separación de sistemas de ecuaciones
@@ -446,21 +447,18 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
     '''
     # TODO: Optimizar el asunto de valores ya calculados para no repetición
     # de cálculos de estas variables.
-
-
-
-    #1.SE CREA LA MATRIZ DEL SISTEMA DE ECUACIONES################
-    lista_eqn= pyENL_eqns
-    lista_variables=[x.name for x in pyENL_variables]
+    # 1.SE CREA LA MATRIZ DEL SISTEMA DE ECUACIONES################
+    lista_eqn = pyENL_eqns
+    lista_variables = [x.name for x in pyENL_variables]
 
     Num_eqn = len(lista_eqn)
-    matriz_sistema = zeros((Num_eqn,Num_eqn) , dtype = int)
+    matriz_sistema = zeros((Num_eqn, Num_eqn), dtype=int)
 
-    for i , eqn in enumerate(lista_eqn):
+    for i, eqn in enumerate(lista_eqn):
 
-        varINeqn=variables(eqn) #variables funcion de utils
+        varINeqn = variables(eqn)  # variables funcion de utils
 
-        #Crea la fila de la matriz
+        # Crea la fila de la matriz
         fila = []
         for variable in lista_variables:
 
@@ -469,32 +467,24 @@ def bloques(pyENL_eqns, pyENL_variables, tol=None, method='hybr', minEqns=3):
             else:
                 fila.append(0)
 
-        matriz_sistema[i,:] = array(fila)
-
-
-
-    #2.CREAR MATRIZ DE RELACION 1VS1###################
-
-
+        matriz_sistema[i, :] = array(fila)
+    # 2.CREAR MATRIZ DE RELACION 1VS1###################
     Rel11, flag = onevsone(matriz_sistema)
-
-
-    #3.CREAR GRAFO ###################################
-
+    # 3.CREAR GRAFO ###################################
     matrizTarjan = (matriz_sistema - Rel11).T
-
     diccTarjan = {}
 
-    for x ,fila in enumerate(matrizTarjan):
-        posFila= (argwhere(fila == 1))
+    for x, fila in enumerate(matrizTarjan):
+        posFila = (argwhere(fila == 1))
         contenido = list(posFila.reshape(posFila.size))
 
-        diccTarjan[int(argwhere(Rel11[:,x]==1))] = contenido
+        diccTarjan[int(argwhere(Rel11[:, x] == 1))] = contenido
 
     bloques = tarjan(diccTarjan)
     bloques.reverse()
 
     return bloques
+
 
 def removeBigComments(texto):
     '''
@@ -505,7 +495,7 @@ def removeBigComments(texto):
     list_sin_comentarios = []
     for seccion in list_texto:
         # se agrega de nuevo el << para los comentarios de una linea
-        lista_seccion =  (seccion + '<<').split('>>')
+        lista_seccion = (seccion + '<<').split('>>')
         list_sin_comentarios += [lista_seccion[-1]]
     texto_sin_comentarios = ''.join(list_sin_comentarios)
 
