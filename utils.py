@@ -1,6 +1,5 @@
 #/usr/bin/env python3
 import random
-import copy
 import os
 import appdirs
 import sys
@@ -21,7 +20,7 @@ import re
 ln = log
 prop = log  # Solo importa el nombre de la función para comprobación...
 haprop = log
-
+import copy # recordar que copy entra en conflicto con el copy importado de numpy
 
 from tarjan import tarjan
 
@@ -130,9 +129,11 @@ def probar(texto_var):
         return True
 
 
-def variables(texto_eqn):
+def variables(texto_eqn, return_posibles_vars = False):
     '''
-    Regresa en texto las variables del string texto_eqn
+    Regresa:
+    - Texto las variables del string texto_eqn
+    - Lista de caracteres que posiblemente son variables (opcional)
     '''
     # Reconocer lo que hay entre paréntesis
     # Cambiar todos los nombres de las funciones por números
@@ -191,7 +192,10 @@ def variables(texto_eqn):
                 if variable not in salida:
                     salida.append(variable)
 
-    return salida
+    if return_posibles_vars:
+        return salida, posibles
+    else:
+        return salida
 
 
 def random_lim(a, b):
@@ -270,11 +274,16 @@ def cantidadEqnVar(texto_caja):
                 '-(' + izq_der[1] + ')'  # Igualación de cero
             lista.append(paraRaiz)
     lista_vars = []
+    dict_vars_properties = {}
     for ecuacion in lista:
-        lista_vars = lista_vars + variables(ecuacion)
+        vars_ecuacion, posibles = variables(ecuacion,True)
+        vars_eqn_properties = variablesProperties(ecuacion,vars_ecuacion, posibles)
+        lista_vars = lista_vars + vars_ecuacion
+        dict_vars_properties.update(vars_eqn_properties)
     lista_vars = list(set(lista_vars))
     # Regresa el número de ecuaciones y de variables.
-    return ecuaciones, lista_vars
+
+    return ecuaciones, lista_vars, dict_vars_properties
 
 def actualizar_directorio(cuDir):
     '''Guarda en config la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
@@ -511,3 +520,43 @@ def removeBigComments(texto):
 
     return texto_sin_comentarios
 
+def variablesProperties(texto_eqn,vars_ecuacion,posibles):
+    '''
+    Identifica a partir de una ecación si es posible asociar la magnitud
+    y/o unidad a la variable.
+
+    Retorna un diccionario donde la llave es la variable y el contenido
+    es otro diccionario asociado a la propiedad identificada
+
+    Ejemplo:
+    a = 1[cm] + 0.5[m]
+
+    Resultado:
+
+    {'a': {
+            'guess': 51.0,
+            'units': Unit('centimeter'),}
+    }
+    '''
+
+    # validar si hay una sola variable y no se repite
+    dic_vars = {}
+    if len(vars_ecuacion) == 1 and posibles.count(vars_ecuacion[0]) == 1:
+        variable_unique = vars_ecuacion[0]
+
+        # validar que la variable esté despejada
+        terminos_eqn = texto_eqn.replace('-','+').split('+')
+        if variable_unique in terminos_eqn:
+            to_eval = texto_eqn.replace(variable_unique,'')
+            to_eval =to_eval.replace("[", "*pyENLu.parse_units('").replace("]", "')")
+            result_var = eval(to_eval)
+
+            dic_vars = {variable_unique: {}}
+            # si no hay unidades el eval retornara un int or float
+            if 'pyENLu' in to_eval:
+                dic_vars[variable_unique]['guess'] = - result_var.magnitude
+                dic_vars[variable_unique]['units'] = result_var.units
+            else:
+                dic_vars[variable_unique]['guess'] = - result_var
+
+    return dic_vars

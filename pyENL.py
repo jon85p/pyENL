@@ -1050,7 +1050,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
         # self.infoLabel.setText((len(texto)))
         # Ahora definir la cantidad de ecuaciones y de variables en la caja
         try:
-            cantidad_eqn, var_reco = cantidadEqnVar(texto)
+            cantidad_eqn, var_reco, var_properties = cantidadEqnVar(texto)
             cantidad_var = len(var_reco)
             a_mostrar = str(cantidad_eqn) + self.traduccion[' ecuaciones / ' ] + \
                 str(cantidad_var) + self.traduccion[' variables']
@@ -1058,12 +1058,23 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             # Ahora actualizar la lista de variables si es necesario
             # Recordar que var_reco contiene las variables reconocidas en la
             # actualización.
-            varsSelf = [obj.name for obj in self.variables]
+            varsSelf = []
+            for obj in self.variables:
+                varName = obj.name
+                varsSelf += [varName]
+                if varName in var_properties.keys():
+                    obj.guess = var_properties[varName].get('guess',obj.guess)
+                    obj.units = var_properties[varName].get('units',obj.units)
+
             for varGUI in var_reco:
                 if varGUI not in varsSelf:
                     # Si no está entonces agregar!
                     new_var = pyENL_variable(varGUI)
+                    if varGUI in var_properties.keys():
+                        new_var.guess = var_properties[varGUI].get('guess',new_var.guess)
+                        new_var.units = var_properties[varGUI].get('units',new_var.units)
                     self.variables.append(new_var)
+
             # Si no está en var_reco pero está en self.variables...
             for i, varSelf in enumerate(self.variables):
                 if varSelf.name not in var_reco:
