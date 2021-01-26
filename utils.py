@@ -549,6 +549,7 @@ def variablesProperties(texto_eqn,vars_ecuacion,posibles):
         if variable_unique in terminos_eqn:
             to_eval = texto_eqn.replace(variable_unique,'')
             to_eval =to_eval.replace("[", "*pyENLu.parse_units('").replace("]", "')")
+            to_eval = ajustaUnidades(to_eval)
             result_var = eval(to_eval)
 
             dic_vars = {variable_unique: {}}
@@ -560,3 +561,16 @@ def variablesProperties(texto_eqn,vars_ecuacion,posibles):
                 dic_vars[variable_unique]['guess'] = - result_var
 
     return dic_vars
+
+def ajustaUnidades(texto):
+    '''
+    Regresa el texto con unidades modificadas para soporte de
+    pyENL, como h para hour y °C para degree_Celsius
+    '''
+    salida = texto
+    if 'hour' not in salida:
+        salida = re.sub(r'([A-z0-9\*{1,2}\/\^)]*)h([A-z0-9\*{1,2}\/\^)]*)',
+                        '\g<1>hour\g<2>', salida)
+    salida = re.sub(r'([A-z0-9\*{1,2}\/\^)]*)°C([A-z0-9\*{1,2}\/\^)]*)',
+                    '\g<1>degree_Celsius\g<2>', salida)
+    return salida

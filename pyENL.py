@@ -35,7 +35,6 @@ if not os.path.exists(pyENL_units_file):
 pyENLu.load_definitions(pyENL_units_file)
 from CoolProp.CoolProp import FluidsList, get_parameter_index, get_parameter_information, is_trivial_parameter
 from pyENL_fcns.functions import dicc_coolprop
-from re import sub
 # Cargar ahora interfaz desde archivo .py haciendo conversión con:
 # $ pyuic4 GUI/MainWindow.ui -o GUI/MainWindow.py
 # Icono: QtWidgets.QPixmap(_fromUtf8("GUI/imgs/icon.ico")
@@ -858,11 +857,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                 lowerlim = float(self.varsTable.item(i, 2).text())
                 upperlim = float(self.varsTable.item(i, 3).text())
                 units = self.varsTable.item(i, 4).text()
-                if not "hour" in units:
-                    units = sub(r'([A-z0-9\*{1,2}\/\^)]*)h([A-z0-9\*{1,2}\/\^)]*)',
-                                    '\g<1>hour\g<2>', units)
-                units = sub(r'([A-z0-9\*{1,2}\/\^)]*)°C([A-z0-9\*{1,2}\/\^)]*)',
-                                '\g<1>degree_Celsius\g<2>', units)
+                units = ajustaUnidades(units)
                 comment = self.varsTable.item(i, 5).text()
                 if lowerlim >= upperlim:
                     raise Exception(self.traduccion['El número '] + str(lowerlim) +
