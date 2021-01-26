@@ -12,6 +12,7 @@ from utils import variables, random_lim, variables_string
 from numpy import inf
 from CoolProp.CoolProp import PropsSI as prop
 from CoolProp.CoolProp import HAPropsSI as haprop
+from re import sub
 from time import time
 import optparse
 from pint import _DEFAULT_REGISTRY as pyENLu
@@ -97,6 +98,11 @@ def entradaTexto(ecuaciones, pyENL_timeout, varsObj=None, tol=None, method='hybr
             expresion = expresion.replace('\t','')
             # Capacidad de interpretar pow
             expresion = expresion.replace("^", "**")
+            if "hour" not in expresion:
+                expresion = sub(r'\[([A-z0-9\*{1,2}\/\^)]*)h([A-z0-9\*{1,2}\/\^)]*)]',
+                                    '[\g<1>hour\g<2>]', expresion)
+            expresion = sub(r'\[([A-z0-9\*{1,2}\/\^)]*)°C([A-z0-9\*{1,2}\/\^)]*)]',
+                               '[\g<1>degree_Celsius\g<2>]', expresion)
             izq_der = expresion.split('=')
             operandos = ["+", "-", "*", "/", "("]
             # Revisar que no haya operadores incompletos
