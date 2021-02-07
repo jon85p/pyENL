@@ -1056,8 +1056,12 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             varsSelf = []
             for obj in self.variables:
                 varName = obj.name
+                varUnits = obj.units
                 varsSelf += [varName]
-                if varName in var_properties.keys():
+                # print(type(varUnits), varUnits, pyENLu.parse_units('dimensionless') )
+                # No reemplaza la unidad si ya está definida en la pestaña de variables
+                # solamente las que estén dimensionless se tomará la unidad de la cajaTexto
+                if varName in var_properties.keys() and varUnits == pyENLu.parse_units('dimensionless') :
                     obj.guess = var_properties[varName].get('guess',obj.guess)
                     obj.units = var_properties[varName].get('units',obj.units)
 
