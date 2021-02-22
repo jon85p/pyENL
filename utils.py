@@ -18,8 +18,8 @@ from numpy import *
 from pyENL_fcns import *
 import re
 ln = log
-prop = log  # Solo importa el nombre de la función para comprobación...
-haprop = log
+from CoolProp.CoolProp import PropsSI as prop
+from CoolProp.CoolProp import HAPropsSI as haprop
 import copy # recordar que copy entra en conflicto con el copy importado de numpy
 
 from tarjan import tarjan
@@ -181,6 +181,11 @@ def variables(texto_eqn, return_posibles_vars = False):
     texto_eqn = re.sub(r'\[[^)]*\]', '', texto_eqn)
     # Reemplazos:
     A_reemplazar = ['(', ')', '-', '*', '/', '^', ',']
+    # Acá va el texto de texto_eqn
+    # Lo que se intenta acá es reemplazar "Algo cualquiera" por "Water"
+    # para seguir probando y simplemente ignorar los strings en la
+    # búsqueda de variables
+    texto_eqn = re.sub(r'''("|')([A-z \-_0-9]*)("|')''', '"Water"', texto_eqn)
     for termino in A_reemplazar:
         texto_eqn = texto_eqn.replace(termino, '+')
     posibles = texto_eqn.split('+')
@@ -277,7 +282,10 @@ def cantidadEqnVar(texto_caja):
     dict_vars_properties = {}
     for ecuacion in lista:
         vars_ecuacion, posibles = variables(ecuacion,True)
-        vars_eqn_properties = variablesProperties(ecuacion,vars_ecuacion, posibles)
+        try:
+            vars_eqn_properties = variablesProperties(ecuacion,vars_ecuacion, posibles)
+        except:
+            vars_eqn_properties = {}
         lista_vars = lista_vars + vars_ecuacion
         dict_vars_properties.update(vars_eqn_properties)
     lista_vars = list(set(lista_vars))
