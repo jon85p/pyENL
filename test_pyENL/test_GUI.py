@@ -4,10 +4,11 @@ import sys
 from PyQt5 import QtCore, uic, QtGui, QtWidgets
 import numpy as np
 from time import sleep
+from os import path
 Qt = QtCore.Qt
 
 try:
-    sys.path.append('/home/travis/build/jon85p/pyENL')
+    sys.path.append(path.realpath("."))
 except:
     pass
 
@@ -21,8 +22,8 @@ from pyENL import MyWindowClass
 def test_init(qtbot):
     widget = MyWindowClass(None, 'Default')
     qtbot.addWidget(widget)
-    assert widget.infoLabel.text() == '0 equations /0 variables'
-    assert widget.actionAbrir.text() == 'Open'
+    assert widget.infoLabel.text() == 'x Ecuaciones/y Variables'
+    assert widget.actionAbrir.text() == 'Abrir'
     QtWidgets.qApp.quit()
     
 def test_reco_vars(qtbot):

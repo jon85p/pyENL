@@ -3,9 +3,10 @@
 # Unit test for pyENL core
 import numpy as np
 import sys
+from os import path
 
 try:
-    sys.path.append('/home/travis/build/jon85p/pyENL')
+    sys.path.append(path.realpath("."))
 except:
     pass
 
