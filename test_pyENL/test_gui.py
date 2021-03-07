@@ -22,8 +22,8 @@ from pyENL import MyWindowClass
 def test_init(qtbot):
     widget = MyWindowClass(None, 'Default')
     qtbot.addWidget(widget)
-    assert widget.infoLabel.text() == 'x Ecuaciones/y Variables'
-    assert widget.actionAbrir.text() == 'Abrir'
+    assert widget.infoLabel.text() == 'x Equations/y Variables'
+    assert widget.actionAbrir.text() == 'Open'
     QtWidgets.qApp.quit()
     
 def test_reco_vars(qtbot):

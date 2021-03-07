@@ -89,4 +89,97 @@ def test_cantidadEqnVar():
 				assert abs(dic[key]['guess'] - dic_[key]['guess']) < 1e-5
 			if dic[key].get('units'):
 				assert dic[key]['units'].format_babel() == dic_[key]['units']
-			
+
+def test_modifyConfigFile():
+	'''
+	Acá testeamos que se modifique el archivo de configuración
+	(no el componente GUI)
+	'''
+	user_config_dir = creaConfigFile(test=True)
+	creaConfigFile()
+	# opciones__ = configFile(user_config_dir + "config", test=True)
+	# Ahora vamos a diseñar un par de casos
+	configs = [
+		{
+			"lang": "es",
+			"method": "hybr",
+			"format": "{:,.5}",
+			"tol": "1e-8",
+			"timeout": "14",
+			"font": "Hack,15,-1,5,25,0,0,0,0,0",
+			"sizeFont": 15,
+			"fontUI": "Hack",
+			"theme": "Default",
+			"cuDir": "/this/is/a/test_k"			
+		},
+		{
+			"lang": "fr",
+			"method": "lm",
+			"format": "{:,.19}",
+			"tol": "1e-6",
+			"timeout": "203",
+			"font": "Hack,18,-1,5,25,0,0,0,0,0",
+			"sizeFont": 18,
+			"fontUI": "Hack",
+			"theme": "Default",
+			"cuDir": "/this/is/a/test_k-d"			
+		},
+		{
+			"lang": "it",
+			"method": "broyden1",
+			"format": "{:,.23}",
+			"tol": "1e-15",
+			"timeout": "98",
+			"font": "Monosans,20,-1,5,25,0,0,0,0,0",
+			"sizeFont": 20,
+			"fontUI": "Monosans",
+			"theme": "Default",
+			"cuDir": "/this/is/a/test with spaces/fran"			
+		},
+		{
+			"lang": "fr",
+			"method": "linearmixing",
+			"format": "{:,.20}",
+			"tol": "1e-9",
+			"timeout": "23",
+			"font": "Hack,21,-1,5,25,0,0,0,0,0",
+			"sizeFont": 21,
+			"fontUI": "Hack",
+			"theme": "Default",
+			"cuDir": "/this/is/a/test_k--d"			
+		}
+	]
+	for config in configs:
+		savePreferences(config, user_config_dir)
+		gen = configFile(user_config_dir + "config")
+		assert gen.lang == config["lang"]
+		assert gen.method == config["method"]
+		assert gen.format == config["format"]
+		assert float(gen.tol) == float(config["tol"])
+		assert float(gen.timeout) == float(config["timeout"])
+		assert gen.sFontUI == config["font"]
+		assert gen.cuDir == config["cuDir"]
+
+def test_createConfigFile():
+	'''
+	Acá se realiza el test tanto de crear el archivo de configuración
+	'''
+	user_config_dir = creaConfigFile(test=True)
+	try:
+		os.remove(user_config_dir + "config")
+	except:
+		pass
+	os.makedirs(user_config_dir, exist_ok= True)
+	opciones_ = configFile(user_config_dir + "config")
+	# Ahora vamos a comprobar que los valores por defecto
+	# se hayan almacenado satisfactoriamente
+	opciones__ = configFile(user_config_dir + "config", test=True)
+	gen = opciones__.config["GENERAL"]
+	assert gen["lang"] == 'en'
+	assert gen["method"] == 'hybr'
+	assert gen["format"] == '{:,.3}'
+	assert float(gen["tol"]) == 1e-4
+	assert float(gen["timeout"]) == 10
+	assert gen["font"] == 'Monospace,12,-1,5,25,0,0,0,0,0'
+	assert gen["cuDir"] == path.expanduser('~')
+

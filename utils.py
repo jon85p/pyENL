@@ -29,13 +29,16 @@ class configFile:
     Clase que facilita datos de configuración, su lectura y escritura
     '''
 
-    def __init__(self, pathC):
+    def __init__(self, pathC, test=False):
         '''
         Inicializada con el nombre de archivo que contiene la configuración
         del programa
         '''
         config = configparser.ConfigParser()
         config.read(pathC)
+        if test:
+            self.config = config
+            return
         nuevo = len(config.sections()) == 0
         # Primero verifica que exista el archivo, si no; carga configuración por
         # defecto.
@@ -292,6 +295,19 @@ def cantidadEqnVar(texto_caja):
     # Regresa el número de ecuaciones y de variables.
 
     return ecuaciones, lista_vars, dict_vars_properties
+
+def creaConfigFile(test=False):
+    currentFile_path = os.path.realpath(__file__)
+    pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
+    sys.path.append(pyENL_dirpath)
+    user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
+    os.makedirs(user_config_dir, exist_ok= True)
+    if test:
+        try:
+            os.remove(user_config_dir + 'config')
+        except:
+            pass
+        return user_config_dir
 
 def actualizar_directorio(cuDir):
     '''Guarda en config la ultima ruta de la carpeta donde se abrió o guardó un archivo'''
@@ -582,3 +598,11 @@ def ajustaUnidades(texto):
     salida = re.sub(r'([A-z0-9\*{1,2}\/\^)]*)°C([A-z0-9\*{1,2}\/\^)]*)',
                     '\g<1>degree_Celsius\g<2>', salida)
     return salida
+
+def savePreferences(configParams, user_config_dir):
+    import configparser
+    config = configparser.ConfigParser()
+    config.read(user_config_dir + 'config')
+    config["GENERAL"] = configParams
+    with open(user_config_dir + "config", "w") as configfile:
+        config.write(configfile)

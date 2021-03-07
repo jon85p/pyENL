@@ -6,11 +6,6 @@ Programa principal que abre la interfaz gráfica de pyENL
 import sys
 import os
 import appdirs
-currentFile_path = os.path.realpath(__file__)
-pyENL_dirpath = os.path.dirname(currentFile_path) + os.sep
-sys.path.append(pyENL_dirpath)
-user_config_dir = appdirs.user_config_dir() + os.sep + "pyENL" + os.sep
-os.makedirs(user_config_dir, exist_ok= True)
 import ast
 import subprocess
 import threading
@@ -19,6 +14,7 @@ from PyQt5 import QtCore, uic, QtGui, QtWidgets
 # import qdarkstyle
 # import qdarkgraystyle
 from utils import *
+creaConfigFile()
 from entrada import pyENL_variable, entradaTexto
 from translations import translations
 from copy import deepcopy
@@ -249,10 +245,7 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
             self.settingsWindow()
         "Actualizar fichero"
         try:
-            import configparser
-            config = configparser.ConfigParser()
-            config.read(user_config_dir + 'config')
-            config["GENERAL"] = {
+            configParams = {
                     "lang": self.lang,
                     "method": self.opt_method,
                     "format": self.format,
@@ -262,8 +255,8 @@ class MyWindowClass(QtWidgets.QMainWindow, form_class):
                     "theme": self.theme,
                     "cuDir": self.cuDir
                     }
-            with open(user_config_dir + "config", "w") as configfile:
-                config.write(configfile)
+            savePreferences(configParams, user_config_dir)
+            
             
         except Exception as e:
             QtWidgets.QMessageBox.about(self, "Error", "No se pudo almacenar la configuración en archivo 'config'")
