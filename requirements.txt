@@ -7,3 +7,4 @@ fluids>=0.1.59
 pint>=0.8
 pyqt5
 tarjan
+zipp>=3.19.1 # not directly required, pinned by Snyk to avoid a vulnerability
